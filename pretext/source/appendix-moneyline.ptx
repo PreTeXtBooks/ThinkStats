@@ -1,0 +1,257 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<appendix xml:id="app-moneyline" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Don't Bet on the Super Bowl</title>
+
+  <introduction>
+    <p>
+      This appendix contains a supporting example for probability and expected value, using
+      the moneyline odds format common in American sports betting.
+    </p>
+    <p>
+      If you have studied probability, you might be familiar with fractional odds, which
+      represent the ratio of the probability something happens to the probability it doesn't.
+      For example, if the Seahawks have a 75% chance of winning the Super Bowl, they have a
+      25% chance of losing, so the ratio is 75 to 25, sometimes written 3:1 and pronounced
+      <q>three to one</q>.
+    </p>
+    <p>
+      But if you search for <q>the odds that the Patriots will win the Super Bowl</q>, you
+      will find the odds expressed as a number like +195 or -240.
+      That's called a moneyline, and it represents the expected return of a wager.
+      Specifically:
+    </p>
+    <ul>
+      <li>
+        <p>
+          A positive moneyline like +195 means that if you bet $100 and win, you get $195
+          back (plus your $100 bet).
+        </p>
+      </li>
+      <li>
+        <p>
+          A negative moneyline like -240 means that if you bet $240 and win, you get $100
+          back (plus your $240 bet).
+        </p>
+      </li>
+    </ul>
+  </introduction>
+
+  <section xml:id="app-moneyline-expected-value">
+    <title>Expected Value</title>
+
+    <p>
+      We can write a function to compute the expected value of a wager.
+    </p>
+    <program language="python">
+      <input>
+def expected_value(p, wager, payout):
+    return p * payout - (1-p) * wager
+      </input>
+    </program>
+    <p>
+      If the Patriots actually have a 25% chance of winning, the first wager has negative
+      expected value<mdash/>so you probably don't want to make it.
+    </p>
+    <program language="python">
+      <input>
+expected_value(p=0.25, wager=100, payout=195)
+      </input>
+    </program>
+    <p>
+      Now let's compute the expected value of the second wager<mdash/>assuming the Seahawks
+      have a 75% chance of winning:
+    </p>
+    <program language="python">
+      <input>
+expected_value(p=0.75, wager=240, payout=100)
+      </input>
+    </program>
+    <p>
+      The expected value of this wager is positive, so you might want to make
+      it<mdash/>but only if you have good reason to think the Seahawks have a 75% chance of
+      winning.
+    </p>
+  </section>
+
+  <section xml:id="app-moneyline-implied-probability">
+    <title>Implied Probability</title>
+
+    <p>
+      More generally, we can compute the expected value of each wager for a range of
+      probabilities from 0 to 1.
+    </p>
+    <program language="python">
+      <input>
+ps = np.linspace(0, 1)
+ev_patriots = expected_value(ps, 100, 195)
+      </input>
+    </program>
+    <program language="python">
+      <input>
+ps = np.linspace(0, 1)
+ev_seahawks = expected_value(1-ps, 240, 100)
+      </input>
+    </program>
+    <p>
+      Here's what they look like.
+    </p>
+    <program language="python">
+      <input>
+plt.plot(ps, ev_patriots, label='Bet on Patriots')
+plt.plot(ps, ev_seahawks, label='Bet on Seahawks')
+plt.axhline(0, color='gray', alpha=0.4)
+
+decorate(xlabel='Actual probability Patriots win',
+        ylabel='Expected value of wager')
+      </input>
+    </program>
+    <p>
+      To find the crossover point, we can set the expected value to 0 and solve for <c>p</c>.
+      This function computes the result:
+    </p>
+    <program language="python">
+      <input>
+def crossover(wager, payout):
+    return wager / (wager + payout)
+      </input>
+    </program>
+    <p>
+      Here's the crossover for a bet on the Patriots at the offered odds.
+    </p>
+    <program language="python">
+      <input>
+p1 = crossover(100, 195)
+p1
+      </input>
+    </program>
+    <p>
+      If you think the Patriots have a probability higher than the crossover, the first bet
+      has positive expected value.
+      And here's the crossover for a bet on the Seahawks.
+    </p>
+    <program language="python">
+      <input>
+p2 = crossover(240, 100)
+p2
+      </input>
+    </program>
+    <p>
+      If you think the Seahawks have a probability higher than this crossover, the second bet
+      has positive expected value.
+    </p>
+    <p>
+      So the offered odds imply that the consensus view of the betting market is that the
+      Patriots have a 33.9% chance of winning and the Seahawks have a 70.6% chance.
+      But you might notice that the sum of those probabilities exceeds 1.
+    </p>
+    <program language="python">
+      <input>
+p1 + p2
+      </input>
+    </program>
+  </section>
+
+  <section xml:id="app-moneyline-the-take">
+    <title>The Take</title>
+
+    <p>
+      The sum of the crossover probabilities determines <term>the take</term>, which is the
+      share of the betting pool taken by <q>the house</q><mdash/>that is, the entity that
+      takes the bets.
+    </p>
+    <p>
+      For example, suppose 1000 people take the first wager and bet $100 each on the
+      Patriots.
+      And 1000 people take the second wager and bet $240 on the Seahawks.
+    </p>
+    <p>
+      Here's the total expected value of all of those wagers.
+    </p>
+    <program language="python">
+      <input>
+total = expected_value(ps, 100_000, 195_000) + expected_value(1-ps, 240_000, 100_000)
+
+plt.plot(ps, total, label='Total')
+plt.axhline(0, color='gray', alpha=0.4)
+
+decorate(xlabel='Actual probability Patriots win',
+        ylabel='Total expected value of all wagers')
+      </input>
+    </program>
+    <p>
+      The total expected value is negative for all probabilities (or zero if the Patriots
+      have no chance at all)<mdash/>which means the house wins.
+    </p>
+    <p>
+      How much the house wins depends on the actual probability.
+      As an example, suppose the actual probability is the midpoint of the probabilities
+      implied by the odds:
+    </p>
+    <program language="python">
+      <input>
+p = (p1 + (1-p2)) / 2
+p
+      </input>
+    </program>
+    <p>
+      In that case, here's the expected take, assuming that the implied probability is
+      correct.
+    </p>
+    <program language="python">
+      <input>
+take = -expected_value(p, 100_000, 195_000) - expected_value(1-p, 240_000, 100_000)
+take
+      </input>
+    </program>
+    <p>
+      As a percentage of the total betting pool, it's a little more than 4%.
+    </p>
+    <program language="python">
+      <input>
+take / (100_000 + 240_000)
+      </input>
+    </program>
+    <p>
+      Which we could have approximated by computing the <term>overround</term>, which is the
+      amount that the sum of the implied probabilities exceeds 1.
+    </p>
+    <program language="python">
+      <input>
+(p1 + p2) - 1
+      </input>
+    </program>
+  </section>
+
+  <section xml:id="app-moneyline-dont-bet">
+    <title>Don't Bet</title>
+
+    <p>
+      In summary, here are the reasons you should not bet on the Super Bowl:
+    </p>
+    <ul>
+      <li>
+        <p>
+          If the implied probabilities are right (within a few percent) all wagers have
+          negative expected value.
+        </p>
+      </li>
+      <li>
+        <p>
+          If you think the implied probabilities are wrong, you might be able to make a good
+          bet<mdash/>but only if you are right. The odds represent the aggregated knowledge
+          of everyone who places a bet, which probably includes people who know more than you
+          do.
+        </p>
+      </li>
+      <li>
+        <p>
+          Even if the implied probabilities are wrong, the market tends to correct quickly.
+          Unless you have information that the market doesn't have, you are probably not going
+          to find a good bet.
+        </p>
+      </li>
+    </ul>
+  </section>
+
+</appendix>
