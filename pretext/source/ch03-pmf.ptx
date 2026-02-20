@@ -5,11 +5,616 @@
 
   <introduction>
     <p>
-      This chapter introduces probability mass functions (PMFs), a way to represent
-      the distribution of a discrete variable.
+      In the previous chapter we represented distributions using a <c>FreqTab</c> object, which contains a set of values and their frequencies <mdash/> that is, the number of times each value appears.
+      In this chapter we'll introduce another way to describe a distribution, a probability mass function (PMF).
+    </p>
+    <p>
+      To represent a PMF, we'll use an object called a <c>Pmf</c>, which contains a set of values and their probabilities.
+      We'll use <c>Pmf</c> objects to compute the mean and variance of a distribution, and the skewness, which indicates whether it is skewed to the left or right.
+      Finally, we will explore how a phenomenon called the "inspection paradox" can cause a sample to give a biased view of a distribution.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-pmfs">
+    <title>PMFs</title>
+
+    <p>
+      A <c>Pmf</c> object is like a <c>FreqTab</c> that contains probabilities instead of frequencies.
+      So one way to make a <c>Pmf</c> is to start with a <c>FreqTab</c>.
+      For example, here's a <c>FreqTab</c> that represents the distribution of values in a short sequence.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import FreqTab
+
+ftab = FreqTab.from_seq([1, 2, 2, 3, 5])
+ftab
+      </input>
+    </program>
+    <p>
+      The sum of the frequencies is the size of the original sequence.
+    </p>
+    <program language="python">
+      <input>
+n = ftab.sum()
+n
+      </input>
+    </program>
+    <p>
+      If we divide the frequencies by <c>n</c>, they represent proportions, rather than counts.
+    </p>
+    <program language="python">
+      <input>
+pmf = ftab / n
+pmf
+      </input>
+    </program>
+    <p>
+      This result indicates that 20% of the values in the sequence are 1, 40% are 2, and so on.
+    </p>
+    <p>
+      We can also think of these proportions as probabilities in the following sense: if we choose a random value from the original sequence, the probability we choose the value 1 is 0.2, the probability we choose the value 2 is 0.4, and so on.
+    </p>
+    <p>
+      Because we divided through by <c>n</c>, the sum of the probabilities is 1, which means that this distribution is <term>normalized</term>.
+    </p>
+    <program language="python">
+      <input>
+pmf.sum()
+      </input>
+    </program>
+    <p>
+      A normalized <c>FreqTab</c> object represents a <term>probability mass function</term> (PMF), so-called because probabilities associated with discrete values are also called "probability masses".
+    </p>
+    <p>
+      The <c>empiricaldist</c> library provides a <c>Pmf</c> object that represents a probability mass function, so instead of creating a <c>FreqTab</c> object and then normalizing it, we can create a <c>Pmf</c> object directly.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import Pmf
+
+pmf = Pmf.from_seq([1, 2, 2, 3, 5])
+pmf
+      </input>
+    </program>
+    <p>
+      The <c>Pmf</c> is normalized so the total probability is 1.
+    </p>
+    <program language="python">
+      <input>
+pmf.sum()
+      </input>
+    </program>
+    <p>
+      <c>Pmf</c> and <c>FreqTab</c> objects are similar in many ways.
+      To look up the probability associated with a value, we can use the bracket operator.
+    </p>
+    <program language="python">
+      <input>
+pmf[2]
+      </input>
+    </program>
+    <p>
+      Or use parentheses to call the <c>Pmf</c> like a function.
+    </p>
+    <program language="python">
+      <input>
+pmf(2)
+      </input>
+    </program>
+    <p>
+      To assign a probability to a value, you have to use the bracket operator.
+    </p>
+    <program language="python">
+      <input>
+pmf[2] = 0.2
+pmf(2)
+      </input>
+    </program>
+    <p>
+      You can modify an existing <c>Pmf</c> by incrementing the probability associated with a value:
+    </p>
+    <program language="python">
+      <input>
+pmf[2] += 0.3
+pmf[2]
+      </input>
+    </program>
+    <p>
+      Or you can multiply a probability by a factor:
+    </p>
+    <program language="python">
+      <input>
+pmf[2] *= 0.5
+pmf[2]
+      </input>
+    </program>
+    <p>
+      If you modify a <c>Pmf</c>, the result may not be normalized <mdash/> that is, the probabilities may no longer add up to 1.
+    </p>
+    <program language="python">
+      <input>
+pmf.sum()
+      </input>
+    </program>
+    <p>
+      The <c>normalize</c> method renormalizes the <c>Pmf</c> by dividing through by the sum <mdash/> and returning the sum.
+    </p>
+    <program language="python">
+      <input>
+pmf.normalize()
+      </input>
+    </program>
+    <p>
+      <c>Pmf</c> objects provide a <c>copy</c> method so you can make and modify a copy without affecting the original.
+    </p>
+    <program language="python">
+      <input>
+pmf.copy()
+      </input>
+    </program>
+    <p>
+      Like a <c>FreqTab</c> object, a <c>Pmf</c> object has a <c>qs</c> attribute that accesses the quantities and a <c>ps</c> attribute that accesses the probabilities.
+      It also has a <c>bar</c> method that plots the <c>Pmf</c> as a bar graph and a <c>plot</c> method that plots it as a line graph.
+    </p>
+  </section>
+
+  <section xml:id="sec-summarizing-pmfs">
+    <title>Summarizing a PMF</title>
+
+    <p>
+      In <xref ref="sec-summary-statistics" text="custom">Chapter 1</xref> we computed the mean of a sample by adding up the elements and dividing by the number of elements.
+      Here's a simple example.
+    </p>
+    <program language="python">
+      <input>
+seq = [1, 2, 2, 3, 5]
+
+n = len(seq)
+mean = np.sum(seq) / n
+mean
+      </input>
+    </program>
+    <p>
+      Now suppose we compute the PMF of the values in the sequence.
+    </p>
+    <program language="python">
+      <input>
+pmf = Pmf.from_seq(seq)
+      </input>
+    </program>
+    <p>
+      Given the <c>Pmf</c>, we can still compute the mean, but the process is different <mdash/> we have to multiply the probabilities and quantities and add up the products.
+    </p>
+    <program language="python">
+      <input>
+mean = np.sum(pmf.ps * pmf.qs)
+mean
+      </input>
+    </program>
+    <p>
+      Notice that we <em>don't</em> have to divide by <c>n</c>, because we already did that when we normalized the <c>Pmf</c>.
+      <c>Pmf</c> objects have a <c>mean</c> method that does the same thing.
+    </p>
+    <program language="python">
+      <input>
+pmf.mean()
+      </input>
+    </program>
+    <p>
+      Given a <c>Pmf</c>, we can compute the variance by computing the deviation of each quantity from the mean.
+    </p>
+    <program language="python">
+      <input>
+deviations = pmf.qs - mean
+      </input>
+    </program>
+    <p>
+      Then we multiply the squared deviations by the probabilities and add up the products.
+    </p>
+    <program language="python">
+      <input>
+var = np.sum(pmf.ps * deviations**2)
+var
+      </input>
+    </program>
+    <p>
+      The <c>var</c> method does the same thing.
+    </p>
+    <program language="python">
+      <input>
+pmf.var()
+      </input>
+    </program>
+    <p>
+      From the variance, we can compute the standard deviation in the usual way.
+    </p>
+    <program language="python">
+      <input>
+np.sqrt(var)
+      </input>
+    </program>
+    <p>
+      Or the <c>std</c> method does the same thing.
+    </p>
+    <program language="python">
+      <input>
+pmf.std()
+      </input>
+    </program>
+    <p>
+      <c>Pmf</c> also provides a <c>mode</c> method that finds the value with the highest probability.
+    </p>
+    <program language="python">
+      <input>
+pmf.mode()
+      </input>
+    </program>
+    <p>
+      We'll see more methods as we go along, but that's enough to get started.
+    </p>
+  </section>
+
+  <section xml:id="sec-class-size-paradox">
+    <title>The Class Size Paradox</title>
+
+    <p>
+      As an example of what we can do with <c>Pmf</c> objects, let's consider a phenomenon I call "the class size paradox."
+    </p>
+    <p>
+      At many American colleges and universities, the student-to-faculty ratio is about 10:1.
+      But students are often surprised that many of their classes have more than 10 students, sometimes a lot more.
+      There are two reasons for the discrepancy:
+    </p>
+    <ul>
+      <li>
+        <p>Students typically take 4 or 5 classes per semester, but professors often teach 1 or 2.</p>
+      </li>
+      <li>
+        <p>The number of students in a small class is small, and the number of students in a large class is large.</p>
+      </li>
+    </ul>
+    <p>
+      The first effect is obvious, at least once it is pointed out; the second is more subtle.
+      Let's look at an example.
+      Suppose that a college offers 65 classes in a given semester, and we are given the number of classes in each of the following size ranges.
+    </p>
+    <program language="python">
+      <input>
+ranges = pd.interval_range(start=5, end=50, freq=5, closed="left")
+ranges.name = "class size"
+
+data = pd.DataFrame(index=ranges)
+data["count"] = [8, 8, 14, 4, 6, 12, 8, 3, 2]
+data
+      </input>
+    </program>
+    <p>
+      The Pandas function <c>interval_range</c> makes an <c>Index</c> where each label represents a range of values.
+      The notation <c>[5, 10)</c> means that <c>5</c> is included in the interval and <c>10</c> is not.
+      Since we don't know the sizes of the classes in each interval, let's assume that all sizes are at the midpoint of the range.
+    </p>
+    <program language="python">
+      <input>
+sizes = ranges.left + 2
+sizes
+      </input>
+    </program>
+    <p>
+      Now let's make a <c>Pmf</c> that represents the distribution of class sizes.
+      Because we know the sizes and their frequencies, we can create a <c>Pmf</c> directly, passing as arguments the counts, sizes, and a name.
+      When we normalize the new <c>Pmf</c>, the result is the sum of the counts.
+    </p>
+    <program language="python">
+      <input>
+counts = data["count"]
+actual_pmf = Pmf(counts, sizes, name="actual")
+actual_pmf.normalize()
+      </input>
+    </program>
+    <p>
+      If you ask the college for the average class size, they report the mean of this distribution, which is 23.7.
+    </p>
+    <program language="python">
+      <input>
+actual_pmf.mean()
+      </input>
+    </program>
+    <p>
+      But if you survey a group of students, ask them how many students are in their classes, and compute the mean, the average is bigger.
+      Let's see how much bigger.
+    </p>
+    <p>
+      The following function takes the actual <c>Pmf</c> of class sizes and makes a new <c>Pmf</c> that represents the class sizes as seen by students.
+      The quantities in the two distributions are the same, but the probabilities in the distribution are multiplied by the quantities, because in a class with size <c>x</c>, there are <c>x</c> students who observe that class.
+      So the probability of observing a class is proportional to its size.
+    </p>
+    <program language="python">
+      <input>
+def bias(pmf, name):
+    # multiply each probability by class size
+    ps = pmf.ps * pmf.qs
+
+    # make a new Pmf and normalize it
+    new_pmf = Pmf(ps, pmf.qs, name=name)
+    new_pmf.normalize()
+    return new_pmf
+      </input>
+    </program>
+    <p>
+      Now we can compute the biased <c>Pmf</c> as observed by students.
+    </p>
+    <program language="python">
+      <input>
+observed_pmf = bias(actual_pmf, name="observed")
+      </input>
+    </program>
+    <p>
+      Here's what the two distributions look like.
+    </p>
+    <program language="python">
+      <input>
+from thinkstats import two_bar_plots
+
+two_bar_plots(actual_pmf, observed_pmf, width=2)
+decorate(xlabel="Class size", ylabel="PMF")
+      </input>
+    </program>
+    <p>
+      In the observed distribution there are fewer small classes and more large ones.
+      And the biased mean is 29.1, almost 25% higher than the actual mean.
+    </p>
+    <program language="python">
+      <input>
+observed_pmf.mean()
+      </input>
+    </program>
+    <p>
+      It is also possible to invert this operation.
+      Suppose you want to find the distribution of class sizes at a college, but you can't get reliable data.
+      One option is to choose a random sample of students and ask how many students are in their classes.
+    </p>
+    <p>
+      The result would be biased for the reasons we've just seen, but you can use it to estimate the actual distribution.
+      Here's the function that unbiases a <c>Pmf</c> by dividing the probabilities by the sizes.
+    </p>
+    <program language="python">
+      <input>
+def unbias(pmf, name):
+    # divide each probability by class size
+    ps = pmf.ps / pmf.qs
+
+    new_pmf = Pmf(ps, pmf.qs, name=name)
+    new_pmf.normalize()
+    return new_pmf
+      </input>
+    </program>
+    <p>
+      And here's the result.
+    </p>
+    <program language="python">
+      <input>
+debiased_pmf = unbias(observed_pmf, "debiased")
+debiased_pmf.mean()
+      </input>
+    </program>
+    <p>
+      The mean of the debiased <c>Pmf</c> is the same as the mean of the actual distribution we started with.
+    </p>
+    <p>
+      If you think this example is interesting, you might like Chapter 2 of <em>Probably Overthinking It</em>, which includes this and several other examples of what's called the "inspection paradox".
+    </p>
+  </section>
+
+  <section xml:id="sec-nsfg-data-pmf">
+    <title>NSFG Data</title>
+
+    <p>
+      In the previous chapter, we plotted frequency tables of pregnancy lengths for first babies and others.
+      But the sizes of the groups are not the same, so we can't compare the frequency tables directly.
+      Because PMFs are normalized, we can compare them.
+      So let's load the NSFG data again and make <c>Pmf</c> objects to represent distributions of pregnancy lengths.
+    </p>
+    <p>
+      The <c>nsfg</c> module provides a <c>get_nsfg_groups</c> function that reads the data, selects rows that represent live births, and partitions live births into first babies and others.
+      It returns three <c>DataFrame</c> objects.
+    </p>
+    <program language="python">
+      <input>
+from nsfg import get_nsfg_groups
+
+live, firsts, others = get_nsfg_groups()
+      </input>
+    </program>
+    <p>
+      We can use <c>firsts</c> and <c>others</c> to make a <c>Pmf</c> for the pregnancy lengths in each group.
+    </p>
+    <program language="python">
+      <input>
+first_pmf = Pmf.from_seq(firsts["prglngth"], name="firsts")
+other_pmf = Pmf.from_seq(others["prglngth"], name="others")
+      </input>
+    </program>
+    <p>
+      Here are the PMFs for first babies and others, plotted as bar graphs.
+    </p>
+    <program language="python">
+      <input>
+two_bar_plots(first_pmf, other_pmf)
+decorate(xlabel="Weeks", ylabel="Probability", xlim=[20, 50])
+      </input>
+    </program>
+    <p>
+      By plotting the PMF instead of the frequency table, we can compare the two distributions without being misled by the difference in sizes of the samples.
+      Based on this figure, first babies seem to be less likely than others to arrive on time (week 39) and more likely to be late (weeks 41 and 42).
+    </p>
+  </section>
+
+  <section xml:id="sec-other-visualizations">
+    <title>Other Visualizations</title>
+
+    <p>
+      Frequency tables and PMFs are useful while you are exploring data and trying to identify patterns and relationships.
+      Once you have an idea what is going on, a good next step is to design a visualization that makes the patterns you have identified as clear as possible.
+    </p>
+    <p>
+      In the NSFG data, the biggest differences in the distributions are near the mode.
+      So it makes sense to zoom in on that part of the graph, and select data from weeks 35 to 46.
+    </p>
+    <p>
+      When we call a <c>Pmf</c> object like a function, we can look up a sequence of quantities and get a sequence of probabilities.
+    </p>
+    <program language="python">
+      <input>
+weeks = range(35, 46)
+first_pmf(weeks)
+      </input>
+    </program>
+    <program language="python">
+      <input>
+other_pmf(weeks)
+      </input>
+    </program>
+    <p>
+      So we can compute the differences in the probabilities like this.
+    </p>
+    <program language="python">
+      <input>
+diffs = first_pmf(weeks) - other_pmf(weeks)
+diffs
+      </input>
+    </program>
+    <p>
+      Here's what they look like, multiplied by 100 to express the differences in percentage points.
+    </p>
+    <program language="python">
+      <input>
+plt.bar(weeks, diffs * 100)
+decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
+      </input>
+    </program>
+    <p>
+      This figure makes the pattern clearer: first babies are less likely to be born in week 39, and somewhat more likely to be born in weeks 41 and 42.
+    </p>
+    <p>
+      When we see a pattern like this in a sample, we can't be sure it also holds in the population <mdash/> and we don't know whether we would see it in another sample from the same population.
+      We'll revisit this question in <xref ref="ch-hypothesis-testing" text="custom">Chapter 9</xref>.
+    </p>
+  </section>
+
+  <glossary xml:id="glossary-ch03">
+    <title>Glossary</title>
+
+    <gi xml:id="term-normalized">
+      <title>normalized</title>
+      <p>A set of probabilities are normalized if they add up to 1.</p>
+    </gi>
+
+    <gi xml:id="term-pmf">
+      <title>probability mass function (PMF)</title>
+      <p>A function that represents a distribution by mapping each quantity to its probability.</p>
+    </gi>
+
+  </glossary>
+
+  <exercises xml:id="exercises-ch03">
+    <title>Exercises</title>
+
+    <p>
+      For the exercises in this chapter, we'll use the NSFG respondent file, which contains one row for each respondent.
+      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      The codebook for this dataset is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.
+    </p>
+    <p>
+      The <c>nsfg.py</c> module provides a function that reads the respondent file and returns a <c>DataFrame</c>.
+    </p>
+    <program language="python">
+      <input>
+from nsfg import read_fem_resp
+
+resp = read_fem_resp()
+resp.shape
+      </input>
+    </program>
+    <p>
+      This <c>DataFrame</c> contains 7643 rows and 3092 columns.
+    </p>
+
+    <exercise xml:id="ex-ch03-01">
+      <title>Exercise 3.1</title>
+      <statement>
+        <p>
+          Select the column <c>numbabes</c>, which records the "number of babies born alive" to each respondent.
+          Make a <c>FreqTab</c> object and display the frequencies of the values in this column.
+          Check that they are consistent with the frequencies in the code book.
+          Are there any special values that should be replaced with <c>NaN</c>?
+        </p>
+        <p>
+          Then make a <c>Pmf</c> object and plot it as a bar graph.
+          Is the distribution symmetric, skewed to the left, or skewed to the right?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-ch03-02">
+      <title>Exercise 3.2</title>
+      <statement>
+        <p>
+          In the same way that the mean identifies a central point in a distribution, and variance quantifies its spread, there is another statistic, called <term>skewness</term>, that indicates whether a distribution is skewed to the left or right.
+        </p>
+        <p>
+          Given a sample, we can compute the skewness by computing the sum of the cubed deviations and dividing by the standard deviation cubed.
+          For example, here's how we compute the skewness of <c>numbabes</c>.
+        </p>
+        <program language="python">
+          <input>
+numbabes = resp["numbabes"].replace(97, np.nan)
+
+deviations = numbabes - numbabes.mean()
+skewness = np.mean(deviations**3) / numbabes.std(ddof=0) ** 3
+skewness
+          </input>
+        </program>
+        <p>
+          A positive value indicates that a distribution is skewed to the right, and a negative value indicates that it is skewed to the left.
+        </p>
+        <p>
+          If you are given a <c>Pmf</c>, rather than a sequence of values, you can compute skewness like this:
+        </p>
+        <ol>
+          <li><p>Compute the deviation of each quantity in the <c>Pmf</c> from the mean.</p></li>
+          <li><p>Cube the deviations, multiply by the probabilities in the <c>Pmf</c>, and add up the products.</p></li>
+          <li><p>Divide the sum by the standard deviation cubed.</p></li>
+        </ol>
+        <p>
+          Write a function called <c>pmf_skewness</c> that takes a <c>Pmf</c> object and returns its skewness.
+          Use your function and the <c>Pmf</c> of <c>numbabes</c> to compute skewness, and confirm you get the same result computed above.
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-ch03-03">
+      <title>Exercise 3.3</title>
+      <statement>
+        <p>
+          Something like the class size paradox appears if you survey children and ask how many children are in their family.
+          Families with many children are more likely to appear in your sample, and families with no children have no chance to be in the sample at all.
+        </p>
+        <p>
+          From <c>resp</c>, select <c>numkdhh</c>, which records the number of children under 18 in each respondent's household.
+          Make a <c>Pmf</c> of the values in this column.
+        </p>
+        <p>
+          Use the <c>bias</c> function to compute the distribution we would see if we surveyed the children and asked them how many children under 18 (including themselves) are in their household.
+        </p>
+        <p>
+          Plot the actual and biased distributions, and compute their means.
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>
