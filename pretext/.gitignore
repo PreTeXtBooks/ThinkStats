@@ -5,6 +5,13 @@
 # don't track unpublished builds
 output
 
+# don't track HTML files generated directly in this directory
+*.html
+*.js
+
+# don't track log files
+logs
+
 # don't track assets generated from source
 generated-assets
 

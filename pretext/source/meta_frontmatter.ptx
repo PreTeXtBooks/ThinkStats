@@ -181,7 +181,7 @@
       the book more engaging for readers.
     </p>
 
-    <section xml:id="preface-whats-new">
+    <paragraphs xml:id="preface-whats-new">
       <title>What's New?</title>
       <p>
         For this third edition, I started by moving the book into Jupyter notebooks.
@@ -227,9 +227,9 @@
         Overall, I think these changes make <em>Think Stats</em> a better book.
         I hope you like it!
       </p>
-    </section>
+    </paragraphs>
 
-    <section xml:id="preface-using-the-code">
+    <paragraphs xml:id="preface-using-the-code">
       <title>Using the Code</title>
       <p>
         The code and data used in this book are available from
@@ -284,9 +284,9 @@
         familiar with those concepts, they are entirely optional.
         Finally, I don't assume you know anything about statistics.
       </p>
-    </section>
+    </paragraphs>
 
-    <section xml:id="preface-acknowledgments">
+    <paragraphs xml:id="preface-acknowledgments">
       <title>Acknowledgments</title>
       <p>
         Thanks to the readers who contributed corrections and suggestions to previous editions
@@ -297,7 +297,7 @@
         Many thanks to the technical reviewers of this edition: Zachary del Rosario, Jerzy
         Wieczorek, Thomas Nield, Walter Paczkowski, and Peter Bruce.
       </p>
-    </section>
+    </paragraphs>
   </preface>
 
 </frontmatter>
