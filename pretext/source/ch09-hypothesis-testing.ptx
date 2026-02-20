@@ -5,11 +5,890 @@
 
   <introduction>
     <p>
-      This chapter introduces hypothesis testing, including the classical approach
-      and a Bayesian resampling-based approach to testing statistical hypotheses.
+      In the datasets we have explored in this book, we've seen differences between groups of people -- and penguins -- correlations between variables, and slopes of regression lines.
+      Results like these are called <term>observed effects</term> because they appear in a sample, as contrasted with actual effects in the population, which we usually can't observe directly.
+      When we see an apparent effect, we should consider whether it is likely to be present in the larger population or whether it might appear in the sample by chance.
+    </p>
+    <p>
+      There are several ways to formulate this question, including Fisher null hypothesis testing, Neyman-Pearson decision theory, and Bayesian hypothesis testing.
+      What I present here is a mixture of these approaches that is often used in practice.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-hypothesis-flipping-coins">
+    <title>Flipping Coins</title>
+
+    <p>
+      We'll start with a simple example, based on an example in David MacKay's book, <em>Information Theory, Inference, and Learning Algorithms</em>.
+    </p>
+    <p>
+      When Euro coins were introduced in 2002, a curious coin enthusiast spun a Belgian one-Euro coin on edge 250 times and noted that it landed with the heads side up 140 times and tails side up 110 times.
+      If the coin is perfectly balanced, we expect only 125 heads, so this data suggests the coin is biased.
+      On the other hand, we don't expect to get exactly 125 heads every time, so it's possible that the coin is actually fair, and the apparent deviation from the expected value is due to chance.
+      To see whether that's plausible, we can perform a hypothesis test.
+    </p>
+    <p>
+      We'll use the following function to compute the absolute difference between the observed number and the expected number if the coin is fair.
+    </p>
+
+    <program language="python">
+      <input>
+n = 250
+p = 0.5
+
+
+def abs_deviation(heads):
+    expected = n * p
+    return np.abs(heads - expected)
+      </input>
+    </program>
+
+    <p>
+      In the observed data, this deviation is 15.
+    </p>
+
+    <program language="python">
+      <input>
+heads = 140
+tails = 110
+
+observed_stat = abs_deviation(heads)
+observed_stat
+      </input>
+    </program>
+
+    <p>
+      If the coin is actually fair, we can simulate the coin-spinning experiment by generating a sequence of random strings -- either <c>'H'</c> or <c>'T'</c> with equal probability -- and counting the number of times <c>'H'</c> appears.
+    </p>
+
+    <program language="python">
+      <input>
+def simulate_flips():
+    flips = np.random.choice(["H", "T"], size=n)
+    heads = np.sum(flips == "H")
+    return heads
+      </input>
+    </program>
+
+    <p>
+      Each time we call this function, we get the outcome of a simulated experiment.
+    </p>
+
+    <program language="python">
+      <input>
+np.random.seed(1)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+simulate_flips()
+      </input>
+    </program>
+
+    <p>
+      The following loop simulates the experiment many times, computes the deviation for each one, and uses a list comprehension to collect the results in a list.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_stats = [abs_deviation(simulate_flips()) for i in range(10001)]
+      </input>
+    </program>
+
+    <p>
+      The result is a sample from the distribution of deviations under the assumption that the coin is fair.
+      Here's what the distribution of these values looks like.
+    </p>
+
+    <program language="python">
+      <input>
+from empiricaldist import Pmf
+
+pmf_effects = Pmf.from_seq(simulated_stats)
+pmf_effects.bar()
+
+decorate(xlabel="Absolute deviation", ylabel="PMF")
+      </input>
+    </program>
+
+    <p>
+      Values near 0 are the most common; values greater than 10 are less common.
+      Remembering that the deviation in the observed data is 15, we see that deviations of that magnitude are rare, but not impossible.
+      In this example, the simulated results equal or exceed 15 about 7.1% of the time.
+    </p>
+
+    <program language="python">
+      <input>
+(np.array(simulated_stats) >= 15).mean() * 100
+      </input>
+    </program>
+
+    <p>
+      So, if the coin is fair, we expect a deviation as big as the one we saw about 7.1% of the time, just by chance.
+    </p>
+    <p>
+      We can conclude that an effect of this size is not common, but it is certainly not impossible, even if the coin is fair.
+      On the basis of this experiment, we can't rule out the possibility that the coin is fair.
+    </p>
+    <p>
+      This example demonstrates the logic of statistical hypothesis testing.
+    </p>
+    <ul>
+      <li>
+        <p>We started with an observation, 140 heads out of 250 spins, and the hypothesis that the coin is biased -- that is, that the probability of heads differs from 50%.</p>
+      </li>
+      <li>
+        <p>We chose a <term>test statistic</term> that quantifies the size of the observed effect. In this example, the test statistic is the absolute deviation from the expected outcome.</p>
+      </li>
+      <li>
+        <p>We defined a <term>null hypothesis</term>, which is a model based on the assumption that the observed effect is due to chance. In this example, the null hypothesis is that the coin is fair.</p>
+      </li>
+      <li>
+        <p>Next, we computed a <term>p-value</term>, which is the probability of seeing the observed effect if the null hypothesis is true. In this example, the p-value is the probability of a deviation as big as 15 or bigger.</p>
+      </li>
+    </ul>
+    <p>
+      The last step is to interpret the result.
+      If the p-value is small, we conclude that the effect would be unlikely to happen by chance.
+      If it is large, we conclude that the effect could plausibly be explained by chance.
+      And if it falls somewhere in the middle, as in this example, we can say that the effect is unlikely to happen by chance, but we can't rule out the possibility.
+    </p>
+    <p>
+      All hypothesis tests are based on these elements -- a test statistic, a null hypothesis, and a p-value.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-hypothesis-diff-means">
+    <title>Testing a Difference in Means</title>
+
+    <p>
+      In the NSFG data, we saw that the average pregnancy length for first babies is slightly longer than for other babies.
+      Now let's see if that difference could be due to chance.
+    </p>
+    <p>
+      The following cells download the data and install <c>statadict</c>, which we need to read the data.
+    </p>
+
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+
+    <p>
+      The function <c>get_nsfg_groups</c> reads the data, selects live births, and groups live births into first babies and others.
+    </p>
+
+    <program language="python">
+      <input>
+from nsfg import get_nsfg_groups
+
+live, firsts, others = get_nsfg_groups()
+      </input>
+    </program>
+
+    <p>
+      Now we can select pregnancy lengths, in weeks, for both groups.
+    </p>
+
+    <program language="python">
+      <input>
+data = firsts["prglngth"].values, others["prglngth"].values
+      </input>
+    </program>
+
+    <p>
+      The following function takes the data as a tuple of two sequences, and computes the absolute difference in means.
+    </p>
+
+    <program language="python">
+      <input>
+def abs_diff_means(data):
+    group1, group2 = data
+    diff = np.mean(group1) - np.mean(group2)
+    return np.abs(diff)
+      </input>
+    </program>
+
+    <p>
+      Between first babies and others, the observed difference in pregnancy length is 0.078 weeks.
+    </p>
+
+    <program language="python">
+      <input>
+observed_diff = abs_diff_means(data)
+observed_diff
+      </input>
+    </program>
+
+    <p>
+      So the hypothesis we'll test is whether there is a difference in pregnancy length between first babies and others.
+      The null hypothesis is that pregnancy lengths are actually the same for both groups, and the apparent difference is due to chance.
+      If pregnancy lengths are the same for both groups, we can combine the two groups into a single pool.
+      To simulate the experiment, we can use the NumPy function <c>shuffle</c> to put the pooled values in random order, and then use slice indexes to select two groups with the same sizes as the original.
+    </p>
+
+    <program language="python">
+      <input>
+def simulate_groups(data):
+    group1, group2 = data
+    n, m = len(group1), len(group2)
+
+    pool = np.hstack(data)
+    np.random.shuffle(pool)
+    return pool[:n], pool[-m:]
+      </input>
+    </program>
+
+    <p>
+      Each time we call this function, it returns a tuple of sequences, which we can pass to <c>abs_diff_means</c>.
+    </p>
+
+    <program language="python">
+      <input>
+abs_diff_means(simulate_groups(data))
+      </input>
+    </program>
+
+    <p>
+      The following loop simulates the experiment many times and computes the difference in means for each simulated dataset.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_diffs = [abs_diff_means(simulate_groups(data)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      To visualize the results, we'll use the following function, which takes a sample of simulated results and makes a <c>Pmf</c> object that approximates its distribution.
+    </p>
+
+    <program language="python">
+      <input>
+from scipy.stats import gaussian_kde
+from empiricaldist import Pmf
+
+
+def make_pmf(sample, low, high):
+    kde = gaussian_kde(sample)
+    qs = np.linspace(low, high, 201)
+    ps = kde(qs)
+    return Pmf(ps, qs)
+      </input>
+    </program>
+
+    <p>
+      We'll also use this function, which fills in the tail of the distribution.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import underride
+
+
+def fill_tail(pmf, observed, side, **options):
+    """Fill the area under a PMF, right or left of an observed value."""
+    options = underride(options, alpha=0.3)
+
+    if side == "right":
+        condition = pmf.qs >= observed
+    elif side == "left":
+        condition = pmf.qs &lt;= observed
+
+    series = pmf[condition]
+    plt.fill_between(series.index, 0, series, **options)
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of the simulated results looks like.
+      The shaded region shows the cases where the difference in means under the null hypothesis exceeds the observed difference.
+      The area of this region is the p-value.
+    </p>
+
+    <program language="python">
+      <input>
+pmf = make_pmf(simulated_diffs, 0, 0.2)
+pmf.plot()
+fill_tail(pmf, observed_diff, "right")
+decorate(xlabel="Absolute difference in means (weeks)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      The following function computes the p-value, which is the fraction of simulated values that are as big or bigger than the observed value.
+    </p>
+
+    <program language="python">
+      <input>
+def compute_p_value(simulated, observed):
+    """Fraction of simulated values as big or bigger than the observed value."""
+    return (np.asarray(simulated) >= observed).mean()
+      </input>
+    </program>
+
+    <p>
+      In this example, the p-value is about 18%, which means it is plausible that a difference as big as 0.078 weeks could happen by chance.
+    </p>
+
+    <program language="python">
+      <input>
+compute_p_value(simulated_diffs, observed_diff)
+      </input>
+    </program>
+
+    <p>
+      Based on this result, we can't be sure that pregnancy lengths are generally longer for first babies -- it's possible that the difference in this dataset is due to chance.
+    </p>
+    <p>
+      Notice that we've seen the same elements in both examples of hypothesis testing: a test statistic, a null hypothesis, and a model of the null hypothesis.
+      In this example, the test statistic is the absolute difference in the means.
+      The null hypothesis is that the distribution of pregnancy lengths is actually the same in both groups.
+      And we modeled the null hypothesis by combining the data from both groups into a single pool, shuffling the pool, and splitting it into two groups with the same sizes as the originals.
+      This process is called <term>permutation</term>, which is another word for shuffling.
+    </p>
+    <p>
+      This computational approach to hypothesis testing makes it easy to combine these elements to test different statistics.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-hypothesis-other-test-statistics">
+    <title>Other Test Statistics</title>
+
+    <p>
+      We might wonder whether there is a difference in variability of pregnancy lengths between first babies and others.
+      To test that hypothesis, we can use as a test statistic the absolute difference between the standard deviations of the two groups.
+      The following function computes this test statistic.
+    </p>
+
+    <program language="python">
+      <input>
+def abs_diff_stds(data):
+    group1, group2 = data
+    diff = np.std(group1) - np.std(group2)
+    return np.abs(diff)
+      </input>
+    </program>
+
+    <p>
+      In the NSFG dataset, the difference in standard deviations is about 0.18.
+    </p>
+
+    <program language="python">
+      <input>
+observed_diff = abs_diff_stds(data)
+observed_diff
+      </input>
+    </program>
+
+    <p>
+      To see whether this difference might be due to chance, we can use permutation again.
+      The following loop simulates the null hypothesis many times and computes the difference in standard deviation for each simulated dataset.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_diffs = [abs_diff_stds(simulate_groups(data)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of the results looks like.
+      Again, the shaded region shows where the test statistic under the null hypothesis exceeds the observed difference.
+    </p>
+
+    <program language="python">
+      <input>
+pmf = make_pmf(simulated_diffs, 0, 0.5)
+pmf.plot()
+fill_tail(pmf, observed_diff, "right")
+decorate(xlabel="Absolute difference in std (weeks)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      We can estimate the area of this region by computing the fraction of results that are as big or bigger than the observed difference.
+    </p>
+
+    <program language="python">
+      <input>
+compute_p_value(simulated_diffs, observed_diff)
+      </input>
+    </program>
+
+    <p>
+      The p-value is about 0.17, so it is plausible that we could see a difference this big even if the two groups are the same.
+      In conclusion, we can't be sure that pregnancy lengths are generally more variable for first babies -- the difference we see in this dataset could be due to chance.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-hypothesis-test-correlation">
+    <title>Testing a Correlation</title>
+
+    <p>
+      We can use the same framework to test correlations.
+      For example, in the NSFG data set, there is a correlation between birth weight and mother's age -- older mothers have heavier babies, on average.
+      But could this effect be due to chance?
+    </p>
+    <p>
+      To find out, we'll start by preparing the data.
+      From live births, we'll select cases where the age of the mother and birth weight are known.
+    </p>
+
+    <program language="python">
+      <input>
+valid = live.dropna(subset=["agepreg", "totalwgt_lb"])
+valid.shape
+      </input>
+    </program>
+
+    <p>
+      Then we'll select the relevant columns.
+    </p>
+
+    <program language="python">
+      <input>
+ages = valid["agepreg"]
+birthweights = valid["totalwgt_lb"]
+      </input>
+    </program>
+
+    <p>
+      The following function takes a tuple of <c>xs</c> and <c>ys</c> and computes the magnitude of the correlation, positive or negative.
+    </p>
+
+    <program language="python">
+      <input>
+def abs_correlation(data):
+    xs, ys = data
+    corr = np.corrcoef(xs, ys)[0, 1]
+    return np.abs(corr)
+      </input>
+    </program>
+
+    <p>
+      In the NSFG dataset, the correlation is about 0.07.
+    </p>
+
+    <program language="python">
+      <input>
+data = ages, birthweights
+observed_corr = abs_correlation(data)
+observed_corr
+      </input>
+    </program>
+
+    <p>
+      The null hypothesis is that there is no correlation between mother's age and birth weight.
+      By shuffling the observed values, we can simulate a world where the distributions of age and birth weight are the same, but where the variables are unrelated.
+    </p>
+    <p>
+      The following function takes a tuple of <c>xs</c> and <c>ys</c>, shuffles <c>xs</c> and returns a tuple containing the shuffled <c>xs</c> and the original <c>ys</c>.
+      It would also work if we shuffled the <c>ys</c> instead, or shuffled both.
+    </p>
+
+    <program language="python">
+      <input>
+def permute(data):
+    xs, ys = data
+    new_xs = xs.values.copy()
+    np.random.shuffle(new_xs)
+    return new_xs, ys
+      </input>
+    </program>
+
+    <p>
+      The correlation of the shuffled values is usually close to 0.
+    </p>
+
+    <program language="python">
+      <input>
+abs_correlation(permute(data))
+      </input>
+    </program>
+
+    <p>
+      The following loop generates many shuffled datasets and computes the correlation of each one.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_corrs = [abs_correlation(permute(data)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of the results looks like.
+      The vertical dotted line shows the observed correlation.
+    </p>
+
+    <program language="python">
+      <input>
+pmf = make_pmf(simulated_corrs, 0, 0.07)
+pmf.plot()
+plt.axvline(observed_corr, color="gray", ls=":")
+decorate(xlabel="Absolute value of correlation", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      We can see that the observed correlation is in the tail of the distribution, with no visible area under the curve.
+      If we try to compute a p-value, the result is 0, indicating that the correlation in the shuffled data did not exceed the observed value in any of the simulations.
+    </p>
+
+    <program language="python">
+      <input>
+compute_p_value(simulated_corrs, observed_corr)
+      </input>
+    </program>
+
+    <p>
+      Based on this calculation, we can conclude that the p-value is probably less that 1 per 1000, but it is not actually zero.
+      It is unlikely for the correlation of the shuffled data to exceed the observed value -- but it is not impossible.
+    </p>
+    <p>
+      When the p-value is small, traditionally less than 0.05, we can say that the result is <term>statistically significant</term>.
+      But this way of interpreting p-values has always been problematic, and it is slowly becoming less widely used.
+    </p>
+    <p>
+      One problem is that the traditional threshold is arbitrary and not appropriate for all applications.
+      Another problem is that this use of "significant" is misleading because it suggests that the effect is important in practice.
+      The correlation between mother's age and birth weight is a good example -- it is statistically significant, but so small that it is not important.
+    </p>
+    <p>
+      An alternative is to interpret p-values qualitatively.
+    </p>
+    <ul>
+      <li>
+        <p>If a p-value is large, it is plausible that the observed effect could happen by chance.</p>
+      </li>
+      <li>
+        <p>If the p-value is small, we can often rule out the possibility that the effect is due to chance -- but we should remember that it could still be due to non-representative sampling or measurement errors.</p>
+      </li>
+    </ul>
+
+  </section>
+
+  <section xml:id="sec-hypothesis-testing-proportions">
+    <title>Testing Proportions</title>
+
+    <p>
+      As a final example, let's consider a case where the choice of the test statistic takes some thought.
+      Suppose you run a casino and you suspect that a customer is using a crooked die -- that is, one that has been modified to make one of the faces more likely than the others.
+      You apprehend the alleged cheater and confiscate the die, but now you have to prove that it is crooked.
+      You roll the die 60 times and record the frequency of each outcome from 1 to 6.
+      Here are the results in a <c>Hist</c> object.
+    </p>
+
+    <program language="python">
+      <input>
+from empiricaldist import Hist
+
+qs = np.arange(1, 7)
+freqs = [8, 9, 19, 5, 8, 11]
+observed = Hist(freqs, qs)
+observed.index.name = "outcome"
+observed
+      </input>
+    </program>
+
+    <p>
+      On average you expect each value to appear 10 times.
+      In this dataset, the value 3 appears more often than expected, and the value 4 appears less often.
+      But could these differences happen by chance?
+    </p>
+    <p>
+      To test this hypothesis, we'll start by computing the expected frequency for each outcome.
+    </p>
+
+    <program language="python">
+      <input>
+num_rolls = observed.sum()
+outcomes = observed.qs
+expected = Hist(num_rolls / 6, outcomes)
+      </input>
+    </program>
+
+    <p>
+      The following function takes the observed and expected frequencies and computes the sum of the absolute differences.
+    </p>
+
+    <program language="python">
+      <input>
+def total_abs_deviation(observed):
+    return np.sum(np.abs(observed - expected))
+      </input>
+    </program>
+
+    <p>
+      In the observed dataset, this test statistic is 20.
+    </p>
+
+    <program language="python">
+      <input>
+observed_dev = total_abs_deviation(observed)
+observed_dev
+      </input>
+    </program>
+
+    <p>
+      The following function takes the observed data, simulates rolling a fair die the same number of times, and returns a <c>Hist</c> object that contains the simulated frequencies.
+    </p>
+
+    <program language="python">
+      <input>
+def simulate_dice(observed):
+    num_rolls = np.sum(observed)
+    rolls = np.random.choice(observed.qs, num_rolls, replace=True)
+    hist = Hist.from_seq(rolls)
+    return hist
+      </input>
+    </program>
+
+    <p>
+      The following loop simulates the experiment many times and computes the total absolute deviation for each one.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_devs = [total_abs_deviation(simulate_dice(observed)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of the test statistic looks like under the null hypothesis.
+      Notice that the total is always even, because every time an outcome appears more often than expected, another outcome has to appear less often.
+    </p>
+
+    <program language="python">
+      <input>
+pmf_devs = Pmf.from_seq(simulated_devs)
+pmf_devs.bar()
+
+decorate(xlabel="Total absolute deviation", ylabel="PMF")
+      </input>
+    </program>
+
+    <p>
+      We can see that a total deviation of 20 is not unusual -- the p-value is about 13%, which means that we can't be sure the die is crooked.
+    </p>
+
+    <program language="python">
+      <input>
+compute_p_value(simulated_devs, observed_dev)
+      </input>
+    </program>
+
+    <p>
+      But the test statistic we chose was not the only option.
+      For a problem like this, it would be more conventional to use the chi-squared statistic, which we can compute like this.
+    </p>
+
+    <program language="python">
+      <input>
+def chi_squared_stat(observed):
+    diffs = (observed - expected) ** 2
+    return np.sum(diffs / expected)
+      </input>
+    </program>
+
+    <p>
+      Squaring the deviations (rather than taking absolute values) gives more weight to large deviations.
+      Dividing through by <c>expected</c> standardizes the deviations -- although in this case it has no effect on the results because the expected frequencies are all equal.
+    </p>
+
+    <program language="python">
+      <input>
+observed_chi2 = chi_squared_stat(observed)
+observed_chi2
+      </input>
+    </program>
+
+    <p>
+      The chi-squared statistic of the observed data is 11.6.
+      By itself, this number doesn't mean very much, but we can compare it to the results from the simulated rolls.
+      The following loop generates many simulated datasets and computes the chi-squared statistic for each one.
+    </p>
+
+    <program language="python">
+      <input>
+simulated_chi2 = [chi_squared_stat(simulate_dice(observed)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of this test statistic looks like under the null hypothesis.
+      The shaded region shows the results that exceed the observed value.
+    </p>
+
+    <program language="python">
+      <input>
+pmf = make_pmf(simulated_chi2, 0, 20)
+pmf.plot()
+fill_tail(pmf, observed_chi2, "right")
+decorate(xlabel="Chi-Squared statistic", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      Again, the area of the shaded region is the p-value.
+    </p>
+
+    <program language="python">
+      <input>
+compute_p_value(simulated_chi2, observed_chi2)
+      </input>
+    </program>
+
+    <p>
+      The p-value using the chi-squared statistic is about 0.04, substantially smaller than what we got using total deviation, 0.13.
+      If we take the 5% threshold seriously, we would consider this effect statistically significant.
+      But considering the two tests together, I would say that the results are inconclusive.
+      I would not rule out the possibility that the die is crooked, but I would not convict the accused cheater.
+    </p>
+    <p>
+      This example demonstrates an important point: the p-value depends on the choice of test statistic and the model of the null hypothesis, and sometimes these choices determine whether an effect is statistically significant or not.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-hypothesis-glossary">
+    <title>Glossary</title>
+
+    <dl>
+      <li>
+        <title>hypothesis testing</title>
+        <p>A set of methods for checking whether an observed effect could plausibly be due to random sampling.</p>
+      </li>
+      <li>
+        <title>test statistic</title>
+        <p>A statistic used in a hypothesis test to quantify the size of an observed effect.</p>
+      </li>
+      <li>
+        <title>null hypothesis</title>
+        <p>A model of a system based on the assumption that an effect observed in a sample does not exist in the population.</p>
+      </li>
+      <li>
+        <title>permutation</title>
+        <p>A way to simulate a null hypothesis by randomly shuffling a dataset.</p>
+      </li>
+      <li>
+        <title>p-value</title>
+        <p>The probability of an effect as big as the observed effect, under a null hypothesis.</p>
+      </li>
+      <li>
+        <title>statistically significant</title>
+        <p>An effect is statistically significant if the p-value is smaller than a chosen threshold, often 5%. In a large dataset, an observed effect can be statistically significant even if it is too small to matter in practice.</p>
+      </li>
+    </dl>
+
+  </section>
+
+  <exercises xml:id="ex-hypothesis">
+
+    <exercise xml:id="ex-hypothesis-1">
+      <title>Exercise 9.1</title>
+      <statement>
+        <p>
+          Let's try hypothesis testing with the penguin data from Chapter 8.
+          Instructions for downloading the data are in the notebook for this chapter.
+        </p>
+        <p>
+          The following cell downloads the data from a repository created by Allison Horst.
+        </p>
+        <p>
+          Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. https://allisonhorst.github.io/palmerpenguins/. doi: 10.5281/zenodo.3960218.
+        </p>
+        <p>
+          The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
+        </p>
+        <program language="python">
+          <input>
+download(
+    "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/c19a904462482430170bfe2c718775ddb7dbb885/inst/extdata/penguins_raw.csv"
+)
+          </input>
+        </program>
+        <p>
+          Here's how we read the data and select the Chinstrap penguins.
+        </p>
+        <program language="python">
+          <input>
+penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
+chinstrap = penguins.query('Species.str.startswith("Chinstrap")')
+chinstrap.shape
+          </input>
+        </program>
+        <p>
+          And here's how we can extract the weights for male and female penguins in kilograms.
+        </p>
+        <program language="python">
+          <input>
+male = chinstrap.query("Sex == 'MALE'")
+weights_male = male["Body Mass (g)"] / 1000
+weights_male.mean()
+          </input>
+        </program>
+        <program language="python">
+          <input>
+female = chinstrap.query("Sex == 'FEMALE'")
+weights_female = female["Body Mass (g)"] / 1000
+weights_female.mean()
+          </input>
+        </program>
+        <p>
+          Use <c>abs_diff_means</c> and <c>simulate_groups</c> to generate a large number of simulated datasets under the null hypothesis that the two groups have the same distribution of weights, and compute the difference in means for each one.
+          Compare the simulation results to the observed difference and compute a p-value.
+          Is it plausible that the apparent difference between the groups is due to chance?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-hypothesis-2">
+      <title>Exercise 9.2</title>
+      <statement>
+        <p>
+          Using the penguin data from the previous exercise, we can extract the culmen depths and lengths for the female penguins (the culmen is the top ridge of the bill).
+        </p>
+        <program language="python">
+          <input>
+data = female["Culmen Depth (mm)"], female["Culmen Length (mm)"]
+          </input>
+        </program>
+        <p>
+          The correlation between these variables is about 0.26.
+        </p>
+        <program language="python">
+          <input>
+observed_corr = abs_correlation(data)
+observed_corr
+          </input>
+        </program>
+        <p>
+          Let's see whether this correlation could happen by chance, even if there is actually no correlation between the measurements.
+          Use <c>permute</c> to generate many permutations of this data and <c>abs_correlation</c> to compute the correlation for each one.
+          Plot the distribution of the correlations under the null hypothesis and compute a p-value for the observed correlation.
+          How do you interpret the result?
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>
