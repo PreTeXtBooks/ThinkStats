@@ -1,0 +1,16 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-exploratory-data-analysis" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Exploratory Data Analysis</title>
+
+  <introduction>
+    <p>
+      This chapter introduces exploratory data analysis using a real dataset from the
+      National Survey of Family Growth (NSFG), which is conducted by the CDC to gather
+      information about families and health in the United States.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

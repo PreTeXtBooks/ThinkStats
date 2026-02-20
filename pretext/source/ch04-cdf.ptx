@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-cdf" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Cumulative Distribution Functions</title>
+
+  <introduction>
+    <p>
+      This chapter introduces cumulative distribution functions (CDFs), which represent
+      the probability that a variable takes a value less than or equal to a given value.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-time-series-analysis" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Time Series Analysis</title>
+
+  <introduction>
+    <p>
+      This chapter introduces time series analysis, including serial correlation,
+      autocorrelation, and methods for modeling and forecasting time series data.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

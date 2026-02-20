@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-least-squares" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Least Squares</title>
+
+  <introduction>
+    <p>
+      This chapter introduces simple linear regression using least squares, including
+      how to fit a line to data and how to interpret the results.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

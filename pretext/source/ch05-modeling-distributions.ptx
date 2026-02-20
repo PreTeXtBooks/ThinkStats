@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-modeling-distributions" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Modeling Distributions</title>
+
+  <introduction>
+    <p>
+      This chapter introduces analytic distributions, which are mathematical models
+      that approximate the empirical distributions of real data.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>
