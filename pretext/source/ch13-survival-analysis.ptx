@@ -5,11 +5,1301 @@
 
   <introduction>
     <p>
-      This chapter introduces survival analysis, including survival functions,
-      hazard functions, and the Kaplan-Meier estimator.
+      Survival analysis is a way to describe how long things last.
+      It is often used to study human lifetimes, but it also applies to
+      <q>survival</q> of mechanical and electronic components, or more generally
+      to an interval in time before any kind of event<mdash/>or even an interval in space.
+    </p>
+    <p>
+      We'll start with a simple example, the lifespans of light bulbs, and then
+      consider a more substantial example, age at first marriage and how it has
+      changed in the United States over the last 50 years.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-survival-functions">
+    <title>Survival Functions</title>
+
+    <p>
+      A fundamental concept in survival analysis is the <term>survival function</term>,
+      which is the fraction of a population that survives longer than a given duration.
+      As a first example, we'll compute a survival function for the lifespans of light bulbs.
+    </p>
+    <p>
+      We'll use data from an experiment conducted in 2007.
+      Researchers installed 50 new light bulbs and left them on continuously.
+      They checked on the bulbs every 12 hours and recorded the lifespan of any that
+      expired<mdash/>and ran the experiment until all 50 bulbs expired.
+      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      We can read the data like this.
+    </p>
+    <program language="python">
+      <input>
+df = pd.read_csv("lamps.csv", index_col=0)
+df.tail()
+      </input>
+    </program>
+    <p>
+      The <c>h</c> column contains lifespans in hours.
+      The <c>f</c> column records the number of bulbs that expired at each value of <c>h</c>.
+      To represent the distribution of lifespans, we'll put these values in a <c>Pmf</c>
+      object and normalize it.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import Pmf
+
+pmf_bulblife = Pmf(df["f"].values, index=df["h"])
+pmf_bulblife.normalize()
+      </input>
+    </program>
+    <p>
+      We can use <c>make_cdf</c> to compute the CDF, which indicates the fraction of bulbs
+      that expire at or before each value of <c>h</c>.
+      For example, 78% of the bulbs expire at or before 1656 hours.
+    </p>
+    <program language="python">
+      <input>
+cdf_bulblife = pmf_bulblife.make_cdf()
+cdf_bulblife[1656]
+      </input>
+    </program>
+    <p>
+      The survival function is the fraction of bulbs that expire <em>after</em> each value of
+      <c>h</c>, which is the complement of the CDF.
+      So we can compute it like this.
+    </p>
+    <program language="python">
+      <input>
+complementary_cdf = 1 - cdf_bulblife
+complementary_cdf[1656]
+      </input>
+    </program>
+    <p>
+      22% of the bulbs expired after 1656 hours.
+    </p>
+    <p>
+      The <c>empiricaldist</c> library provides a <c>Surv</c> object that represents a
+      survival function, and a method called <c>make_surv</c> that makes one.
+    </p>
+    <program language="python">
+      <input>
+surv_bulblife = cdf_bulblife.make_surv()
+surv_bulblife[1656]
+      </input>
+    </program>
+    <p>
+      If we plot the CDF and the survival function, we can see that they are
+      complementary<mdash/>that is, their sum is 1 at all values of <c>h</c>.
+    </p>
+    <program language="python">
+      <input>
+cdf_bulblife.plot(ls="--", label="CDF")
+surv_bulblife.plot(label="Survival")
+
+decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
+      </input>
+    </program>
+    <p>
+      In that sense, the CDF and survival function are equivalent<mdash/>if we are given
+      either one, we can compute the other<mdash/>but in the context of survival analysis it
+      is more common to work with survival curves.
+      And computing a survival curve is a step toward the next important concept, the hazard
+      function.
+    </p>
+  </section>
+
+  <section xml:id="sec-hazard-function">
+    <title>Hazard Function</title>
+
+    <p>
+      In the light bulb dataset, each value of <c>h</c> represents a 12-hour interval ending
+      at hour <c>h</c><mdash/>which I will call <q>interval <c>h</c></q>.
+      Suppose we know that a light bulb has survived up to interval <c>h</c>, and we would
+      like to know the probability that it expires during interval <c>h</c>.
+      To answer this question, we can use the survival function, which indicates the fraction
+      of bulbs that survive past interval <c>h</c>, and the PMF, which indicates the fraction
+      that expire during interval <c>h</c>.
+      The sum of these is the fraction of bulbs that <em>could</em> expire during interval
+      <c>h</c>, which are said to be <q>at risk</q>.
+      As an example, 26% of the bulbs were at risk during interval 1656.
+    </p>
+    <program language="python">
+      <input>
+at_risk = pmf_bulblife + surv_bulblife
+at_risk[1656]
+      </input>
+    </program>
+    <p>
+      And 4% of all bulbs expired during interval 1656.
+    </p>
+    <program language="python">
+      <input>
+pmf_bulblife[1656]
+      </input>
+    </program>
+    <p>
+      The <term>hazard</term> is the ratio of <c>pmf_bulblife</c> and <c>at_risk</c>.
+    </p>
+    <program language="python">
+      <input>
+hazard = pmf_bulblife / at_risk
+hazard[1656]
+      </input>
+    </program>
+    <p>
+      Of all bulbs that survived up to interval 1656, about 15% expired during interval 1656.
+    </p>
+    <p>
+      Instead of computing the hazard function ourselves, we can use <c>empiricaldist</c>,
+      which provides a <c>Hazard</c> object that represents a hazard function, and a
+      <c>make_hazard</c> method that computes it.
+    </p>
+    <program language="python">
+      <input>
+hazard_bulblife = surv_bulblife.make_hazard()
+hazard_bulblife[1656]
+      </input>
+    </program>
+    <p>
+      Here's what the hazard function looks like for the light bulbs.
+    </p>
+    <program language="python">
+      <input>
+hazard_bulblife.plot()
+decorate(xlabel="Light bulb duration (hours)", ylabel="Hazard")
+      </input>
+    </program>
+    <p>
+      We can see that the hazard is higher in some places than others, but this way of
+      visualizing the hazard function can be misleading, especially in parts of the range
+      where we don't have much data.
+      A better alternative is to plot the <term>cumulative hazard function</term>, which is
+      the cumulative sum of the hazards.
+    </p>
+    <program language="python">
+      <input>
+cumulative_hazard = hazard_bulblife.cumsum()
+cumulative_hazard.plot()
+
+decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
+      </input>
+    </program>
+    <p>
+      Where the probability of expiring is high, the cumulative hazard function is steep.
+      Where the probability of expiring is low, the cumulative hazard function is flat.
+      In this example, we can see that the hazard is highest between 1500 and 2000 hours.
+      After that, the hazard decreases<mdash/>although this outcome is based on just one
+      unusually long-lived bulb, so it might look different in another dataset.
+    </p>
+    <p>
+      Now that we have the general idea of survival and hazard functions, let's apply them
+      to a more substantial dataset.
+    </p>
+  </section>
+
+  <section xml:id="sec-marriage-data">
+    <title>Marriage Data</title>
+
+    <p>
+      In many countries, people are getting married later than they used to, and more people
+      stay unmarried.
+      To explore these trends in the United States, we'll use the tools of survival analysis
+      and data from the National Survey of Family Growth (NSFG).
+    </p>
+    <p>
+      The NSFG dataset we used in previous chapters is the pregnancy file, which contains one
+      row for each pregnancy reported by the survey respondents.
+      In this chapter, we'll work with the respondent file, which contains information about
+      the respondents themselves.
+    </p>
+    <p>
+      I have compiled responses from nine iterations of the survey, conducted between 1982 and
+      2019, and selected data related to marriage.
+      Instructions for downloading this excerpt are in the notebook for this chapter.
+    </p>
+    <p>
+      We can read the data like this.
+    </p>
+    <program language="python">
+      <input>
+resp = pd.read_csv("marriage_nsfg_female.csv.gz")
+resp.shape
+      </input>
+    </program>
+    <p>
+      The excerpt includes one row for each of more than 70,000 respondents, and has the
+      following variables related to age and marriage.
+    </p>
+    <ul>
+      <li>
+        <p>
+          <c>cmbirth</c>: The respondent's date of birth, known for all respondents.
+        </p>
+      </li>
+      <li>
+        <p>
+          <c>cmintvw</c>: The date the respondent was interviewed, known for all respondents.
+        </p>
+      </li>
+      <li>
+        <p>
+          <c>cmmarrhx</c>: The date the respondent was first married, if applicable and known.
+        </p>
+      </li>
+      <li>
+        <p>
+          <c>evrmarry</c>: 1 if the respondent had been married prior to the date of interview,
+          0 otherwise.
+        </p>
+      </li>
+    </ul>
+    <p>
+      The first three variables are encoded in <q>century-months</q><mdash/>that is, the integer
+      number of months since December 1899.
+      So century-month 1 is January 1900.
+    </p>
+    <p>
+      To explore generational changes, we'll group respondents by their decade of birth.
+      We'll use the following function, which takes a value of <c>cmbirth</c> and computes the
+      corresponding decade of birth.
+      It uses the integer division operator <c>//</c> to divide by 10 and round down.
+    </p>
+    <program language="python">
+      <input>
+month0 = pd.to_datetime("1899-12-31")
+
+
+def decade_of_birth(cmbirth):
+    date = month0 + pd.DateOffset(months=cmbirth)
+    return date.year // 10 * 10
+      </input>
+    </program>
+    <p>
+      We can use this function and the <c>apply</c> method to compute each respondent's decade
+      of birth and assign it to a new column called <c>cohort</c>.
+      In this context, a <term>cohort</term> is a group of people with something in
+      common<mdash/>like the decade they were born<mdash/>who are treated as a group for
+      purposes of analysis.
+    </p>
+    <p>
+      The result from <c>value_counts</c> shows the number of people in each cohort.
+    </p>
+    <program language="python">
+      <input>
+from thinkstats import value_counts
+
+resp["cohort"] = resp["cmbirth"].apply(decade_of_birth)
+value_counts(resp["cohort"])
+      </input>
+    </program>
+    <p>
+      The dataset includes more than 10,000 respondents born in each decade from the 1950s to
+      the 1980s, and fewer respondents in the earlier and later decades.
+    </p>
+    <p>
+      Next we'll compute each respondent's age when married (if applicable) and their age when
+      interviewed.
+    </p>
+    <program language="python">
+      <input>
+resp["agemarr"] = (resp["cmmarrhx"] - resp["cmbirth"]) / 12
+resp["age"] = (resp["cmintvw"] - resp["cmbirth"]) / 12
+      </input>
+    </program>
+    <p>
+      To get started with this data, we'll use the following function, which takes as arguments
+      a <c>DataFrame</c> and a list of cohorts, and returns a dictionary that maps from each
+      cohort to a <c>Surv</c> object.
+      For each cohort, it selects their ages at first marriage and uses <c>Surv.from_seq</c> to
+      compute a survival function.
+      The <c>dropna=False</c> argument includes <c>NaN</c> values in the survival function, so
+      the result includes people who have not married.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import Surv
+
+
+def make_survival_map(resp, cohorts):
+    surv_map = {}
+
+    grouped = resp.groupby("cohort")
+    for cohort in cohorts:
+        group = grouped.get_group(cohort)
+        surv_map[cohort] = Surv.from_seq(group["agemarr"], dropna=False)
+
+    return surv_map
+      </input>
+    </program>
+    <p>
+      Here's how we use this function.
+    </p>
+    <program language="python">
+      <input>
+cohorts = [1980, 1960, 1940]
+surv_map = make_survival_map(resp, cohorts)
+      </input>
+    </program>
+    <p>
+      And here are the results for people born in the 1940s, 1960s, and 1980s.
+    </p>
+    <program language="python">
+      <input>
+for cohort, surv in surv_map.items():
+    surv.plot(label=f"{cohort}s")
+
+ylim = [-0.05, 1.05]
+decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
+      </input>
+    </program>
+    <p>
+      If we take these results at face value, they show that people in earlier generations got
+      married younger, and more of them got married eventually.
+      However, we should not interpret these results yet, because they are not correct.
+      There are two problems we have to address:
+    </p>
+    <ul>
+      <li>
+        <p>
+          As discussed in <xref ref="ch-exploratory-data-analysis"/>, the NSFG uses stratified
+          sampling, which means that it deliberately oversamples some groups.
+        </p>
+      </li>
+      <li>
+        <p>
+          Also, this way of computing the survival function does not properly take into account
+          people who are not married yet.
+        </p>
+      </li>
+    </ul>
+    <p>
+      For the first problem, we'll use a kind of resampling called a
+      <term>weighted bootstrap</term>.
+      For the second problem, we'll use a method called Kaplan-Meier estimation.
+      We'll start with resampling.
+    </p>
+  </section>
+
+  <section xml:id="sec-weighted-bootstrap">
+    <title>Weighted Bootstrap</title>
+
+    <p>
+      The NSFG dataset includes a column called <c>finalwgt</c> that contains each respondent's
+      sampling weight, which is the number of people in the population they represent.
+      We can use these weights during the resampling process to correct for stratified sampling.
+      The following function takes a <c>DataFrame</c> and the name of the column that contains
+      the sampling weights.
+      It resamples the rows of the <c>DataFrame</c>, taking the sampling weights into account,
+      and returns a new <c>DataFrame</c>.
+    </p>
+    <program language="python">
+      <input>
+def resample_rows_weighted(df, column="finalwgt"):
+    n = len(df)
+    weights = df[column]
+    return df.sample(n, weights=weights, replace=True)
+      </input>
+    </program>
+    <p>
+      The current dataset includes respondents from several iterations of the survey, called
+      cycles, so in order to resample, we have to group the respondents by cycle, resample each
+      group, and then put the groups back together.
+      That's what the following function does.
+    </p>
+    <program language="python">
+      <input>
+def resample_cycles(resp):
+    grouped = resp.groupby("cycle")
+    samples = [resample_rows_weighted(group) for _, group in grouped]
+    return pd.concat(samples)
+      </input>
+    </program>
+    <p>
+      To get started, we'll resample the data once.
+    </p>
+    <program language="python">
+      <input>
+# Seed the random number generator so we get the same results every time
+np.random.seed(1)
+
+sample = resample_cycles(resp)
+      </input>
+    </program>
+    <p>
+      Later we'll resample the data several times, so we can see how much variation there is
+      due to random sampling.
+    </p>
+    <p>
+      The following figure shows the results with resampling, compared to the results from the
+      previous section without resampling, shown as dotted lines.
+    </p>
+    <program language="python">
+      <input>
+for label, surv in surv_map.items():
+    surv.plot(ls=":", color="gray", alpha=0.6)
+
+survs_resampled = make_survival_map(sample, cohorts)
+
+for label, surv in survs_resampled.items():
+    surv.plot(label=label)
+
+decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
+      </input>
+    </program>
+    <p>
+      The difference, with and without resampling, is substantial, which shows that we need to
+      correct for stratified sampling to get accurate results.
+    </p>
+    <p>
+      Now let's get to the second problem, dealing with incomplete data.
+    </p>
+  </section>
+
+  <section xml:id="sec-estimating-hazard-functions">
+    <title>Estimating Hazard Functions</title>
+
+    <p>
+      In the light bulb example, we know the life spans for all 50 bulbs, so we can compute
+      the survival function directly<mdash/>and we can use the survival function to compute the
+      hazard function.
+    </p>
+    <p>
+      In the marriage example, we know the age at first marriage for some respondents, the ones
+      who had been married before they were interviewed.
+      But for respondents who had never married, we don't know at what age they would marry in
+      the future<mdash/>or if they will.
+    </p>
+    <p>
+      This kind of missing data is said to be <term>censored</term>.
+      That term might seem odd, because censored information is usually hidden deliberately, but
+      in this case it is hidden just because we don't know the future.
+    </p>
+    <p>
+      However, we have partial information we can work with: if someone is unmarried when they
+      are surveyed, we know that the age when they get married (if they do) must be greater than
+      their current age.
+    </p>
+    <p>
+      We can use this partial information to estimate the hazard function; then we can use the
+      hazard function to compute the survival function.
+      This process is called <term>Kaplan-Meier estimation</term>.
+    </p>
+    <p>
+      To demonstrate, I'll select just one cohort from the resampled data.
+    </p>
+    <program language="python">
+      <input>
+resp60 = sample.query("cohort == 1960")
+      </input>
+    </program>
+    <p>
+      For respondents who were married when they were surveyed, we'll select their age at first
+      marriage.
+      There are 9921 of them, which we'll call <q>complete</q> cases.
+    </p>
+    <program language="python">
+      <input>
+complete = resp60.query("evrmarry == 1")["agemarr"]
+complete.count()
+      </input>
+    </program>
+    <p>
+      For respondents who had not married, we'll select their age when they were surveyed.
+      There are 5468 of them, which we'll call the <q>ongoing</q> cases.
+    </p>
+    <program language="python">
+      <input>
+ongoing = resp60.query("evrmarry == 0")["age"]
+ongoing.count()
+      </input>
+    </program>
+    <p>
+      Now, to estimate the hazard function, we'll compute the total number of cases that were
+      <q>at risk</q> at each age, including everyone who was unmarried up to that age.
+      It will be convenient to make a <c>FreqTab</c> object that counts the number of complete
+      and ongoing cases at each age.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import FreqTab
+
+ft_complete = FreqTab.from_seq(complete)
+ft_ongoing = FreqTab.from_seq(ongoing)
+      </input>
+    </program>
+    <p>
+      As an example, there are 58 respondents who reported that they were married for the first
+      time at age 25.
+    </p>
+    <program language="python">
+      <input>
+ft_complete[25]
+      </input>
+    </program>
+    <p>
+      And another 5 respondents who were surveyed at age 25 and reported that they had never
+      married.
+    </p>
+    <program language="python">
+      <input>
+ft_ongoing[25]
+      </input>
+    </program>
+    <p>
+      From these <c>FreqTab</c> objects, we can compute unnormalized <c>Surv</c> objects that
+      contain the number of complete and ongoing cases that exceed each age.
+    </p>
+    <program language="python">
+      <input>
+surv_complete = ft_complete.make_surv()
+surv_ongoing = ft_ongoing.make_surv()
+      </input>
+    </program>
+    <p>
+      For example, there are 2848 people who reported getting married after age 25.
+    </p>
+    <program language="python">
+      <input>
+surv_complete[25]
+      </input>
+    </program>
+    <p>
+      And 2273 people surveyed after age 25 who had never married.
+    </p>
+    <program language="python">
+      <input>
+surv_ongoing[25]
+      </input>
+    </program>
+    <p>
+      The sum of the four numbers we just computed is the number of respondents who were at
+      risk<mdash/>that is, people who could have married at age 25.
+      The term <q>at risk</q> is a legacy of survival analysis in medicine, where it often
+      refers to risk of disease or death.
+      It might seem incongruent in the context of marriage, which is generally considered a
+      positive milestone.
+      That said, here's how we compute it.
+    </p>
+    <program language="python">
+      <input>
+at_risk = ft_complete[25] + ft_ongoing[25] + surv_complete[25] + surv_ongoing[25]
+at_risk
+      </input>
+    </program>
+    <p>
+      Of those, the number who actually married at age 25 is <c>ft_complete[25]</c>.
+      So we can compute the hazard function at age 25 like this.
+    </p>
+    <program language="python">
+      <input>
+hazard = ft_complete[25] / at_risk
+hazard
+      </input>
+    </program>
+    <p>
+      That's how we can compute the hazard function at a single age.
+      Now let's compute the whole function, for all ages.
+      We'll use the <c>union</c> method of the <c>Index</c> class to compute a Pandas
+      <c>Index</c> that contains all of the ages from <c>ft_complete</c> and
+      <c>ft_ongoing</c>, in order.
+    </p>
+    <program language="python">
+      <input>
+ts = pd.Index.union(ft_complete.index, ft_ongoing.index)
+      </input>
+    </program>
+    <p>
+      Now we can compute the number of people at risk at every age, by looking up the ages in
+      <c>ts</c> in each of the <c>FreqTab</c> and <c>Surv</c> objects.
+    </p>
+    <program language="python">
+      <input>
+at_risk = ft_complete(ts) + ft_ongoing(ts) + surv_complete(ts) + surv_ongoing(ts)
+      </input>
+    </program>
+    <p>
+      Finally, we can compute the hazard function at each age, and put the results into a
+      <c>Hazard</c> object.
+    </p>
+    <program language="python">
+      <input>
+from empiricaldist import Hazard
+
+hs = ft_complete(ts) / at_risk
+hazard = Hazard(hs, ts)
+      </input>
+    </program>
+    <p>
+      Here's what the cumulative hazard function looks like.
+    </p>
+    <program language="python">
+      <input>
+hazard.cumsum().plot()
+
+decorate(xlabel="Age", ylabel="Cumulative hazard")
+      </input>
+    </program>
+    <p>
+      It is steepest between ages 20 and 30, which means that an unmarried person is at the
+      greatest <q>risk</q> of getting married at these ages.
+      After that, the cumulative hazard levels off, which means that the hazard gradually
+      decreases.
+    </p>
+  </section>
+
+  <section xml:id="sec-estimating-survival-functions">
+    <title>Estimating Survival Functions</title>
+
+    <p>
+      If we are given a survival function, we know how to compute the hazard function.
+      Now let's go in the other direction.
+    </p>
+    <p>
+      Here's one way to think of it.
+      The hazard function indicates the probability of getting married at each age, if you have
+      not already married.
+      So the complement of the hazard function is the probability of staying unmarried at each
+      age.
+    </p>
+    <p>
+      In order to <q>survive</q> past a given age, <c>t</c>, you have to stay unmarried at
+      every age up to and including <c>t</c>.
+      And the probability of doing that is the product of the complementary hazard function,
+      which we can compute like this.
+    </p>
+    <program language="python">
+      <input>
+ps = (1 - hazard).cumprod()
+      </input>
+    </program>
+    <p>
+      The <c>Hazard</c> object has a <c>make_surv</c> method that does this computation.
+    </p>
+    <program language="python">
+      <input>
+surv = hazard.make_surv()
+      </input>
+    </program>
+    <p>
+      Here's what the result looks like, compared to the previous result (dotted line), which
+      corrected for stratified resampling, but did not handle censored data.
+    </p>
+    <program language="python">
+      <input>
+survs_resampled[1960].plot(ls=":", color="gray", label="resampled")
+surv.plot(label="Kaplan-Meier")
+
+decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
+      </input>
+    </program>
+    <p>
+      We can see how important it is to handle censored data correctly.
+    </p>
+    <p>
+      A survival function like this was the basis of a famous magazine article in
+      1986<mdash/><em>Newsweek</em> reported that a 40-year old unmarried woman was
+      <q>more likely to be killed by a terrorist</q> than get married.
+      That claim was widely reported and became part of popular culture, but it was wrong then
+      (because it was based on faulty analysis) and turned out to be even more wrong (because
+      of cultural changes that were already in progress).
+      In 2006, <em>Newsweek</em> ran an another article acknowledging their error.
+    </p>
+    <p>
+      I encourage you to read more about this article, the statistics it was based on, and the
+      reaction.
+      It should remind you of the ethical obligation to perform statistical analysis with care,
+      interpret the results with appropriate skepticism, and present them to the public
+      accurately and honestly.
+    </p>
+    <p>
+      <url href="https://www.snopes.com/fact-check/marry-go-round/">Snopes has a good article
+      on the topic.</url>
+    </p>
+    <p>
+      The following function encapsulates the steps of Kaplan-Meier estimation.
+      It takes as arguments sequences of survival times for complete and ongoing cases, and
+      returns a <c>Hazard</c> object.
+    </p>
+    <program language="python">
+      <input>
+def estimate_hazard(complete, ongoing):
+    """Kaplan-Meier estimation."""
+    ft_complete = FreqTab.from_seq(complete)
+    ft_ongoing = FreqTab.from_seq(ongoing)
+
+    surv_complete = ft_complete.make_surv()
+    surv_ongoing = ft_ongoing.make_surv()
+
+    ts = pd.Index.union(ft_complete.index, ft_ongoing.index)
+    at_risk = ft_complete(ts) + ft_ongoing(ts) + surv_complete(ts) + surv_ongoing(ts)
+
+    hs = ft_complete(ts) / at_risk
+    return Hazard(hs, ts)
+      </input>
+    </program>
+    <p>
+      And here's a function that takes a group of respondents, extracts survival times, calls
+      <c>estimate_hazard</c> to get the hazard function, and then computes the corresponding
+      survival function.
+    </p>
+    <program language="python">
+      <input>
+def estimate_survival(group):
+    """Estimate the survival function."""
+    complete = group.query("evrmarry == 1")["agemarr"]
+    ongoing = group.query("evrmarry == 0")["age"]
+    hf = estimate_hazard(complete, ongoing)
+    sf = hf.make_surv()
+    return sf
+      </input>
+    </program>
+    <p>
+      Soon we'll use these functions to compute confidence intervals for survival functions.
+      But first let's see another way to compute Kaplan-Meier estimates.
+    </p>
+  </section>
+
+  <section xml:id="sec-lifelines">
+    <title>Lifelines</title>
+
+    <p>
+      A Python package called <c>lifelines</c> provides tools for survival analysis, including
+      functions that compute Kaplan-Meier estimates.
+    </p>
+    <p>
+      We can use it to confirm that the result in the previous section is correct.
+      First we'll compute the survival function using <c>estimate_survival</c>.
+    </p>
+    <program language="python">
+      <input>
+surv = estimate_survival(resp60)
+      </input>
+    </program>
+    <p>
+      Next we'll compute it using <c>lifelines</c>.
+      First we'll get the data into the format <c>lifelines</c> requires.
+    </p>
+    <program language="python">
+      <input>
+complete = complete.dropna()
+durations = np.concatenate([complete, ongoing])
+event_observed = np.concatenate([np.ones(len(complete)), np.zeros(len(ongoing))])
+      </input>
+    </program>
+    <p>
+      Now we can make a <c>KaplanMeierFitter</c> object and fit the data.
+    </p>
+    <program language="python">
+      <input>
+from lifelines import KaplanMeierFitter
+
+kmf = KaplanMeierFitter()
+kmf.fit(durations=durations, event_observed=event_observed)
+      </input>
+    </program>
+    <p>
+      After fitting the data, we can call the <c>plot</c> function to display the results,
+      which include the estimated survival function and a confidence
+      interval<mdash/>although the confidence interval is not correct in this case because it
+      doesn't correct for stratified sampling.
+    </p>
+    <program language="python">
+      <input>
+kmf.plot()
+
+decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
+      </input>
+    </program>
+    <p>
+      Unlike the survival function we computed, the one from <c>lifelines</c> starts from 0.
+      But the rest of the function is the same, within floating-point error.
+    </p>
+    <program language="python">
+      <input>
+ps = kmf.survival_function_["KM_estimate"].drop(0)
+np.allclose(ps, surv)
+      </input>
+    </program>
+    <p>
+      In the next section, we'll use weighted resampling to compute confidence intervals that
+      take stratified sampling into account.
+    </p>
+  </section>
+
+  <section xml:id="sec-confidence-intervals">
+    <title>Confidence Intervals</title>
+
+    <p>
+      The Kaplan-Meier estimate we computed is based on a single resampling of the dataset.
+      To get an idea of how much variation there is due to random sampling, we'll run the
+      analysis with several resamplings and plot the results.
+    </p>
+    <p>
+      We'll use the following function, which takes a <c>DataFrame</c> and a list of cohorts,
+      estimates the survival function for each cohort, and returns a dictionary that maps from
+      each integer cohort to a <c>Surv</c> object.
+    </p>
+    <p>
+      This function is identical to <c>make_survival_map</c>, except that it calls
+      <c>estimate_survival</c>, which uses Kaplan-Meier estimation, rather than
+      <c>Surv.from_seq</c>, which only works if there is no censored data.
+    </p>
+    <program language="python">
+      <input>
+def estimate_survival_map(resp, cohorts):
+    """Make a dictionary from cohorts to Surv objects."""
+    surv_map = {}
+
+    grouped = resp.groupby("cohort")
+    for cohort in cohorts:
+        group = grouped.get_group(cohort)
+        surv_map[cohort] = estimate_survival(group)
+
+    return surv_map
+      </input>
+    </program>
+    <p>
+      The following loop generates 101 random resamplings of the dataset and makes a list of
+      101 dictionaries containing the estimated survival functions.
+    </p>
+    <program language="python">
+      <input>
+cohorts = [1940, 1950, 1960, 1970, 1980, 1990]
+
+surv_maps = [estimate_survival_map(resample_cycles(resp), cohorts) for i in range(101)]
+      </input>
+    </program>
+    <p>
+      To plot the results, we'll use the following function, which takes that list of
+      dictionaries, an integer cohort, and a color string.
+      It loops through the dictionaries, selects the survival function for the given cohort,
+      and plots it with a nearly transparent line<mdash/>which is one way to visualize the
+      variability between resamplings.
+    </p>
+    <program language="python">
+      <input>
+def plot_cohort(surv_maps, cohort, color):
+    """Plot results for a single cohort."""
+    survs = [surv_map[cohort] for surv_map in surv_maps]
+    for surv in survs:
+        surv.plot(color=color, alpha=0.05)
+
+    x, y = surv.index[-1], surv.iloc[-1]
+    plt.text(x + 1, y, f"{cohort}s", ha="left", va="center")
+      </input>
+    </program>
+    <p>
+      Here are the results for birth cohorts from the 1940s to the 1990s.
+    </p>
+    <program language="python">
+      <input>
+colors = [f"C{i}" for i in range(len(cohorts))]
+
+for cohort, color in zip(cohorts, colors):
+    plot_cohort(surv_maps, cohort, color)
+
+xlim = [8, 55]
+decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
+      </input>
+    </program>
+    <p>
+      This visualization is good enough for exploration, but the lines look blurry and some
+      of the labels overlap.
+      More work might be needed to make a publication-ready figure, but we'll keep it simple
+      for now.
+    </p>
+    <p>
+      Several patterns are visible:
+    </p>
+    <ul>
+      <li>
+        <p>
+          Women born in the 1940s married earliest<mdash/>cohorts born in the 1950s and 1960s
+          married later, but about the same fraction stayed unmarried.
+        </p>
+      </li>
+      <li>
+        <p>
+          Women born in the 1970s married later <em>and</em> stayed unmarried at higher rates
+          than previous cohorts.
+        </p>
+      </li>
+      <li>
+        <p>
+          Cohorts born in the 1980s and 1990s are marrying even later, and are on track to
+          stay unmarried at even higher rates<mdash/>although these patterns could change in
+          the future.
+        </p>
+      </li>
+    </ul>
+    <p>
+      We'll have to wait for the next data release from the NSFG to learn more.
+    </p>
+  </section>
+
+  <section xml:id="sec-expected-remaining-lifetime">
+    <title>Expected Remaining Lifetime</title>
+
+    <p>
+      Given a distribution, we can compute the expected remaining lifetime as a function of
+      elapsed time.
+      For example, given the distribution of pregnancy lengths, we can compute the expected
+      time until delivery.
+      To demonstrate, we'll use pregnancy data from the NSFG.
+    </p>
+    <p>
+      We'll use <c>get_nsfg_groups</c> to read the data and divide it into first babies and
+      others.
+    </p>
+    <program language="python">
+      <input>
+from nsfg import get_nsfg_groups
+
+live, firsts, others = get_nsfg_groups()
+      </input>
+    </program>
+    <p>
+      We'll start with a single resampling of the data.
+    </p>
+    <program language="python">
+      <input>
+sample = resample_rows_weighted(live, "finalwgt")
+      </input>
+    </program>
+    <p>
+      Here's the PMF of pregnancy durations.
+    </p>
+    <program language="python">
+      <input>
+pmf_durations = Pmf.from_seq(sample["prglngth"])
+      </input>
+    </program>
+    <p>
+      Now suppose it's the beginning of the 36th week of pregnancy.
+      Remembering that the most common pregnancy length is 39 weeks, we expect the remaining
+      time to be 3-4 weeks.
+      To make that estimate more precise, we can identify the values in the distribution that
+      equal or exceed 36 weeks.
+    </p>
+    <program language="python">
+      <input>
+t = 36
+is_remaining = pmf_durations.qs &gt;= t
+      </input>
+    </program>
+    <p>
+      Next we'll make a new <c>Pmf</c> object that contains only those values, shifted left so
+      the current time is at 0.
+    </p>
+    <program language="python">
+      <input>
+ps = pmf_durations.ps[is_remaining]
+qs = pmf_durations.qs[is_remaining] - t
+
+pmf_remaining = Pmf(ps, qs)
+      </input>
+    </program>
+    <p>
+      Because we selected a subset of the values in the <c>Pmf</c>, the probabilities no
+      longer add up to 1, but we can normalize the <c>Pmf</c> so they do.
+    </p>
+    <program language="python">
+      <input>
+pmf_remaining.normalize()
+      </input>
+    </program>
+    <p>
+      Here's the result, which shows the distribution of remaining time at the beginning of
+      the 36th week.
+    </p>
+    <program language="python">
+      <input>
+pmf_remaining.bar(label="Week 36")
+decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
+      </input>
+    </program>
+    <p>
+      The mean of this distribution is the expected remaining time.
+    </p>
+    <program language="python">
+      <input>
+pmf_remaining.mean()
+      </input>
+    </program>
+    <p>
+      The following function encapsulates these steps and computes the distribution of
+      remaining time for a given <c>Pmf</c> at a given time, <c>t</c>.
+    </p>
+    <program language="python">
+      <input>
+def compute_pmf_remaining(pmf, t):
+    """Distribution of remaining time."""
+    is_remaining = pmf.qs &gt;= t
+    ps = pmf.ps[is_remaining]
+    qs = pmf.qs[is_remaining] - t
+    pmf_remaining = Pmf(ps, qs)
+    pmf_remaining.normalize()
+    return pmf_remaining
+      </input>
+    </program>
+    <p>
+      The following function takes a <c>Pmf</c> of pregnancy lengths and computes the expected
+      remaining time at the beginning of each week from the 36th to the 43rd.
+    </p>
+    <program language="python">
+      <input>
+def expected_remaining(pmf):
+    index = range(36, 44)
+    expected = pd.Series(index=index)
+
+    for t in index:
+        pmf_remaining = compute_pmf_remaining(pmf, t)
+        expected[t] = pmf_remaining.mean()
+
+    return expected
+      </input>
+    </program>
+    <p>
+      Here are the results for a single resampling of the data.
+    </p>
+    <program language="python">
+      <input>
+expected = expected_remaining(pmf_durations)
+expected
+      </input>
+    </program>
+    <p>
+      To see how much variation there is due to random sampling, we can run this analysis with
+      several resamplings and plot the results.
+    </p>
+    <program language="python">
+      <input>
+for i in range(21):
+    sample = resample_rows_weighted(live, "finalwgt")
+    pmf_durations = Pmf.from_seq(sample["prglngth"])
+    expected = expected_remaining(pmf_durations)
+    expected.plot(color="C0", alpha=0.1)
+
+decorate(
+    xlabel="Weeks of pregnancy", ylabel="Expected remaining time (weeks)", ylim=[0, 3.4]
+)
+      </input>
+    </program>
+    <p>
+      Between weeks 36 and 39, the expected remaining time decreases until, at the beginning
+      of the 39th week, it is about 0.6 weeks.
+      But after that, the curve levels off.
+      At the beginning of the 40th week, the expected remaining time is still close to 0.6
+      weeks<mdash/>actually a little higher<mdash/>and at the beginning of the 41st, 42nd,
+      and 43rd, it is almost the same.
+      For people waiting anxiously for a baby to be born, this behavior seems quite cruel.
+    </p>
+  </section>
+
+  <section xml:id="sec-survival-glossary">
+    <title>Glossary</title>
+
+    <dl>
+      <li>
+        <title>survival analysis</title>
+        <p>
+          A set of methods for describing and predicting the time until an event of interest,
+          often focused on lifetimes or durations.
+        </p>
+      </li>
+      <li>
+        <title>survival function</title>
+        <p>
+          A function that maps from a time, <m>t</m>, to the probability of surviving beyond
+          <m>t</m>.
+        </p>
+      </li>
+      <li>
+        <title>hazard function</title>
+        <p>
+          A function that maps from <m>t</m> to the fraction of cases that experience the event
+          at <m>t</m>, out of all cases that survive until <m>t</m>.
+        </p>
+      </li>
+      <li>
+        <title>cumulative hazard function</title>
+        <p>
+          The cumulative sum of the hazard function, often useful for visualization.
+        </p>
+      </li>
+      <li>
+        <title>weighted bootstrap</title>
+        <p>
+          A form of resampling that uses sampling weights to correct for stratified sampling
+          by simulating a representative sample.
+        </p>
+      </li>
+      <li>
+        <title>censored data</title>
+        <p>
+          Data that is only partially known because the event of interest has not yet occurred
+          or was unobserved.
+        </p>
+      </li>
+      <li>
+        <title>Kaplan-Meier estimation</title>
+        <p>
+          A method for estimating survival and hazard functions in datasets with censored
+          observations.
+        </p>
+      </li>
+      <li>
+        <title>cohort</title>
+        <p>
+          A set of subjects with shared characteristics<mdash/>like decade of
+          birth<mdash/>analyzed as a group.
+        </p>
+      </li>
+    </dl>
+  </section>
+
+  <exercises xml:id="sec-survival-exercises">
+    <title>Exercises</title>
+
+    <exercise xml:id="ex-survival-13-1">
+      <statement>
+        <p>
+          We can use the methods in this chapter to estimate hazard and survival functions for
+          the duration of a marriage.
+          To keep things simple, we'll consider only first marriages, and we'll focus on divorce
+          as the endpoint, rather than separation or death.
+        </p>
+        <p>
+          In the NSFG data, the <c>cmdivorcx</c> column contains the date of divorce for each
+          respondent's first marriage, if applicable, encoded in century-months.
+          Compute the duration of marriages that have ended in divorce, and the duration, so
+          far, of marriages that are ongoing.
+        </p>
+        <ul>
+          <li>
+            <p>
+              For complete cases, compute the elapsed time between <c>cmdivorcx</c> and
+              <c>cmmarrhx</c>. If both values are valid<mdash/>not <c>NaN</c><mdash/>that
+              means the respondent's first marriage ended in divorce.
+            </p>
+          </li>
+          <li>
+            <p>
+              To identify ongoing cases, select people who have only married once and who are
+              still married. You can use <c>fmarno</c>, which records the number of times each
+              respondent has married, and <c>rmarital</c>, which encodes their informal marital
+              status<mdash/>the value 1 indicates that the respondent is married.
+            </p>
+          </li>
+        </ul>
+        <p>
+          In some cases the values of these variables are only approximate, so you might find a
+          small number of negative differences, but they should not be more than one year.
+        </p>
+        <p>
+          Estimate the hazard and survival functions for the duration of marriage.
+          Plot the cumulative hazard function<mdash/>when is the danger of divorce highest?
+          Plot the survival function<mdash/>what fraction of marriages end in divorce?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-survival-13-2">
+      <statement>
+        <p>
+          In 2012, a team of demographers at the University of Southern California estimated
+          life expectancy for people born in Sweden in the early 1800s and 1900s.
+          For ages from 0 to 91 years, they estimated the age-specific mortality rate, which
+          is the fraction of people who die at a given age, out of all who survive until that
+          age<mdash/>which you might recognize as the hazard function.
+        </p>
+        <p>
+          I used an online graph digitizer to get the data from the figure in their paper and
+          store it in a CSV file.
+          Instructions for downloading the data are in the notebook for this chapter.
+        </p>
+        <p>
+          Data source: Beltrán-Sánchez, H., Crimmins, E. M., <amp/> Finch, C. E. (2012).
+          Early cohort mortality predicts the rate of aging in the cohort: a historical
+          analysis. <em>Journal of developmental origins of health and disease</em>, 3(5),
+          380-386.
+        </p>
+        <p>
+          We can load the data like this.
+        </p>
+        <program language="python">
+          <input>
+mortality = pd.read_csv("mortality_rates_beltran2012.csv", header=[0, 1]).dropna()
+          </input>
+        </program>
+        <p>
+          The following function interpolates the data to make a hazard function with
+          approximate mortality rates for each age from 0 to 99.
+        </p>
+        <program language="python">
+          <input>
+from scipy.interpolate import interp1d
+from empiricaldist import Hazard
+
+
+def make_hazard(ages, rates):
+    """Make a Hazard function by interpolating a Series."""
+    interp = interp1d(ages, rates, fill_value="extrapolate")
+    xs = np.arange(0, 100)
+    ys = np.exp(interp(xs))
+    return Hazard(ys, xs)
+          </input>
+        </program>
+        <p>
+          Now we can make a <c>Hazard</c> object like this.
+        </p>
+        <program language="python">
+          <input>
+ages = mortality["1800", "X"].values
+rates = mortality["1800", "Y"].values
+hazard = make_hazard(ages, rates)
+          </input>
+        </program>
+        <p>
+          Here's what the mortality rates look like.
+        </p>
+        <program language="python">
+          <input>
+hazard.plot()
+
+decorate(xlabel="Age (years)", ylabel="Hazard")
+          </input>
+        </program>
+        <p>
+          Use <c>make_surv</c> to make a survival function based on these rates, and
+          <c>make_cdf</c> to compute the corresponding CDF.
+          Plot the results.
+        </p>
+        <p>
+          Then use <c>make_pmf</c> to make a <c>Pmf</c> object that represents the
+          distribution of lifetimes, and plot it.
+          Finally, use <c>compute_pmf_remaining</c> to compute the average remaining lifetime
+          at each age from 0 to 99.
+          Plot the result.
+        </p>
+        <p>
+          In the remaining lifetime curve, you should see a counterintuitive
+          pattern<mdash/>for the first few years of life, remaining lifetime increases.
+          Because infant mortality was so high in the early 1800s, an older child was expected
+          to live longer than a younger child.
+          After about age 5, life expectancy returns to the pattern we
+          expect<mdash/>young people are expected to live longer than old people.
+        </p>
+        <p>
+          If you are interested in this topic, you might like Chapter 5 of my book,
+          <em>Probably Overthinking It</em>, available from
+          <url href="https://probablyoverthinking.it">probablyoverthinking.it</url>.
+        </p>
+      </statement>
+    </exercise>
+  </exercises>
 
 </chapter>
