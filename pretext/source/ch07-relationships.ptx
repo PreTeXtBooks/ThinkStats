@@ -54,12 +54,39 @@ nlsy = pd.read_csv("nlsy97-extract.csv.gz").replace(missing_codes, np.nan)
 nlsy.shape
       </input>
     </program>
+    <pre>
+(8984, 34)
+    </pre>
 
     <program language="python">
       <input>
 nlsy.head()
       </input>
     </program>
+    <pre>
+   R0000100  R0490200  R0536300  R0536401  R0536402  R1235800  R1318200  \
+0         1       NaN         2         9      1981         1       NaN   
+1         2       NaN         1         7      1982         1     145.0   
+2         3       NaN         2         9      1983         1      82.0   
+3         4       NaN         2         2      1981         1       NaN   
+4         5       NaN         1        10      1982         1       NaN   
+
+   R1482600  R3961900  R3989200  ...  R9872200  R9872300  R9872400  S1552700  \
+0         4       NaN       NaN  ...     293.0     250.0     333.0       NaN   
+1         2       NaN       NaN  ...     114.0     230.0     143.0       NaN   
+2         2       NaN       NaN  ...       NaN       NaN       NaN       NaN   
+3         2       NaN       NaN  ...     195.0     230.0     216.0       NaN   
+4         2       NaN       NaN  ...     293.0     230.0     231.0       NaN   
+
+   U0008900  U1845500  U3444000  U4949700  Z9083800  Z9083900  
+0  120000.0       NaN       NaN       NaN      16.0       4.0  
+1   98928.0  116000.0  188857.0  180000.0      14.0       2.0  
+2       NaN       NaN       NaN   75000.0      16.0       4.0  
+3   85000.0   45000.0       NaN       NaN      13.0       2.0  
+4  210000.0  212000.0       NaN  240000.0      12.0       2.0  
+
+[5 rows x 34 columns]
+    </pre>
 
     <p>
       The <c>DataFrame</c> contains one row for each of the 8984 participants in the survey and one column for each of the 34 variables I selected.
@@ -97,6 +124,9 @@ nlsy_valid = nlsy.dropna(subset=columns).copy()
 nlsy_valid.shape
       </input>
     </program>
+    <pre>
+(1398, 36)
+    </pre>
 
     <p>
       SAT scores are standardized so the mean is 500 and the standard deviation is 100.
@@ -109,6 +139,9 @@ sat_verbal = nlsy_valid["sat_verbal"]
 sat_verbal.mean(), sat_verbal.std()
       </input>
     </program>
+    <pre>
+(np.float64(501.80972818311875), np.float64(108.36562024213643))
+    </pre>
 
     <program language="python">
       <input>
@@ -116,6 +149,9 @@ sat_math = nlsy_valid["sat_math"]
 sat_math.mean(), sat_math.std()
       </input>
     </program>
+    <pre>
+(np.float64(503.0829756795422), np.float64(109.8329973731453))
+    </pre>
 
     <p>
       Now, to see whether there is a relationship between these variables, let's look at a <term>scatter plot</term>.
@@ -128,6 +164,9 @@ plt.scatter(sat_verbal, sat_math)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_001.png" width="80%"/>
+    </figure>
 
     <p>
       Using the default options of the <c>scatter</c> function, we can see the general shape of the relationship.
@@ -149,6 +188,9 @@ plt.scatter(sat_verbal, sat_math, s=5)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_002.png" width="80%"/>
+    </figure>
 
     <p>
       Now we can see that the markers are aligned in rows and columns, because scores are rounded off to the nearest multiple of 10.
@@ -186,6 +228,9 @@ plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_003.png" width="80%"/>
+    </figure>
 
     <p>
       Jittering reduces the visual effect of rounding and makes the shape of the relationship clearer.
@@ -203,6 +248,9 @@ plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5, alpha=0.2)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_004.png" width="80%"/>
+    </figure>
 
     <p>
       With transparency, overlapping data points look darker, so darkness is proportional to density.
@@ -232,6 +280,20 @@ deciles = pd.qcut(nlsy_valid["sat_verbal"], 10, labels=False) + 1
 deciles.value_counts().sort_index()
       </input>
     </program>
+    <pre>
+sat_verbal
+1     142
+2     150
+3     139
+4     140
+5     159
+6     130
+7     148
+8     121
+9     138
+10    131
+Name: count, dtype: int64
+    </pre>
 
     <p>
       The number of respondents in each decile is roughly equal.
@@ -246,6 +308,9 @@ df_groupby = nlsy_valid.groupby(deciles)
 df_groupby
       </input>
     </program>
+    <pre>
+&lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fa0adfd49d0&gt;
+    </pre>
 
     <p>
       The result is a <c>DataFrameGroupBy</c> object that represents the groups.
@@ -258,6 +323,9 @@ series_groupby = df_groupby["sat_math"]
 series_groupby
       </input>
     </program>
+    <pre>
+&lt;pandas.core.groupby.generic.SeriesGroupBy object at 0x7fa0b01af7d0&gt;
+    </pre>
 
     <p>
       The result is a <c>SeriesGroupBy</c> object that represents the math scores in each decile.
@@ -286,6 +354,9 @@ plt.plot(xs, median, label="median")
 decorate(xlabel="SAT Verbal Decile", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_005.png" width="80%"/>
+    </figure>
 
     <p>
       As an alternative, we can compute the median verbal score in each group and plot those values on the x-axis, rather than the decile numbers.
@@ -301,6 +372,9 @@ plt.plot(xs, median, color="C0", label="median")
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_006.png" width="80%"/>
+    </figure>
 
     <p>
       It looks like the relationship between these variables is linear -- that is, each increase in the median verbal scores corresponds to a roughly equal increase in median math scores.
@@ -325,6 +399,17 @@ nlsy["piat_math"] = nlsy["R1318200"]
 nlsy["piat_math"].describe()
       </input>
     </program>
+    <pre>
+count    6044.000000
+mean       93.903706
+std        14.631148
+min        55.000000
+25%        84.000000
+50%        92.000000
+75%       103.000000
+max       145.000000
+Name: piat_math, dtype: float64
+    </pre>
 
     <p>
       Here's what the distribution of scores looks like.
@@ -339,6 +424,9 @@ cdf_piat_math.step()
 decorate(ylabel="CDF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_007.png" width="80%"/>
+    </figure>
 
     <p>
       Students who do well on the PIAT in 9th grade are likely to do well on the SAT math section in 12th grade.
@@ -355,6 +443,9 @@ scatter(nlsy, "piat_math", "sat_math")
 decorate(xlabel="PIAT Math", ylabel="SAT Math")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_008.png" width="80%"/>
+    </figure>
 
     <p>
       As expected, students who do well on the PIAT are likely to do well on the SAT math.
@@ -369,6 +460,9 @@ scatter(nlsy, "piat_math", "sat_verbal")
 decorate(xlabel="PIAT Math", ylabel="SAT Verbal")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_009.png" width="80%"/>
+    </figure>
 
     <p>
       Students with higher PIAT scores also have higher SAT verbal scores, on average.
@@ -420,6 +514,9 @@ piat_math_standard = standardize(piat_math)
 np.mean(piat_math_standard), np.std(piat_math_standard)
       </input>
     </program>
+    <pre>
+(np.float64(-2.4321756236287047e-16), np.float64(1.0))
+    </pre>
 
     <p>
       The results are <term>standard scores</term>, also called "z-scores".
@@ -435,6 +532,9 @@ sat_math_standard = standardize(sat_math)
 np.mean(sat_math_standard), np.std(sat_math_standard)
       </input>
     </program>
+    <pre>
+(np.float64(-1.737268302591932e-16), np.float64(0.9999999999999998))
+    </pre>
 
     <p>
       The following figure shows sequences of these scores for the first 100 participants.
@@ -458,6 +558,9 @@ plt.plot(sat_math_standard.values[:100], label="SAT math", color="C1")
 decorate(ylabel="z-score", xticks=[])
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_010.png" width="80%"/>
+    </figure>
 
     <p>
       These variables are clearly related: when one is above the mean, the other is likely to be above the mean, too.
@@ -475,6 +578,9 @@ decorate(ylabel="z-score", xticks=[])
 np.mean(piat_math_standard * sat_math_standard)
       </input>
     </program>
+    <pre>
+np.float64(0.639735816517885)
+    </pre>
 
     <p>
       The result, which is about 0.64, is the correlation coefficient.
@@ -489,6 +595,9 @@ np.mean(piat_math_standard * sat_math_standard)
 np.mean(sat_math_standard * piat_math_standard)
       </input>
     </program>
+    <pre>
+np.float64(0.639735816517885)
+    </pre>
 
     <p>
       So the correlation coefficient is symmetric: if someone's SAT math score is 1 standard deviation above the mean, we expect their PIAT math score to be 0.64 standard deviations above the mean, on average.
@@ -502,6 +611,10 @@ np.mean(sat_math_standard * piat_math_standard)
 np.corrcoef(piat_math, sat_math)
       </input>
     </program>
+    <pre>
+array([[1.        , 0.63973582],
+       [0.63973582, 1.        ]])
+    </pre>
 
     <p>
       The result is a <term>correlation matrix</term>, with one row and one column for each variable.
@@ -523,6 +636,9 @@ from thinkstats import corrcoef
 corrcoef(nlsy, "piat_math", "sat_math")
       </input>
     </program>
+    <pre>
+np.float64(0.6397358165178849)
+    </pre>
 
     <p>
       We can use this function to compute the correlation of <c>piat_math</c> and <c>sat_verbal</c>.
@@ -533,6 +649,9 @@ corrcoef(nlsy, "piat_math", "sat_math")
 corrcoef(nlsy, "piat_math", "sat_verbal")
       </input>
     </program>
+    <pre>
+np.float64(0.509413914696731)
+    </pre>
 
     <p>
       The correlation is about 0.51, so if someone's PIAT math score is one standard deviation above the mean, we expect their SAT verbal score to be 0.51 standard deviations above the mean, on average.
@@ -571,6 +690,9 @@ for i, rho in enumerate([0, 0.3, 0.7, 0.99]):
 decorate()
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_011.png" width="80%"/>
+    </figure>
 
     <p>
       The Greek letter ρ, which is spelled "rho" and pronounced like "row", is the conventional symbol for the correlation coefficient.
@@ -590,6 +712,9 @@ for i, rho in enumerate([-0.1, -0.3, -0.7, -0.99]):
 decorate()
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_012.png" width="80%"/>
+    </figure>
 
     <p>
       The correlation coefficient is always between -1 and 1.
@@ -613,6 +738,9 @@ for i, kind in enumerate(["abs", "quadratic", "sinusoid"]):
 decorate()
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_013.png" width="80%"/>
+    </figure>
 
     <p>
       Correlation quantifies the strength of a <em>linear</em> relationship between variables.
@@ -639,6 +767,17 @@ nlsy["income"] = nlsy["U4949700"]
 nlsy["income"].describe()
       </input>
     </program>
+    <pre>
+count      6051.000000
+mean     104274.239960
+std      108470.571497
+min           0.000000
+25%       38000.000000
+50%       80000.000000
+75%      134157.000000
+max      599728.000000
+Name: income, dtype: float64
+    </pre>
 
     <p>
       The values in this column are gross family income, which is total income of the respondent and the other members of their household, from all sources, reported in U.S. dollars (USD).
@@ -653,6 +792,9 @@ cdf_income.step()
 decorate(xlabel="Income (USD)", ylabel="CDF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_014.png" width="80%"/>
+    </figure>
 
     <p>
       Notice the step near $600,000 -- values above this threshold were capped to protect the anonymity of the participants.
@@ -666,6 +808,9 @@ scatter(nlsy, "piat_math", "income")
 decorate(xlabel="PIAT math", ylabel="Gross Family Income (USD)")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_015.png" width="80%"/>
+    </figure>
 
     <p>
       It looks like there is a relationship between these variables.
@@ -677,6 +822,9 @@ decorate(xlabel="PIAT math", ylabel="Gross Family Income (USD)")
 corrcoef(nlsy, "piat_math", "income")
       </input>
     </program>
+    <pre>
+np.float64(0.30338587288641233)
+    </pre>
 
     <p>
       The correlation is about 0.3, which means that if someone gets a PIAT math score one standard deviation above the mean when they are 15 years old, we expect their income to be about 0.3 standard deviations above the mean when they are 40.
@@ -710,6 +858,9 @@ income_rank = valid["income"].rank(method="first")
 income_rank.min(), income_rank.max()
       </input>
     </program>
+    <pre>
+(np.float64(1.0), np.float64(4101.0))
+    </pre>
 
     <p>
       Here's a scatter plot of income ranks versus math score ranks.
@@ -722,6 +873,9 @@ plt.scatter(piat_math_rank, income_rank, s=5, alpha=0.2)
 decorate(xlabel="PIAT math rank", ylabel="Income rank")
       </input>
     </program>
+    <figure>
+      <image source="images/chap07_016.png" width="80%"/>
+    </figure>
 
     <p>
       And here's the correlation of the ranks.
@@ -732,6 +886,9 @@ decorate(xlabel="PIAT math rank", ylabel="Income rank")
 np.corrcoef(piat_math_rank, income_rank)[0, 1]
       </input>
     </program>
+    <pre>
+np.float64(0.38148396696764847)
+    </pre>
 
     <p>
       The result is about 0.38, somewhat higher than the Pearson correlation, which is 0.30.
@@ -748,6 +905,9 @@ from thinkstats import rankcorr
 rankcorr(nlsy, "piat_math", "income")
       </input>
     </program>
+    <pre>
+np.float64(0.38474681505344815)
+    </pre>
 
     <p>
       And SciPy provides a similar function called <c>spearmanr</c>, because rank correlation is also called Spearman's correlation.
@@ -760,6 +920,9 @@ from scipy.stats import spearmanr
 spearmanr(valid["piat_math"], valid["income"]).statistic
       </input>
     </program>
+    <pre>
+np.float64(0.38474681505344815)
+    </pre>
 
     <p>
       As an exercise, you'll have a chance to compute the correlation between SAT verbal scores and income, using both Pearson correlation and rank correlation.
@@ -900,6 +1063,9 @@ decile_plot(nlsy, "sat_verbal", "sat_math")
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
           </input>
         </program>
+    <figure>
+      <image source="images/chap07_017.png" width="80%"/>
+    </figure>
         <p>
           Make a decile plot of PIAT math scores and income.
           Does it appear to be a linear relationship?
@@ -936,6 +1102,17 @@ nlsy["gpa"] = nlsy["R9871900"].replace(missing_codes, np.nan) / 100
 nlsy["gpa"].describe()
           </input>
         </program>
+    <pre>
+count    6004.000000
+mean        2.818408
+std         0.616357
+min         0.100000
+25%         2.430000
+50%         2.860000
+75%         3.260000
+max         4.170000
+Name: gpa, dtype: float64
+    </pre>
         <p>
           And here's what the distribution of GPAs looks like.
         </p>
@@ -946,6 +1123,9 @@ cdf_income.step()
 decorate(xlabel="GPA", ylabel="CDF")
           </input>
         </program>
+    <figure>
+      <image source="images/chap07_021.png" width="80%"/>
+    </figure>
         <p>
           Make a scatter plot that shows the relationship between GPA and SAT math scores and compute the correlation coefficient.
           Do the same for the relationship between GPA and SAT verbal scores.
@@ -968,6 +1148,18 @@ nlsy["degree"] = nlsy["Z9083900"]
 nlsy["degree"].value_counts().sort_index()
           </input>
         </program>
+    <pre>
+degree
+0.0     877
+1.0    1167
+2.0    3531
+3.0     766
+4.0    1713
+5.0     704
+6.0      64
+7.0     130
+Name: count, dtype: int64
+    </pre>
         <p>
           But we can use these lists to decode them.
         </p>
@@ -999,6 +1191,9 @@ plt.xticks(positions, labels, rotation=30, ha="right")
 decorate(ylabel="PMF")
           </input>
         </program>
+    <figure>
+      <image source="images/chap07_024.png" width="80%"/>
+    </figure>
         <p>
           Make a scatter plot of <c>income</c> versus <c>degree</c>.
           To avoid overplotting, jitter the values of <c>degree</c> and adjust the marker size and transparency.
@@ -1043,6 +1238,17 @@ brfss = read_brfss()
 brfss["htm3"].describe()
           </input>
         </program>
+    <pre>
+count    409129.000000
+mean        168.825190
+std          10.352653
+min          61.000000
+25%         160.000000
+50%         168.000000
+75%         175.000000
+max         236.000000
+Name: htm3, dtype: float64
+    </pre>
         <p>
           Make a decile plot of weight versus height. Does the relationship seem to be linear?
           Compute the correlation coefficient and rank correlation. Are they substantially different? Which one do you think better quantifies the relationship between these variables?

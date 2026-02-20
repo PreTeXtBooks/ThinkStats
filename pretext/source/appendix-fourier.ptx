@@ -41,6 +41,9 @@ ys = A * np.cos(2 * np.pi * f * ts + phi)
 np.mean(ys)
       </input>
     </program>
+    <pre>
+np.float64(-2.220446049250313e-16)
+    </pre>
     <p>
       And add in zero-mean Gaussian noise.
     </p>
@@ -61,6 +64,9 @@ plt.xlabel('t')
 plt.ylabel('y');
       </input>
     </program>
+    <figure>
+      <image source="images/fourier_001.png" width="80%"/>
+    </figure>
     <p>
       Now let's see if we can use the signal to estimate the parameters.
       The key idea is this trigonometric identity:
@@ -94,6 +100,37 @@ res = smf.ols('ys ~ 0 + cos + sin', data=data).fit()
 res.summary()
       </input>
     </program>
+    <pre>
+&lt;class 'statsmodels.iolib.summary.Summary'&gt;
+"""
+                                 OLS Regression Results                                
+=======================================================================================
+Dep. Variable:                     ys   R-squared (uncentered):                   0.815
+Model:                            OLS   Adj. R-squared (uncentered):              0.808
+Method:                 Least Squares   F-statistic:                              106.0
+Date:                Sat, 18 Oct 2025   Prob (F-statistic):                    2.46e-18
+Time:                        11:46:12   Log-Likelihood:                         -34.513
+No. Observations:                  50   AIC:                                      73.03
+Df Residuals:                      48   BIC:                                      76.85
+Df Model:                           2                                                  
+Covariance Type:            nonrobust                                                  
+==============================================================================
+                 coef    std err          t      P&gt;|t|      [0.025      0.975]
+------------------------------------------------------------------------------
+cos            1.2602      0.098     12.794      0.000       1.062       1.458
+sin           -0.6846      0.098     -6.950      0.000      -0.883      -0.487
+==============================================================================
+Omnibus:                        0.306   Durbin-Watson:                   2.389
+Prob(Omnibus):                  0.858   Jarque-Bera (JB):                0.244
+Skew:                           0.160   Prob(JB):                        0.885
+Kurtosis:                       2.877   Cond. No.                         1.00
+==============================================================================
+
+Notes:
+[1] R² is computed without centering (uncentered) since the model does not contain a constant.
+[2] Standard
+... (output truncated)
+    </pre>
     <p>
       Here's what the fitted model looks like compared to the data.
     </p>
@@ -108,6 +145,9 @@ plt.ylabel('y')
 plt.legend();
       </input>
     </program>
+    <figure>
+      <image source="images/fourier_002.png" width="80%"/>
+    </figure>
     <p>
       It looks like the fitted curve has recovered the phase of the periodic component.
       The estimated amplitude and phase are not represented explicitly in the parameters of
@@ -152,6 +192,9 @@ c = 2 / len(ts) * np.vdot(ws, ys)
 c
       </input>
     </program>
+    <pre>
+np.complex128(1.2602143401738164+0.68455041144776j)
+    </pre>
     <p>
       The result is a complex number that represents the estimated amplitude and phase of the
       signal.
@@ -164,6 +207,9 @@ phi_hat = np.angle(c)
 A_hat, phi_hat
       </input>
     </program>
+    <pre>
+(np.float64(1.4341371792799409), np.float64(0.49760870975866645))
+    </pre>
     <p>
       And the estimated values are the same as what we got from linear regression.
     </p>

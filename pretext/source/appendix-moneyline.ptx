@@ -58,6 +58,9 @@ def expected_value(p, wager, payout):
 expected_value(p=0.25, wager=100, payout=195)
       </input>
     </program>
+    <pre>
+-26.25
+    </pre>
     <p>
       Now let's compute the expected value of the second wager<mdash/>assuming the Seahawks
       have a 75% chance of winning:
@@ -67,6 +70,9 @@ expected_value(p=0.25, wager=100, payout=195)
 expected_value(p=0.75, wager=240, payout=100)
       </input>
     </program>
+    <pre>
+15.0
+    </pre>
     <p>
       The expected value of this wager is positive, so you might want to make
       it<mdash/>but only if you have good reason to think the Seahawks have a 75% chance of
@@ -106,6 +112,9 @@ decorate(xlabel='Actual probability Patriots win',
         ylabel='Expected value of wager')
       </input>
     </program>
+    <figure>
+      <image source="images/moneyline_001.png" width="80%"/>
+    </figure>
     <p>
       To find the crossover point, we can set the expected value to 0 and solve for <c>p</c>.
       This function computes the result:
@@ -125,6 +134,9 @@ p1 = crossover(100, 195)
 p1
       </input>
     </program>
+    <pre>
+0.3389830508474576
+    </pre>
     <p>
       If you think the Patriots have a probability higher than the crossover, the first bet
       has positive expected value.
@@ -136,6 +148,9 @@ p2 = crossover(240, 100)
 p2
       </input>
     </program>
+    <pre>
+0.7058823529411765
+    </pre>
     <p>
       If you think the Seahawks have a probability higher than this crossover, the second bet
       has positive expected value.
@@ -150,6 +165,9 @@ p2
 p1 + p2
       </input>
     </program>
+    <pre>
+1.0448654037886342
+    </pre>
   </section>
 
   <section xml:id="app-moneyline-the-take">
@@ -194,6 +212,9 @@ p = (p1 + (1-p2)) / 2
 p
       </input>
     </program>
+    <pre>
+0.31655034895314055
+    </pre>
     <p>
       In that case, here's the expected take, assuming that the implied probability is
       correct.
@@ -212,6 +233,9 @@ take
 take / (100_000 + 240_000)
       </input>
     </program>
+    <pre>
+0.04189636971438623
+    </pre>
     <p>
       Which we could have approximated by computing the <term>overround</term>, which is the
       amount that the sum of the implied probabilities exceeds 1.
@@ -221,6 +245,9 @@ take / (100_000 + 240_000)
 (p1 + p2) - 1
       </input>
     </program>
+    <pre>
+0.04486540378863424
+    </pre>
   </section>
 
   <section xml:id="app-moneyline-dont-bet">

@@ -48,6 +48,9 @@ metadata = response.json()
 metadata.keys()
       </input>
     </program>
+    <pre>
+dict_keys(['chart', 'columns', 'dateDownloaded'])
+    </pre>
     <p>
       Here's the chart-level documentation.
     </p>
@@ -58,6 +61,16 @@ from pprint import pprint
 pprint(metadata["chart"])
       </input>
     </program>
+    <pre>
+{'citation': 'Contains modified Copernicus Climate Change Service information '
+             '(2019)',
+ 'originalChartUrl': 'https://ourworldindata.org/grapher/average-monthly-surface-temperature?v=1&amp;csvType=full&amp;useColumnShortNames=true',
+ 'selection': ['World'],
+ 'subtitle': 'The temperature of the air measured 2 meters above the ground, '
+             'encompassing land, sea, and in-land water surfaces.',
+ 'title': 'Average monthly surface temperature'}
+
+    </pre>
     <p>
       And here's the documentation of the column we'll use.
     </p>
@@ -66,6 +79,39 @@ pprint(metadata["chart"])
 pprint(metadata["columns"]["temperature_2m"])
       </input>
     </program>
+    <pre>
+{'citationLong': 'Contains modified Copernicus Climate Change Service '
+                 'information (2019) – with major processing by Our World in '
+                 'Data. “Annual average” [dataset]. Contains modified '
+                 'Copernicus Climate Change Service information, “ERA5 monthly '
+                 'averaged data on single levels from 1940 to present 2” '
+                 '[original data].',
+ 'citationShort': 'Contains modified Copernicus Climate Change Service '
+                  'information (2019) – with major processing by Our World in '
+                  'Data',
+ 'descriptionKey': [],
+ 'descriptionProcessing': '- Temperature measured in kelvin was converted to '
+                          'degrees Celsius (°C) by subtracting 273.15.\n'
+                          '\n'
+                          '- Initially, the temperature dataset is provided '
+                          'with specific coordinates in terms of longitude and '
+                          'latitude. To tailor this data to each country, we '
+                          'utilize geographical boundaries as defined by the '
+                          'World Bank. The method involves trimming the global '
+                          'temperature dataset to match the exact geographical '
+                          'shape of each country. To correct for potential '
+                          "distortions caused by the Earth's curvature on a "
+                          'flat map, we apply a latitude-based weighting. This '
+                          'step is essential for maintaining accuracy, '
+                          'especially in high-latitude regions where '
+                          'distortion is more pronounced. The result of this '
+                          'process is a latitude-weighted average temperature '
+                          'for each nation.\n'
+                          '\n'
+                          "- It's important to note, however, that due to the "
+                      
+... (output truncated)
+    </pre>
     <p>
       The following cells download the data for the United States<mdash/>to see data from
       another country, change <c>country_code</c> to almost any three-letter ISO 3166
@@ -124,6 +170,9 @@ temp_series.plot(label=country_code)
 plt.ylabel("Surface temperature (℃)");
       </input>
     </program>
+    <figure>
+      <image source="images/temperature_001.png" width="80%"/>
+    </figure>
     <p>
       Not surprisingly, there is a strong seasonal pattern.
       We can use <c>seasonal_decompose</c> from StatsModels to identify a long-term trend,
@@ -168,6 +217,9 @@ def plot_decomposition(original, decomposition):
 plot_decomposition(temp_series, decomposition)
       </input>
     </program>
+    <figure>
+      <image source="images/temperature_002.png" width="80%"/>
+    </figure>
     <p>
       As always, I'm grateful to Our World in Data for making datasets like this available,
       and now easier to use programmatically.

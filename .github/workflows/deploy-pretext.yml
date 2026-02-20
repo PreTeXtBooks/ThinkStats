@@ -34,6 +34,10 @@ jobs:
           pip install --upgrade pip
           pip install -r pretext/requirements.txt
 
+      - name: Generate Python code outputs
+        run: |
+          python pretext/generate_outputs.py
+
       - name: Build PreTeXt HTML
         run: |
           cd pretext
