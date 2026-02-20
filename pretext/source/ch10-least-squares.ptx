@@ -5,11 +5,1048 @@
 
   <introduction>
     <p>
-      This chapter introduces simple linear regression using least squares, including
-      how to fit a line to data and how to interpret the results.
+      This chapter and the next introduce the idea of fitting a model to data.
+      In this context, a <term>model</term> consists of a mathematical description of the relationship between variables -- like a straight line -- and a description of random variation -- like a normal distribution.
+    </p>
+    <p>
+      When we say that a model fits data, we usually mean that it minimizes errors, which are the distances between the model and the data.
+      We'll start with one of the most widely-used ways of fitting a model, minimizing the sum of the squared errors, which is called a least squares fit.
+    </p>
+    <p>
+      We'll also start with models that work with just two variables at a time.
+      The next chapter introduces models that can handle more than two variables.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-least-squares-fit">
+    <title>Least Squares Fit</title>
+
+    <p>
+      As a first example, let's return to the scenario from Chapter 8.
+      Suppose you are a researcher in Antarctica, studying local populations of penguins.
+      As part of your data collection, you capture a sample of penguins, measure and weigh them -- and then release them unharmed.
+    </p>
+    <p>
+      As you would soon learn, it can be difficult to get penguins to stay on the scale long enough to get an accurate measurement.
+      Suppose that for some penguins we have measurements like flipper and bill sizes, but no weights.
+      Let's see if we can use the other measurements to fill in the missing data -- this process is called <term>imputation</term>.
+    </p>
+    <p>
+      We'll start by exploring the relationship between the weights and measurements, using data collected between 2007 and 2010 by researchers at Palmer Station in Antarctica.
+      The data they collected is freely available -- instructions for downloading it are in the notebook for this chapter.
+    </p>
+    <p>
+      The following cell downloads the data from a repository created by Allison Horst.
+    </p>
+    <p>
+      Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. https://allisonhorst.github.io/palmerpenguins/. doi: 10.5281/zenodo.3960218.
+    </p>
+    <p>
+      The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
+    </p>
+
+    <program language="python">
+      <input>
+download(
+    "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/c19a904462482430170bfe2c718775ddb7dbb885/inst/extdata/penguins_raw.csv"
+)
+      </input>
+    </program>
+
+    <p>
+      We can use <c>read_csv</c> to read the data.
+    </p>
+
+    <program language="python">
+      <input>
+penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
+penguins.shape
+      </input>
+    </program>
+
+    <p>
+      The dataset includes measurements of 151 Adélie penguins.
+      We can use <c>query</c> to select the rows that contain this data.
+    </p>
+
+    <program language="python">
+      <input>
+adelie = penguins.query('Species.str.startswith("Adelie")')
+len(adelie)
+      </input>
+    </program>
+
+    <p>
+      Now suppose we know the flipper length of an Adélie penguin -- let's see how well we can predict its weight.
+      First we'll select these columns from the <c>DataFrame</c>.
+    </p>
+
+    <program language="python">
+      <input>
+xvar = "Flipper Length (mm)"
+yvar = "Body Mass (g)"
+
+flipper_length = adelie[xvar]
+body_mass = adelie[yvar]
+      </input>
+    </program>
+
+    <p>
+      Here's a scatter plot showing the relationship between these quantities.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
+decorate(xlabel=xvar, ylabel=yvar)
+      </input>
+    </program>
+
+    <p>
+      It looks like they are related -- we can quantify the strength of the relationship by computing the coefficient of correlation.
+    </p>
+
+    <program language="python">
+      <input>
+np.corrcoef(flipper_length, body_mass)[0, 1]
+      </input>
+    </program>
+
+    <p>
+      The correlation is about 0.47, so penguins with longer flippers tend to be heavier.
+      That's useful because it means we can guess a penguin's weight more accurately if we know its flipper length -- but correlation alone doesn't tell us how to make those guesses.
+      For that, we need to choose a <term>line of best fit</term>.
+    </p>
+    <p>
+      There are many ways to define the "best" line, but for data like this a common choice is a <term>linear least squares</term> fit, which is the straight line that minimizes the mean squared error (MSE).
+    </p>
+    <p>
+      SciPy provides a function called <c>linregress</c> that computes a least squares fit.
+      The name is short for <term>linear regression</term>, which is another term for a model like this.
+      The arguments of <c>linregress</c> are the <c>x</c> values and the <c>y</c> values, in that order.
+    </p>
+
+    <program language="python">
+      <input>
+from scipy.stats import linregress
+
+result = linregress(flipper_length, body_mass)
+result
+      </input>
+    </program>
+
+    <p>
+      The result is a <c>LinregressResult</c> object that contains the slope and intercept of the fitted line, along with other information we'll unpack soon.
+      The slope is about 32.8, which means that each additional millimeter of flipper length is associated with an additional 32.8 grams of body weight.
+    </p>
+    <p>
+      The intercept is -2535 grams, which might seem nonsensical, since a measured weight can't be negative.
+      It might make more sense if we use the slope and intercept to evaluate the fitted line at the average flipper length.
+    </p>
+
+    <program language="python">
+      <input>
+x = flipper_length.mean()
+y = result.intercept + result.slope * x
+x, y
+      </input>
+    </program>
+
+    <p>
+      For a penguin with the average flipper length, about 190 mm, the expected body weight is about 3700 grams.
+    </p>
+    <p>
+      The following function takes the result from <c>linregress</c> and a sequence of <c>xs</c> and finds the point on the fitted line for each value of <c>x</c>.
+    </p>
+
+    <program language="python">
+      <input>
+def predict(result, xs):
+    ys = result.intercept + result.slope * xs
+    return ys
+      </input>
+    </program>
+
+    <p>
+      The name <c>predict</c> might seem odd here -- in natural language, a <term>prediction</term> usually pertains to something happening in the future, but in the context of regression, the points on the fitted line are also called predictions.
+    </p>
+    <p>
+      We can use <c>predict</c> to compute the points on the line for a range of flipper sizes.
+    </p>
+
+    <program language="python">
+      <input>
+fit_xs = np.linspace(np.min(flipper_length), np.max(flipper_length))
+fit_ys = predict(result, fit_xs)
+      </input>
+    </program>
+
+    <p>
+      Here's the fitted line along with the scatter plot of the data.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
+plt.plot(fit_xs, fit_ys, color="C1")
+decorate(xlabel=xvar, ylabel=yvar)
+      </input>
+    </program>
+
+    <p>
+      As expected, the fitted line goes through the center of the data and follows the trend.
+      And some of the predictions are accurate -- but many of the data points are far from the line.
+      To get a sense of how good (or bad) the predictions are, we can compute the prediction error, which is the vertical distance of each point from the line.
+      The following function computes these errors, which are also called <term>residuals</term>.
+    </p>
+
+    <program language="python">
+      <input>
+def compute_residuals(result, xs, ys):
+    fit_ys = predict(result, xs)
+    return ys - fit_ys
+      </input>
+    </program>
+
+    <p>
+      Here are the residuals for body mass as a function of flipper length.
+    </p>
+
+    <program language="python">
+      <input>
+residuals = compute_residuals(result, flipper_length, body_mass)
+      </input>
+    </program>
+
+    <p>
+      As an example, we can look at the results for the first penguin in the dataset.
+    </p>
+
+    <program language="python">
+      <input>
+x = flipper_length[0]
+y = predict(result, x)
+x, y
+      </input>
+    </program>
+
+    <p>
+      The flipper length of the selected penguin is 181 mm and the predicted body mass is 3407 grams.
+      Now let's see what the actual mass is.
+    </p>
+
+    <program language="python">
+      <input>
+body_mass[0], residuals[0]
+      </input>
+    </program>
+
+    <p>
+      The actual mass of this penguin is 3750 grams, and the residual -- after subtracting away the prediction -- is 343 grams.
+    </p>
+    <p>
+      The average of the squared residuals is the mean squared error (MSE) of the predictions.
+    </p>
+
+    <program language="python">
+      <input>
+mse = np.mean(residuals**2)
+mse
+      </input>
+    </program>
+
+    <p>
+      By itself, this number doesn't mean very much.
+      We can make more sense of it by computing the coefficient of determination.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-coefficient-of-determination">
+    <title>Coefficient of Determination</title>
+
+    <p>
+      Suppose you want to guess the weight of a penguin.
+      If you know its flipper length, you can use the least squares fit to inform your guess, and the MSE quantifies the accuracy of your guesses, on average.
+    </p>
+    <p>
+      But what if you don't know the flipper length -- what would you guess?
+      It turns out that guessing the mean is the best strategy in the sense that it minimizes the MSE.
+      If we always guess the mean, the prediction errors are the deviations from the mean.
+    </p>
+
+    <program language="python">
+      <input>
+deviations = body_mass - np.mean(body_mass)
+      </input>
+    </program>
+
+    <p>
+      And the MSE is the mean squared deviation.
+    </p>
+
+    <program language="python">
+      <input>
+np.mean(deviations**2)
+      </input>
+    </program>
+
+    <p>
+      You might remember that the mean squared deviation is the variance.
+    </p>
+
+    <program language="python">
+      <input>
+np.var(body_mass)
+      </input>
+    </program>
+
+    <p>
+      So we can think of the variance of the masses as the MSE if we always guess the mean, and the variance of the residuals as the MSE if we use the regression line.
+      If we compute the ratio of these variances and subtract it from 1, the result indicates how much the MSE is reduced if we use flipper lengths to inform our guesses.
+    </p>
+    <p>
+      The following function computes this value, which is technically called the <term>coefficient of determination</term>, but because it is denoted <m>R^2</m>, most people call it "R squared".
+    </p>
+
+    <program language="python">
+      <input>
+def coefficient_of_determination(ys, residuals):
+    return 1 - np.var(residuals) / np.var(ys)
+      </input>
+    </program>
+
+    <p>
+      In the example, <m>R^2</m> is about 0.22, which means that the fitted line reduces MSE by 22%.
+    </p>
+
+    <program language="python">
+      <input>
+R2 = coefficient_of_determination(body_mass, residuals)
+R2
+      </input>
+    </program>
+
+    <p>
+      It turns out that there's a relationship between the coefficient of determination, <m>R^2</m>, and the coefficient of correlation, <m>r</m>.
+      As you might guess based on the notation, <m>r^2 = R^2</m>.
+    </p>
+    <p>
+      We can show that's true by computing the square root of <m>R^2</m>.
+    </p>
+
+    <program language="python">
+      <input>
+r = np.sqrt(R2)
+r
+      </input>
+    </program>
+
+    <p>
+      And comparing it to the correlation we computed earlier.
+    </p>
+
+    <program language="python">
+      <input>
+corr = np.corrcoef(flipper_length, body_mass)[0, 1]
+corr
+      </input>
+    </program>
+
+    <p>
+      They are the same except for a small difference due to floating-point approximation.
+    </p>
+    <p>
+      The <c>linregress</c> function also computes this value and returns it as an attribute in the <c>RegressionResult</c> object.
+    </p>
+
+    <program language="python">
+      <input>
+result.rvalue
+      </input>
+    </program>
+
+    <p>
+      The coefficients of determination and correlation convey mostly the same information, but they are interpreted differently:
+    </p>
+    <ul>
+      <li><p>Correlation quantifies the strength of the relationship on a scale from -1 to 1.</p></li>
+      <li><p><m>R^2</m> quantifies the ability of the fitted line to reduce MSE.</p></li>
+    </ul>
+    <p>
+      Also, <m>R^2</m> is always positive, so it doesn't indicate whether the correlation is positive or negative.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-minimizing-mse">
+    <title>Minimizing MSE</title>
+
+    <p>
+      Earlier I said that the least squares fit is the straight line that minimizes the mean squared error (MSE).
+      We won't prove that, but we can test it by adding small random values to the intercept and slope, and checking whether the MSE gets worse.
+    </p>
+
+    <program language="python">
+      <input>
+intercept = result.intercept + np.random.normal(0, 1)
+slope = result.slope + np.random.normal(0, 1)
+      </input>
+    </program>
+
+    <p>
+      To run the test, we need to make an object with <c>intercept</c> and <c>slope</c> attributes -- we'll use the <c>SimpleNamespace</c> object provided by the <c>types</c> module.
+    </p>
+
+    <program language="python">
+      <input>
+from types import SimpleNamespace
+
+fake_result = SimpleNamespace(intercept=intercept, slope=slope)
+fake_result
+      </input>
+    </program>
+
+    <p>
+      We can pass this object to <c>compute_residuals</c> and use the residuals to compute the MSE.
+    </p>
+
+    <program language="python">
+      <input>
+fake_residuals = compute_residuals(fake_result, flipper_length, body_mass)
+fake_mse = np.mean(fake_residuals**2)
+      </input>
+    </program>
+
+    <p>
+      If we compare the result to the MSE of the least squares line, it is always worse.
+    </p>
+
+    <program language="python">
+      <input>
+mse, fake_mse, fake_mse > mse
+      </input>
+    </program>
+
+    <p>
+      Minimizing MSE is nice, but it's not the only definition of "best".
+      One alternative is to minimize the absolute values of the errors.
+      Another is to minimize the shortest distance from each point to the fitted line, which is called the "total error".
+      In some contexts, guessing too high might be better (or worse) than guessing too low.
+      In that case you might want to compute a cost function for each residual, and minimize total cost.
+    </p>
+    <p>
+      But the least squares fit is much more widely used than these alternatives, primarily because it is efficient to compute.
+      The following function shows how.
+    </p>
+
+    <program language="python">
+      <input>
+def least_squares(xs, ys):
+    xbar = np.mean(xs)
+    ybar = np.mean(ys)
+
+    xdev = xs - xbar
+    ydev = ys - ybar
+
+    slope = np.sum(xdev * ydev) / np.sum(xdev**2)
+    intercept = ybar - slope * xbar
+
+    return intercept, slope
+      </input>
+    </program>
+
+    <p>
+      To test this function, we'll use flipper length and body mass again.
+    </p>
+
+    <program language="python">
+      <input>
+intercept, slope = least_squares(flipper_length, body_mass)
+intercept, slope
+      </input>
+    </program>
+
+    <p>
+      And we can confirm that we get the same results we got from <c>linregress</c>.
+    </p>
+
+    <program language="python">
+      <input>
+np.allclose([intercept, slope], [result.intercept, result.slope])
+      </input>
+    </program>
+
+    <p>
+      Minimizing MSE made sense when computational efficiency was more important than choosing the method most appropriate to the problem at hand.
+      But that's no longer the case, so it is worth considering whether squared residuals are the right thing to minimize.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-estimation">
+    <title>Estimation</title>
+
+    <p>
+      The parameters <c>slope</c> and <c>intercept</c> are estimates based on a sample.
+      Like other estimates, they are vulnerable to non-representative sampling, measurement error, and variability due to random sampling.
+      As usual, it's hard to quantify the effect of non-representative sampling and measurement error.
+      It's easier to quantify the effect of random sampling.
+    </p>
+    <p>
+      One way to do that is a kind of resampling called <term>bootstrapping</term>: we'll treat the sample as if it were the whole population and draw new samples, with replacement, from the observed data.
+      The following function takes a <c>DataFrame</c> and uses the <c>sample</c> method to resample the rows and return a new <c>DataFrame</c>.
+    </p>
+
+    <program language="python">
+      <input>
+def resample(df):
+    n = len(df)
+    return df.sample(n, replace=True)
+      </input>
+    </program>
+
+    <p>
+      And the following function takes a <c>DataFrame</c>, finds the least squares fit, and returns the slope of the fitted line.
+    </p>
+
+    <program language="python">
+      <input>
+def estimate_slope(df):
+    xs, ys = df["Flipper Length (mm)"], df["Body Mass (g)"]
+    result = linregress(xs, ys)
+    return result.slope
+      </input>
+    </program>
+
+    <p>
+      We can use these functions to generate many simulated datasets and compute the slope for each one.
+    </p>
+
+    <program language="python">
+      <input>
+# Seed the random number generator so we get the same results every time
+
+np.random.seed(1)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+resampled_slopes = [estimate_slope(resample(adelie)) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      The result is a sample from the sampling distribution of the slope.
+      Here's what it looks like.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import plot_kde
+
+plot_kde(resampled_slopes)
+decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      We can use <c>percentile</c> to compute a 90% confidence interval.
+    </p>
+
+    <program language="python">
+      <input>
+ci90 = np.percentile(resampled_slopes, [5, 95])
+print(result.slope, ci90)
+      </input>
+    </program>
+
+    <p>
+      So we could report that the estimated slope is 33 grams / mm with a 90% CI [25, 40] grams / mm.
+    </p>
+    <p>
+      The standard error of the estimate is the standard deviation of the sampling distribution.
+    </p>
+
+    <program language="python">
+      <input>
+stderr = np.std(resampled_slopes)
+stderr
+      </input>
+    </program>
+
+    <p>
+      The <c>RegressionResult</c> object we got from <c>linregress</c> provides an approximation of the standard error, based on some assumptions about the shape of the distribution.
+    </p>
+
+    <program language="python">
+      <input>
+result.stderr
+      </input>
+    </program>
+
+    <p>
+      The standard error we computed by resampling is a little smaller, but the difference probably doesn't matter in practice.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-visualizing-uncertainty">
+    <title>Visualizing Uncertainty</title>
+
+    <p>
+      Each time we resample the dataset, we get a different fitted line.
+      To see how much variation there is in the lines, one option is to loop through them and plot them all.
+      The following function takes a resampled <c>DataFrame</c>, computes a least squares fit, and generates predicted values for a sequence of <c>xs</c>.
+    </p>
+
+    <program language="python">
+      <input>
+def fit_line(df, fit_xs):
+    xs, ys = df["Flipper Length (mm)"], df["Body Mass (g)"]
+    result = linregress(xs, ys)
+    fit_ys = predict(result, fit_xs)
+    return fit_ys
+      </input>
+    </program>
+
+    <p>
+      Here's the sequence of <c>xs</c> we'll use.
+    </p>
+
+    <program language="python">
+      <input>
+xs = adelie["Flipper Length (mm)"]
+fit_xs = np.linspace(np.min(xs), np.max(xs))
+      </input>
+    </program>
+
+    <p>
+      And here's what the fitted lines look like, along with a scatter plot of the data.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
+
+for i in range(101):
+    fit_ys = fit_line(resample(adelie), fit_xs)
+    plt.plot(fit_xs, fit_ys, color="C1", alpha=0.05)
+
+decorate(xlabel=xvar, ylabel=yvar)
+      </input>
+    </program>
+
+    <p>
+      Near the middle, the fitted lines are close together -- at the extremes, they are farther apart.
+    </p>
+    <p>
+      Another way to represent the variability of the fitted lines is to plot a 90% confidence interval for each predicted value.
+      We can do that by collecting the fitted lines as a list of arrays.
+    </p>
+
+    <program language="python">
+      <input>
+fitted_ys = [fit_line(resample(adelie), fit_xs) for i in range(1001)]
+      </input>
+    </program>
+
+    <p>
+      We can think of this list of arrays as a two-dimensional array with one row for each fitted line and one column corresponding to each of the <c>xs</c>.
+    </p>
+    <p>
+      We can use <c>percentile</c> with the <c>axis=0</c> argument to find the 5th, 50th, and 95th percentiles of the <c>ys</c> corresponding to each of the <c>xs</c>.
+    </p>
+
+    <program language="python">
+      <input>
+low, median, high = np.percentile(fitted_ys, [5, 50, 95], axis=0)
+      </input>
+    </program>
+
+    <p>
+      Now we'll use <c>fill_between</c> to plot a region between the 5th and 95 percentiles, which represents the 90% CI, along with the median value in each column and a scatter plot of the data.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
+
+plt.fill_between(fit_xs, low, high, color="C1", lw=0, alpha=0.2)
+plt.plot(fit_xs, median, color="C1")
+
+decorate(xlabel=xvar, ylabel=yvar)
+      </input>
+    </program>
+
+    <p>
+      This is my favorite way to represent the variability of a fitted line due to random sampling.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-transformation">
+    <title>Transformation</title>
+
+    <p>
+      Before fitting a line to data, it is sometimes useful to transform one or both variables, for example by computing the squares of the values, their square roots, or their logarithms.
+      To demonstrate, we'll use heights and weights from the Behavioral Risk Factor Surveillance System (BRFSS), described in Chapter 5.
+    </p>
+    <p>
+      The following cell downloads the BRFSS data.
+    </p>
+
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
+      </input>
+    </program>
+
+    <p>
+      We can load the BRFSS data like this.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import read_brfss
+
+brfss = read_brfss()
+      </input>
+    </program>
+
+    <p>
+      Next we'll find the rows with valid data and select the columns containing heights and weights.
+    </p>
+
+    <program language="python">
+      <input>
+valid = brfss.dropna(subset=["htm3", "wtkg2"])
+heights, weights = valid["htm3"], valid["wtkg2"]
+      </input>
+    </program>
+
+    <p>
+      We can use <c>linregress</c> to compute the slope and intercept of the least squares fit.
+    </p>
+
+    <program language="python">
+      <input>
+result_brfss = linregress(heights, weights)
+result_brfss.intercept, result_brfss.slope
+      </input>
+    </program>
+
+    <p>
+      The slope is about 0.96, which means that an increase of 1 centimeter corresponds to an increase of almost 1 kilogram, on average.
+      We can use <c>predict</c> again to generate predicted values for a range of <c>xs</c>.
+    </p>
+
+    <program language="python">
+      <input>
+fit_xs = np.linspace(heights.min(), heights.max())
+fit_ys = predict(result_brfss, fit_xs)
+      </input>
+    </program>
+
+    <p>
+      Before we make a scatter plot of the data, it's useful to jitter the heights and weights.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import jitter
+
+jittered_heights = jitter(heights, 2)
+jittered_weights = jitter(weights, 1.5)
+      </input>
+    </program>
+
+    <p>
+      And we'll use the mean and standard deviation of the heights to choose the limits of the <m>x</m> axis.
+    </p>
+
+    <program language="python">
+      <input>
+m, s = heights.mean(), heights.std()
+xlim = m - 4 * s, m + 4 * s
+ylim = 0, 200
+      </input>
+    </program>
+
+    <p>
+      Here's a scatter plot of the jittered data along with the fitted line.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(jittered_heights, jittered_weights, alpha=0.01, s=0.1)
+plt.plot(fit_xs, fit_ys, color="C1")
+decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
+      </input>
+    </program>
+
+    <p>
+      The fitted line doesn't pass through the densest part of the scatter plot.
+      That's because the weights don't follow a normal distribution.
+      As we saw in Chapter 5, adult weights tend to follow a lognormal distribution, which is skewed toward larger values -- and those values pull the fitted line up.
+    </p>
+    <p>
+      Another cause for concern is the distribution of the residuals, which looks like this.
+    </p>
+
+    <program language="python">
+      <input>
+residuals = compute_residuals(result_brfss, heights, weights)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+from thinkstats import make_pmf
+
+pmf_kde = make_pmf(residuals, -60, 120)
+pmf_kde.plot()
+
+decorate(xlabel="Residual (kg)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      The distribution of the residuals is skewed to the right.
+      By itself, that's not necessarily a problem, but it suggests that the least squares fit has not characterized the relationship between these variables properly.
+    </p>
+    <p>
+      If the weights follow a lognormal distribution, their logarithms follow a normal distribution.
+      So let's see what happens if we fit a line to the logarithms of weight as a function of height.
+    </p>
+
+    <program language="python">
+      <input>
+log_weights = np.log10(weights)
+result_brfss2 = linregress(heights, log_weights)
+result_brfss2.intercept, result_brfss2.slope
+      </input>
+    </program>
+
+    <p>
+      Because we transformed one of the variables, the slope and intercept are harder to interpret.
+      But we can use <c>predict</c> to compute the fitted line.
+    </p>
+
+    <program language="python">
+      <input>
+fit_xs = np.linspace(heights.min(), heights.max())
+fit_ys = predict(result_brfss2, fit_xs)
+      </input>
+    </program>
+
+    <p>
+      And then plot it along with a scatter plot of the transformed data.
+    </p>
+
+    <program language="python">
+      <input>
+jittered_log_weights = jitter(log_weights, 1.5)
+plt.scatter(jittered_heights, jittered_log_weights, alpha=0.01, s=0.1)
+plt.plot(fit_xs, fit_ys, color="C1")
+decorate(xlabel="Height (cm)", ylabel="Weight (log10 kg)", xlim=xlim)
+      </input>
+    </program>
+
+    <p>
+      The fitted line passes through the densest part of the plot, and the actual values extend about the same distance above and below the line -- so the distribution of the residuals is roughly symmetric.
+    </p>
+
+    <program language="python">
+      <input>
+residuals = compute_residuals(result_brfss2, heights, log_weights)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+pmf_kde = make_pmf(residuals, -0.6, 0.6)
+pmf_kde.plot()
+
+decorate(xlabel="Residual (kg)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      The appearance of the scatter plot and the distribution of the residuals suggest that the relationship of height and log-transformed weight is well described by the fitted line.
+      If we compare the <m>r</m> values of the two regressions, we see that the correlation of height with log-transformed weights is slightly higher.
+    </p>
+
+    <program language="python">
+      <input>
+result_brfss.rvalue, result_brfss2.rvalue
+      </input>
+    </program>
+
+    <p>
+      Which means that the <m>R^2</m> value is slightly higher, too.
+    </p>
+
+    <program language="python">
+      <input>
+result_brfss.rvalue**2, result_brfss2.rvalue**2
+      </input>
+    </program>
+
+    <p>
+      If we use heights to guess weights, the guesses are a little better if we work with the log-transformed weights.
+    </p>
+    <p>
+      However, transforming the data makes the parameters of the model harder to interpret -- it can help to invert the transformation before presenting the results.
+      For example, the inverse of a logarithm in base 10 is exponentiation with base 10.
+      Here's what the fitted line looks like after the inverse transformation, along with the untransformed data.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(jittered_heights, jittered_weights, alpha=0.01, s=0.1)
+plt.plot(fit_xs, 10**fit_ys, color="C1")
+decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
+      </input>
+    </program>
+
+    <p>
+      A fitted line that's straight with respect to the transformed data is curved with respect to the original data.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-least-squares-glossary">
+    <title>Glossary</title>
+
+    <dl>
+      <li>
+        <title>model</title>
+        <p>In the context of regression, a model is a mathematical description of the relationship between variables -- such as a straight line -- along with a description of random variation -- such as a normal distribution.</p>
+      </li>
+      <li>
+        <title>imputation</title>
+        <p>A process for estimating and filling in missing values in a dataset.</p>
+      </li>
+      <li>
+        <title>line of best fit</title>
+        <p>A line (or curve) that best describes a relationship between variables, by some definition of "best".</p>
+      </li>
+      <li>
+        <title>linear regression</title>
+        <p>A method for finding a line of best fit.</p>
+      </li>
+      <li>
+        <title>prediction</title>
+        <p>A point on a line of best fit -- in the context of regression, it is not necessarily a claim about the future.</p>
+      </li>
+      <li>
+        <title>residual</title>
+        <p>The difference between an observed value and a value predicted by a line of best fit.</p>
+      </li>
+      <li>
+        <title>linear least squares fit</title>
+        <p>A line that minimizes the sum of squared residuals.</p>
+      </li>
+      <li>
+        <title>coefficient of determination</title>
+        <p>A statistic, denoted <m>R^2</m> and often pronounced "R squared", that quantifies how well a model fits the data.</p>
+      </li>
+      <li>
+        <title>bootstrap resampling</title>
+        <p>A way of resampling by treating the sample as a population and drawing new samples with the same size as the original, with replacement.</p>
+      </li>
+    </dl>
+
+  </section>
+
+  <exercises xml:id="ex-least-squares">
+
+    <exercise xml:id="ex-least-squares-1">
+      <title>Exercise 10.1</title>
+      <statement>
+        <p>
+          In this chapter we computed a least squares fit for penguin weights as a function of flipper length.
+          There are two other measurements in the dataset we can also consider: culmen length and culmen depth (the culmen is the top ridge of the bill).
+        </p>
+        <p>
+          Compute the least squares fit for weight as a function of culmen length.
+          Make a scatter plot of these variables and plot the fitted line.
+        </p>
+        <p>
+          Based on the <c>rvalue</c> attribute of the <c>RegressionResult</c> object, what is the correlation of these variables?
+          What is the coefficient of determination?
+          Which is a better predictor of weight, culmen length or flipper length?
+        </p>
+        <program language="python">
+          <input>
+xvar = "Culmen Length (mm)"
+yvar = "Body Mass (g)"
+
+culmen_length = adelie[xvar]
+body_mass = adelie[yvar]
+          </input>
+        </program>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-least-squares-2">
+      <title>Exercise 10.2</title>
+      <statement>
+        <p>
+          In this chapter we used resampling to approximate the sampling distribution for the slope of a fitted line.
+          We can approximate the sampling distribution of the intercept the same way:
+        </p>
+        <ol>
+          <li><p>Write a function called <c>estimate_intercept</c> that takes a resampled <c>DataFrame</c> as an argument, computes the least squares fit of penguin weight as a function of flipper length, and returns the intercept.</p></li>
+          <li><p>Call the function with many resampled versions of <c>adelie</c> and collect the intercepts.</p></li>
+          <li><p>Use <c>plot_kde</c> to plot the sampling distribution of the intercept.</p></li>
+          <li><p>Compute the standard error and a 90% confidence interval.</p></li>
+          <li><p>Check that the standard error you get from resampling is consistent with the <c>intercept_stderr</c> attribute in the <c>RegressionResult</c> object -- it might be a little smaller.</p></li>
+        </ol>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-least-squares-3">
+      <title>Exercise 10.3</title>
+      <statement>
+        <p>
+          A person's Body Mass Index (BMI) is their weight in kilograms divided by their height in meters raised to the second power.
+          In the BRFSS dataset, we can compute BMI like this, after converting heights from centimeters to meters.
+        </p>
+        <program language="python">
+          <input>
+heights_m = heights / 100
+bmis = weights / heights_m**2
+          </input>
+        </program>
+        <p>
+          In this definition, heights are squared, rather than raised to some other exponent, because of the observation -- early in the history of statistics -- that average weight increases roughly in proportion to height squared.
+        </p>
+        <p>
+          To see whether that's true, we can use data from the BRFSS, a least squares fit, and a little bit of math.
+          Suppose weight is proportional to height raised to an unknown exponent, <m>a</m>.
+          In that case, we can write:
+        </p>
+        <me>w = b h^a</me>
+        <p>
+          where <m>w</m> is weight, <m>h</m> is height, and <m>b</m> is an unknown constant of proportionality.
+          Taking logarithms of both sides:
+        </p>
+        <me>\log w = \log b + a \log h</me>
+        <p>
+          So, if we compute a least squares fit for log-transformed weights as a function of log-transformed heights, the slope of the fitted line estimates the unknown exponent <m>a</m>.
+        </p>
+        <p>
+          Compute the logarithms of height and weight.
+          You can use any base for the logarithms, as long as it's the same for both transformations.
+          Compute a least squares fit.
+          Is the slope close to 2?
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>

@@ -5,11 +5,1369 @@
 
   <introduction>
     <p>
-      This chapter introduces time series analysis, including serial correlation,
-      autocorrelation, and methods for modeling and forecasting time series data.
+      A <term>time series</term> is a sequence of measurements from a system that varies in time.
+      Many of the tools we used in previous chapters, like regression, can also be used with time series.
+      But there are additional methods that are particularly useful for this kind of data.
+    </p>
+    <p>
+      As examples, we'll look at two datasets: renewable electricity generation in the United States from 2001 to 2024, and weather data over the same interval.
+      We will develop methods to decompose a time series into a long-term trend and a repeated seasonal component.
+      We'll use linear regression models to fit and forecast trends.
+      And we'll try out a widely-used model for analyzing time series data, with the formal name "autoregressive integrated moving average" and the easier-to-say acronym ARIMA.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-time-series-electricity">
+    <title>Electricity</title>
+
+    <p>
+      As an example of time-series data, we'll use a dataset from the U.S. Energy Information Administration -- it includes total electricity generation per month from renewable sources from 2001 to 2024.
+      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      The following cell downloads the data, which I downloaded September 17, 2024 from https://www.eia.gov/electricity/data/browser/.
+    </p>
+
+    <program language="python">
+      <input>
+filename = "Net_generation_for_all_sectors.csv"
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
+      </input>
+    </program>
+
+    <p>
+      After loading the data, we have to make some transformations to get it into a format that's easy to work with.
+    </p>
+
+    <program language="python">
+      <input>
+elec = (
+    pd.read_csv("Net_generation_for_all_sectors.csv", skiprows=4)
+    .drop(columns=["units", "source key"])
+    .set_index("description")
+    .replace("--", np.nan)
+    .transpose()
+    .astype(float)
+)
+      </input>
+    </program>
+
+    <p>
+      In the reformatted dataset, each column is a sequence of monthly totals in gigawatt-hours (GWh).
+      Here are the column labels, showing the different sources of electricity, or "sectors".
+    </p>
+
+    <program language="python">
+      <input>
+elec.columns
+      </input>
+    </program>
+
+    <p>
+      The labels in the index are strings indicating months and years -- here are the first 12.
+    </p>
+
+    <program language="python">
+      <input>
+elec.index[:12]
+      </input>
+    </program>
+
+    <p>
+      It will be easier to work with this data if we replace these strings with Pandas <c>Timestamp</c> objects.
+      We can use the <c>date_range</c> function to generate a sequence of <c>Timestamp</c> objects, starting in January 2001 with the frequency code <c>"ME"</c>, which stands for "month end", so it fills in the last day of each month.
+    </p>
+
+    <program language="python">
+      <input>
+elec.index = pd.date_range(start="2001-01", periods=len(elec), freq="ME")
+elec.index[:6]
+      </input>
+    </program>
+
+    <p>
+      Now the index is a <c>DataTimeIndex</c> with the data type <c>datetime64[ns]</c>, which is defined in NumPy -- <c>64</c> means each label uses 64 bits, and <c>ns</c> means it has nanosecond precision.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-decomposition">
+    <title>Decomposition</title>
+
+    <p>
+      As a first example, we'll look at how electricity generation from nuclear reactors changed over the interval from January 2001 to June 2024, and we'll decompose the time series into a long-term trend and a periodic component.
+      Here are monthly totals of electricity generation from nuclear reactors in the United States.
+    </p>
+
+    <program language="python">
+      <input>
+actual_options = dict(color="C0", lw=1, alpha=0.6)
+trend_options = dict(color="C1", alpha=0.6)
+pred_options = dict(color="C2", alpha=0.6, ls=':')
+model_options = dict(color="gray", alpha=0.6, ls='--')
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+nuclear = elec["United States : nuclear"]
+nuclear.plot(label="nuclear", **actual_options)
+
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      It looks like there are some increases and decreases, but they are hard to see clearly because there are large variations from month to month.
+      To see the long-term trend more clearly, we can use the <c>rolling</c> and <c>mean</c> methods to compute a <term>moving average</term>.
+    </p>
+
+    <program language="python">
+      <input>
+trend = nuclear.rolling(window=12).mean()
+      </input>
+    </program>
+
+    <p>
+      The <c>window=12</c> argument selects overlapping intervals of 12 months, so the first interval contains 12 measurements starting with the first, the second interval contains 12 measurements starting with the second, and so on.
+      For each interval, we compute the mean production.
+    </p>
+    <p>
+      Here's what the results look like, along with the original data.
+    </p>
+
+    <program language="python">
+      <input>
+nuclear.plot(label="nuclear", **actual_options)
+trend.plot(label="trend", **trend_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The trend is still quite variable.
+      We could smooth it more by using a longer window, but we'll stick with the 12-month window for now.
+    </p>
+    <p>
+      If we subtract the trend from the original data, the result is a "detrended" time series, which means that the long-term mean is close to constant.
+      Here's what it looks like.
+    </p>
+
+    <program language="python">
+      <input>
+detrended = (nuclear - trend).dropna()
+detrended.plot(label="detrended", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      It seems like there is a repeating annual pattern, which makes sense because demand for electricity varies from one season to another, as it is used to generate heat in the winter and run air conditioning in the summer.
+      To describe this annual pattern we can select the month part of the <c>datetime</c> objects in the index, group the data by month, and compute average production.
+      Here's what the monthly averages look like.
+    </p>
+
+    <program language="python">
+      <input>
+monthly_averages = detrended.groupby(detrended.index.month).mean()
+monthly_averages.plot(label="monthly average", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      On the x-axis, month 1 is January and month 12 is December.
+      Electricity production is highest during the coldest and warmest months, and lowest during April and October.
+    </p>
+    <p>
+      We can use <c>monthly_averages</c> to construct the seasonal component of the data, which is a series the same length as <c>nuclear</c>, where the element for each month is the average for that month.
+      Here's what it looks like.
+    </p>
+
+    <program language="python">
+      <input>
+seasonal = monthly_averages[nuclear.index.month]
+seasonal.index = nuclear.index
+seasonal.plot(label="seasonal", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      Each 12-month period is identical to the others.
+    </p>
+    <p>
+      The sum of the trend and the seasonal component represents the expected value for each month.
+    </p>
+
+    <program language="python">
+      <input>
+expected = trend + seasonal
+      </input>
+    </program>
+
+    <p>
+      Here's what it looks like compared to the original series.
+    </p>
+
+    <program language="python">
+      <input>
+expected.plot(label="expected", **pred_options)
+nuclear.plot(label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      If we subtract this sum from the original series, the result is the residual component, which represents the departure from the expected value for each month.
+    </p>
+
+    <program language="python">
+      <input>
+resid = nuclear - expected
+resid.plot(label="residual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      We can think of the residual as the sum of everything in the world that affects energy production, but is not explained by the long-term trend or the seasonal component.
+      Among other things, that sum includes weather, equipment that's down for maintenance, and changes in demand due to specific events.
+      Since the residual is the sum of many unpredictable, and sometimes unknowable, factors, we often treat it as a random quantity.
+    </p>
+    <p>
+      Here's what the distribution of the residuals look like.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import plot_kde
+
+plot_kde(resid.dropna())
+decorate(xlabel="Residual (GWh)", ylabel="Density")
+      </input>
+    </program>
+
+    <p>
+      It resembles the bell curve of the normal distribution, which is consistent with the assumption that it is the sum of many random contributions.
+    </p>
+    <p>
+      To quantify how well this model describes the original series, we can compute the coefficient of determination, which indicates how much smaller the variance of the residuals is, compared to the variance of the original series.
+    </p>
+
+    <program language="python">
+      <input>
+rsquared = 1 - resid.var() / nuclear.var()
+rsquared
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> value is about 0.92, which means that the long-term trend and seasonal component account for 92% of the variability in the series.
+      This <m>R^2</m> is substantially higher than the ones we saw in the previous chapter, but that's common with time series data -- especially in a case like this where we've constructed the model to resemble the data.
+    </p>
+    <p>
+      The process we've just walked through is called <term>seasonal decomposition</term>.
+      StatsModels provides a function that does it, called <c>seasonal_decompose</c>.
+    </p>
+
+    <program language="python">
+      <input>
+from statsmodels.tsa.seasonal import seasonal_decompose
+
+decomposition = seasonal_decompose(nuclear, model="additive", period=12)
+      </input>
+    </program>
+
+    <p>
+      The <c>model="additive"</c> argument indicates the additive model, so the series is decomposed into the sum of a trend, seasonal component, and residual.
+      We'll see the multiplicative model soon.
+      The <c>period=12</c> argument indicates that the duration of the seasonal component is 12 months.
+    </p>
+    <p>
+      The result is an object that contains the three components.
+      The notebook for this chapter provides a function that plots them.
+    </p>
+
+    <program language="python">
+      <input>
+def plot_decomposition(original, decomposition):
+    plt.figure(figsize=(6, 5))
+
+    ax1 = plt.subplot(4, 1, 1)
+    plt.plot(original, label="Original", color="C0", lw=1)
+    plt.ylabel("Original")
+
+    plt.subplot(4, 1, 2, sharex=ax1)
+    plt.plot(decomposition.trend, label="Trend", color="C1", lw=1)
+    plt.ylabel("Trend")
+
+    plt.subplot(4, 1, 3, sharex=ax1)
+    plt.plot(decomposition.seasonal, label="Seasonal", color="C2", lw=1)
+    plt.ylabel("Seasonal")
+
+    plt.subplot(4, 1, 4, sharex=ax1)
+    plt.plot(decomposition.resid, label="Residual", color="C3", lw=1)
+    plt.ylabel("Residual")
+
+    plt.tight_layout()
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+plot_decomposition(nuclear, decomposition)
+      </input>
+    </program>
+
+    <p>
+      The results are similar to those we computed ourselves, with small differences due to the details of the implementation.
+    </p>
+    <p>
+      This kind of seasonal decomposition provides insight into the structure of a time series.
+      As we'll see in the next section, it is also useful for making forecasts.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-prediction">
+    <title>Prediction</title>
+
+    <p>
+      We can use the results from seasonal decomposition to predict the future.
+      To demonstrate, we'll use the following function to split the time series into a <term>training series</term>, which we'll use to generate predictions, and a <term>test series</term>, which we'll use to see whether they are accurate.
+    </p>
+
+    <program language="python">
+      <input>
+def split_series(series, n=60):
+    training = series.iloc[:-n]
+    test = series.iloc[-n:]
+    return training, test
+      </input>
+    </program>
+
+    <p>
+      With <c>n=60</c>, the duration of the test series is five years, starting in July 2019.
+    </p>
+
+    <program language="python">
+      <input>
+training, test = split_series(nuclear)
+test.index[0]
+      </input>
+    </program>
+
+    <p>
+      Now, suppose it's June 2019 and you are asked to generate a five-year forecast for electricity production from nuclear generators.
+      To answer this question, we'll use the training data to make a model and then use the model to generate predictions.
+      We'll start with a seasonal decomposition of the training data.
+    </p>
+
+    <program language="python">
+      <input>
+decomposition = seasonal_decompose(training, model="additive", period=12)
+trend = decomposition.trend
+      </input>
+    </program>
+
+    <p>
+      Now we'll fit a linear model to the trend.
+      The explanatory variable, <c>months</c>, is the number of months from the beginning of the series.
+    </p>
+
+    <program language="python">
+      <input>
+import statsmodels.formula.api as smf
+
+months = np.arange(len(trend))
+data = pd.DataFrame({"trend": trend, "months": months}).dropna()
+results = smf.ols("trend ~ months", data=data).fit()
+      </input>
+    </program>
+
+    <p>
+      Here is a summary of the results.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import display_summary
+
+display_summary(results)
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> value is about 0.35, which suggests that the model does not fit the data particularly well.
+      We can get a better sense of that by plotting the fitted line.
+      We'll use the <c>predict</c> method to compute expected values for the training and test data.
+    </p>
+
+    <program language="python">
+      <input>
+months = np.arange(len(training) + len(test))
+df = pd.DataFrame({"months": months})
+pred_trend = results.predict(df)
+pred_trend.index = nuclear.index
+      </input>
+    </program>
+
+    <p>
+      Here's the trend component and the linear model.
+    </p>
+
+    <program language="python">
+      <input>
+trend.plot(**trend_options)
+pred_trend.plot(label="linear model", **model_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      There's a lot going on that's not captured by the linear model, but it looks like there is a generally increasing trend.
+    </p>
+    <p>
+      Next we'll use the seasonal component from the decomposition to compute a <c>Series</c> of monthly averages.
+    </p>
+
+    <program language="python">
+      <input>
+seasonal = decomposition.seasonal
+monthly_averages = seasonal.groupby(seasonal.index.month).mean()
+      </input>
+    </program>
+
+    <p>
+      We can predict the seasonal component by looking up the dates from the fitted line in <c>monthly_averages</c>.
+    </p>
+
+    <program language="python">
+      <input>
+pred_seasonal = monthly_averages[pred_trend.index.month]
+pred_seasonal.index = pred_trend.index
+      </input>
+    </program>
+
+    <p>
+      Finally, to generate predictions, we'll add the seasonal component to the trend.
+    </p>
+
+    <program language="python">
+      <input>
+pred = pred_trend + pred_seasonal
+      </input>
+    </program>
+
+    <p>
+      Here's the training data and the predictions.
+    </p>
+
+    <program language="python">
+      <input>
+pred.plot(label="prediction", **pred_options)
+training.plot(label="training", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The predictions fit the training data reasonably well, and the forecast looks like a reasonable projection, based on the assumption that the long-term trend will continue.
+    </p>
+    <p>
+      Now, from the vantage point of the future, let's see how accurate this forecast turned out to be.
+      Here are the predicted and actual values for the five-year interval from July 2019.
+    </p>
+
+    <program language="python">
+      <input>
+forecast = pred[test.index]
+forecast.plot(label="predicted", **pred_options)
+test.plot(label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The first year of the forecast was pretty good, but production from nuclear reactors in 2020 was lower than expected -- possibly due to the COVID-19 pandemic -- and it never returned to the long-term trend.
+    </p>
+    <p>
+      To quantify the accuracy of the predictions, we'll use the mean absolute percentage error (MAPE), which the following function computes.
+    </p>
+
+    <program language="python">
+      <input>
+def MAPE(predicted, actual):
+    ape = np.abs(predicted - actual) / actual
+    return np.mean(ape) * 100
+      </input>
+    </program>
+
+    <p>
+      In this example, the predictions are off by 3.81% on average.
+    </p>
+
+    <program language="python">
+      <input>
+MAPE(forecast, test)
+      </input>
+    </program>
+
+    <p>
+      We'll come back to this example later in the chapter and see if we can do better with a different model.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-multiplicative">
+    <title>Multiplicative Model</title>
+
+    <p>
+      The additive model we used in the previous section assumes that the time series is the <em>sum</em> of a long-term trend, a seasonal component, and a residual -- which implies that the magnitude of the seasonal component and the residuals does not vary over time.
+    </p>
+    <p>
+      As an example that violates this assumption, let's look at small-scale solar electricity production since 2014.
+    </p>
+
+    <program language="python">
+      <input>
+solar = elec["United States : small-scale solar photovoltaic"].dropna()
+solar.plot(label="solar", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      Over this interval, total production has increased several times over.
+      And it's clear that the magnitude of seasonal variation has increased as well.
+    </p>
+    <p>
+      If we suppose that the magnitudes of seasonal and random variation are proportional to the magnitude of the trend, that suggests an alternative to the additive model in which the time series is the <em>product</em> of the three components.
+    </p>
+    <p>
+      To try out this multiplicative model, we'll split this series into training and test sets.
+    </p>
+
+    <program language="python">
+      <input>
+training, test = split_series(solar)
+      </input>
+    </program>
+
+    <p>
+      And call <c>seasonal_decompose</c> with the <c>model="multiplicative"</c> argument.
+    </p>
+
+    <program language="python">
+      <input>
+decomposition = seasonal_decompose(training, model="multiplicative", period=12)
+      </input>
+    </program>
+
+    <p>
+      Here's what the results look like.
+    </p>
+
+    <program language="python">
+      <input>
+plot_decomposition(training, decomposition)
+      </input>
+    </program>
+
+    <p>
+      Now the seasonal and residual components are multiplicative factors.
+      So, it looks like the seasonal component varies from about 25% below the trend to 25% above.
+      And the residual component is usually less than 5% either way, with the exception of some larger factors in the first period.
+      We can extract the components of the model like this.
+    </p>
+
+    <program language="python">
+      <input>
+trend = decomposition.trend
+seasonal = decomposition.seasonal
+resid = decomposition.resid
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> value of this model is very high.
+    </p>
+
+    <program language="python">
+      <input>
+rsquared = 1 - resid.var() / training.var()
+rsquared
+      </input>
+    </program>
+
+    <p>
+      The production of a solar panel is largely a function of the sunlight it's exposed to, so it makes sense that production follows an annual cycle so closely.
+    </p>
+    <p>
+      To predict the long term trend, we'll use a quadratic model.
+    </p>
+
+    <program language="python">
+      <input>
+months = range(len(training))
+data = pd.DataFrame({"trend": trend, "months": months}).dropna()
+results = smf.ols("trend ~ months + I(months**2)", data=data).fit()
+      </input>
+    </program>
+
+    <p>
+      In the Patsy formula, the substring <c>I(months**2)</c> adds a quadratic term to the model, so we don't have to compute it explicitly.
+      Here are the results.
+    </p>
+
+    <program language="python">
+      <input>
+display_summary(results)
+      </input>
+    </program>
+
+    <p>
+      The p-values of the linear and quadratic terms are very small, which suggests that the quadratic model captures more information about the trend than a linear model would -- and the <m>R^2</m> value is very high.
+    </p>
+    <p>
+      Now we can use the model to compute the expected value of the trend for the past and future.
+    </p>
+
+    <program language="python">
+      <input>
+months = range(len(solar))
+df = pd.DataFrame({"months": months})
+pred_trend = results.predict(df)
+pred_trend.index = solar.index
+      </input>
+    </program>
+
+    <p>
+      Here's what it looks like.
+    </p>
+
+    <program language="python">
+      <input>
+pred_trend.plot(label="quadratic model", **model_options)
+trend.plot(**trend_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The quadratic model fits the past trend well.
+      Now we can use the seasonal component to predict future seasonal variation.
+    </p>
+
+    <program language="python">
+      <input>
+monthly_averages = seasonal.groupby(seasonal.index.month).mean()
+pred_seasonal = monthly_averages[pred_trend.index.month]
+pred_seasonal.index = pred_trend.index
+      </input>
+    </program>
+
+    <p>
+      Finally, to compute <term>retrodictions</term> for past values and predictions for the future, we multiply the trend and the seasonal component.
+    </p>
+
+    <program language="python">
+      <input>
+pred = pred_trend * pred_seasonal
+      </input>
+    </program>
+
+    <p>
+      Here is the result along with the training data.
+    </p>
+
+    <program language="python">
+      <input>
+training.plot(label="training", **actual_options)
+pred.plot(label="prediction", **pred_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The retrodictions fit the training data well and the predictions seem plausible -- now let's see if they turned out to be accurate.
+      Here are the predictions along with the test data.
+    </p>
+
+    <program language="python">
+      <input>
+future = pred[test.index]
+future.plot(label="prediction", **pred_options)
+test.plot(label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      For the first three years, the predictions are very good.
+      After that, it looks like actual growth exceeded expectations.
+    </p>
+    <p>
+      In this example, seasonal decomposition worked well for modeling and predicting solar production, but in the previous example, it was not very effective for nuclear production.
+      In the next section, we'll try a different approach, autoregression.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-autoregression">
+    <title>Autoregression</title>
+
+    <p>
+      The first idea of autoregression is that the future will be like the past.
+      For example, in the time series we've looked at so far, there is a clear annual cycle.
+      So if you are asked to make a prediction for next June, a good starting place would be last June.
+    </p>
+    <p>
+      To see how well that might work, let's go back to <c>nuclear</c>, which contains monthly electricity production from nuclear generators, and compute differences between the same month in successive years, which are called "year-over-year" differences.
+    </p>
+
+    <program language="python">
+      <input>
+diff = (nuclear - nuclear.shift(12)).dropna()
+diff.plot(label="year over year differences", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The magnitudes of these differences are substantially smaller than the magnitudes of the original series, which suggests the second idea of autoregression, which is that it might be easier to predict these differences, rather than the original values.
+    </p>
+    <p>
+      Toward that end, let's see if there are correlations between successive elements in the series of differences.
+      If so, we could use those correlations to predict future values based on previous values.
+    </p>
+    <p>
+      I'll start by making a <c>DataFrame</c>, putting the differences in the first column and putting the same differences -- shifted by 1, 2, and 3 months -- into successive columns.
+      These columns are named <c>lag1</c>, <c>lag2</c>, and <c>lag3</c>, because the series they contain have been <term>lagged</term> or delayed.
+    </p>
+
+    <program language="python">
+      <input>
+df_ar = pd.DataFrame({"diff": diff})
+for lag in [1, 2, 3]:
+    df_ar[f"lag{lag}"] = diff.shift(lag)
+
+df_ar = df_ar.dropna()
+      </input>
+    </program>
+
+    <p>
+      Here are the correlations between these columns.
+    </p>
+
+    <program language="python">
+      <input>
+df_ar.corr()[["diff"]]
+      </input>
+    </program>
+
+    <p>
+      These correlations are called lagged correlations or <term>autocorrelations</term> -- the prefix "auto" indicates that we're taking the correlation of the series with itself.
+      As a special case, the correlation between <c>diff</c> and <c>lag1</c> is called <term>serial correlation</term> because it is the correlation between successive elements in the series.
+    </p>
+    <p>
+      These correlation are strong enough to suggest that they should help with prediction, so let's put them into a multiple regression.
+      The following function uses the columns from the <c>DataFrame</c> to make a Patsy formula with the first column as the response variable and the other columns as explanatory variables.
+    </p>
+
+    <program language="python">
+      <input>
+def make_formula(df):
+    """Make a Patsy formula from column names."""
+    y = df.columns[0]
+    xs = " + ".join(df.columns[1:])
+    return f"{y} ~ {xs}"
+      </input>
+    </program>
+
+    <p>
+      Here are the results of a linear model that predicts the next value in a sequence based on the previous three values.
+    </p>
+
+    <program language="python">
+      <input>
+formula = make_formula(df_ar)
+results_ar = smf.ols(formula=formula, data=df_ar).fit()
+display_summary(results_ar)
+      </input>
+    </program>
+
+    <p>
+      Now we can use the <c>predict</c> method to generate predictions for the past values in the series.
+      Here's what these retrodictions look like compared to the data.
+    </p>
+
+    <program language="python">
+      <input>
+pred_ar = results_ar.predict(df_ar)
+pred_ar.plot(label="predictions", **pred_options)
+diff.plot(label="differences", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The predictions are good in some places, but the <m>R^2</m> value is only about 0.319, so there is room for improvement.
+    </p>
+
+    <program language="python">
+      <input>
+resid_ar = (diff - pred_ar).dropna()
+R2 = 1 - resid_ar.var() / diff.var()
+R2
+      </input>
+    </program>
+
+    <p>
+      One way to improve the predictions is to compute the residuals from this model and use another model to predict the residuals -- which is the third idea of autoregression.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-moving-average">
+    <title>Moving Average</title>
+
+    <p>
+      Suppose it's June 2019, and you are asked to make a prediction for June 2020.
+      Your first guess might be that this year's value will be repeated next year.
+    </p>
+    <p>
+      Now suppose it's May 2020, and you are asked to revise your prediction for June 2020.
+      You could use the results from the last three months, and the autocorrelation model from the previous section, to predict the year-over-year difference.
+    </p>
+    <p>
+      Finally, suppose you check the predictions for the last few months, and see that they have been consistently too low.
+      That suggests that the prediction for next month might also be too low, so you could revise it upward.
+      The underlying assumption is that recent prediction errors predict future prediction errors.
+    </p>
+    <p>
+      To see whether they do, we can make a <c>DataFrame</c> with the residuals from the autoregression model in the first column, and lagged versions of the residuals in the other columns.
+      For this example, I'll use lags of 1 and 6 months.
+    </p>
+
+    <program language="python">
+      <input>
+df_ma = pd.DataFrame({"resid": resid_ar})
+
+for lag in [1, 6]:
+    df_ma[f"lag{lag}"] = resid_ar.shift(lag)
+
+df_ma = df_ma.dropna()
+      </input>
+    </program>
+
+    <p>
+      We can use <c>ols</c> to make an autoregression model for the residuals.
+      This part of the model is called a "moving average" because it reduces variability in the predictions in a way that's analogous to the effect of a moving average.
+      I don't find that term particularly helpful, but it is conventional.
+    </p>
+    <p>
+      Anyway, here's a summary of the autoregression model for the residuals.
+    </p>
+
+    <program language="python">
+      <input>
+formula = make_formula(df_ma)
+results_ma = smf.ols(formula=formula, data=df_ma).fit()
+display_summary(results_ma)
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> is quite small, so it looks like this part of the model won't help very much.
+      But the p-value for the 6-month lag is small, which suggests that it contributes more information than we'd expect by chance.
+    </p>
+    <p>
+      Now we can use the model to generate retrodictions for the residuals.
+    </p>
+
+    <program language="python">
+      <input>
+pred_ma = results_ma.predict(df_ma)
+      </input>
+    </program>
+
+    <p>
+      Then, to generate retrodictions for the year-over-year differences, we add the adjustment from the second model to the retrodictions from the first.
+    </p>
+
+    <program language="python">
+      <input>
+pred_diff = pred_ar + pred_ma
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> value for the sum of the two models is about 0.332, which is just a little better than the result without the moving average adjustment (0.319).
+    </p>
+
+    <program language="python">
+      <input>
+resid_ma = (diff - pred_diff).dropna()
+R2 = 1 - resid_ma.var() / diff.var()
+R2
+      </input>
+    </program>
+
+    <p>
+      Next we'll use these year-over-year differences to generate retrodictions for the original values.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-retrodiction">
+    <title>Retrodiction with Autoregression</title>
+
+    <p>
+      To generate retrodictions, we'll start by putting the year-over-year differences in a <c>Series</c> that's aligned with the index of the original.
+    </p>
+
+    <program language="python">
+      <input>
+pred_diff = pd.Series(pred_diff, index=nuclear.index)
+      </input>
+    </program>
+
+    <p>
+      Using <c>isna</c> to check for <c>NaN</c> values, we find that the first 21 elements of the new <c>Series</c> are missing.
+    </p>
+
+    <program language="python">
+      <input>
+n_missing = pred_diff.isna().sum()
+n_missing
+      </input>
+    </program>
+
+    <p>
+      That's because we shifted the <c>Series</c> by 12 months to compute year-over-year differences, then we shifted the differences 3 months for the first autoregression model, and we shifted the residuals of the first model by 6 months for the second model.
+      Each time we shift a <c>Series</c> like this, we lose a few values at the beginning, and the sum of these shifts is 21.
+    </p>
+    <p>
+      So before we can generate retrodictions, we have to prime the pump by copying the first 21 elements from the original into a new <c>Series</c>.
+    </p>
+
+    <program language="python">
+      <input>
+pred_series = pd.Series(index=nuclear.index, dtype=float)
+pred_series.iloc[:n_missing] = nuclear.iloc[:n_missing]
+      </input>
+    </program>
+
+    <p>
+      Now we can run the following loop, which fills in the elements from index 21 (which is the 22nd element) to the end.
+      Each element is the sum of the value from the previous year and the predicted year-over-year difference.
+    </p>
+
+    <program language="python">
+      <input>
+for i in range(n_missing, len(pred_series)):
+    pred_series.iloc[i] = pred_series.iloc[i - 12] + pred_diff.iloc[i]
+      </input>
+    </program>
+
+    <p>
+      Now we'll replace the elements we copied with <c>NaN</c> so we don't get credit for "predicting" the first 21 values perfectly.
+    </p>
+
+    <program language="python">
+      <input>
+pred_series[:n_missing] = np.nan
+      </input>
+    </program>
+
+    <p>
+      Here's what the retrodictions look like compared to the original.
+    </p>
+
+    <program language="python">
+      <input>
+pred_series.plot(label="predicted", **pred_options)
+nuclear.plot(label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      They look pretty good, and the <m>R^2</m> value is about 0.86.
+    </p>
+
+    <program language="python">
+      <input>
+resid = (nuclear - pred_series).dropna()
+R2 = 1 - resid.var() / nuclear.var()
+R2
+      </input>
+    </program>
+
+    <p>
+      The model we used to compute these retrodictions is called SARIMA, which is one of a family of models called ARIMA.
+      Each part of these acronyms refers to an element of the model.
+    </p>
+    <ul>
+      <li><p><term>S</term> stands for seasonal, because the first step was to compute differences between values separated by one seasonal period.</p></li>
+      <li><p><term>AR</term> stands for autoregression, which we used to model lagged correlations in the differences.</p></li>
+      <li><p><term>I</term> stands for integrated, because the iterative process we used to compute <c>pred_series</c> is analogous to integration in calculus.</p></li>
+      <li><p><term>MA</term> stands for moving average, which is the conventional name for the second autoregression model we ran with the residuals from the first.</p></li>
+    </ul>
+    <p>
+      ARIMA models are powerful and versatile tools for modeling time series data.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-arima">
+    <title>ARIMA</title>
+
+    <p>
+      StatsModel provides a library called <c>tsa</c>, which stands for "time series analysis" -- it includes a function called <c>ARIMA</c> that fits ARIMA models and generates forecasts.
+    </p>
+    <p>
+      To fit the SARIMA model we developed in the previous sections, we'll call this function with two tuples as arguments: <c>order</c> and <c>seasonal_order</c>.
+      Here are the values in <c>order</c> that correspond to the model we used in the previous sections.
+    </p>
+
+    <program language="python">
+      <input>
+order = ([1, 2, 3], 0, [1, 6])
+      </input>
+    </program>
+
+    <p>
+      The values in <c>order</c> indicate:
+    </p>
+    <ul>
+      <li><p>Which lags should be included in the AR model -- in this example it's the first three.</p></li>
+      <li><p>How many times it should compute differences between successive elements -- in this example it's 0 because we computed a seasonal difference instead, and we'll get to that in a minute.</p></li>
+      <li><p>Which lags should be included in the MA model -- in this example it's the first and sixth.</p></li>
+    </ul>
+    <p>
+      Now here are the values in <c>seasonal_order</c>.
+    </p>
+
+    <program language="python">
+      <input>
+seasonal_order = (0, 1, 0, 12)
+      </input>
+    </program>
+
+    <p>
+      The first and third elements are 0, which means that this model does not include seasonal AR or seasonal MA.
+      The second element is 1, which means it computes seasonal differences -- and the last element is the seasonal period.
+    </p>
+    <p>
+      Here's how we use <c>ARIMA</c> to make and fit this model.
+    </p>
+
+    <program language="python">
+      <input>
+import statsmodels.tsa.api as tsa
+
+model = tsa.ARIMA(nuclear, order=order, seasonal_order=seasonal_order)
+results_arima = model.fit()
+display_summary(results_arima)
+      </input>
+    </program>
+
+    <p>
+      The results include estimated coefficients for the three lags in the AR model, the two lags in the MA model, and <c>sigma2</c>, which is the variance of the residuals.
+    </p>
+    <p>
+      From <c>results_arima</c> we can extract <c>fittedvalues</c>, which contains the retrodictions.
+      For the same reason there were missing values at the beginning of the retrodictions we computed, there are incorrect values at the beginning of <c>fittedvalues</c>, which we'll drop.
+    </p>
+
+    <program language="python">
+      <input>
+fittedvalues = results_arima.fittedvalues[n_missing:]
+      </input>
+    </program>
+
+    <p>
+      The fitted values are similar to the ones we computed, but not exactly the same -- probably because <c>ARIMA</c> handles the initial conditions differently.
+    </p>
+
+    <program language="python">
+      <input>
+fittedvalues.plot(label="ARIMA model", **pred_options)
+nuclear.plot(label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The <m>R^2</m> value is also similar but not precisely the same.
+    </p>
+
+    <program language="python">
+      <input>
+resid = fittedvalues - nuclear
+R2 = 1 - resid.var() / nuclear.var()
+R2
+      </input>
+    </program>
+
+    <p>
+      The <c>ARIMA</c> function makes it easy to experiment with different versions of the model.
+    </p>
+    <p>
+      As an exercise, try out different values in <c>order</c> and <c>seasonal_order</c> and see if you can find a model with higher <m>R^2</m>.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-prediction-arima">
+    <title>Prediction with ARIMA</title>
+
+    <p>
+      The object returned by <c>ARIMA</c> provides a method called <c>get_forecast</c> that generates predictions.
+      To demonstrate, we'll split the time series into a training and test set, and fit the same model to the training set.
+    </p>
+
+    <program language="python">
+      <input>
+training, test = split_series(nuclear)
+model = tsa.ARIMA(training, order=order, seasonal_order=seasonal_order)
+results_training = model.fit()
+      </input>
+    </program>
+
+    <p>
+      We can use the result to generate a forecast for the test set.
+    </p>
+
+    <program language="python">
+      <input>
+forecast = results_training.get_forecast(steps=len(test))
+      </input>
+    </program>
+
+    <p>
+      The result is an object that contains an attribute called <c>forecast_mean</c> and a function that returns a confidence interval.
+    </p>
+
+    <program language="python">
+      <input>
+forecast_mean = forecast.predicted_mean
+forecast_ci = forecast.conf_int()
+forecast_ci.columns = ["lower", "upper"]
+      </input>
+    </program>
+
+    <p>
+      We can plot the results like this and compare them to the actual time series.
+    </p>
+
+    <program language="python">
+      <input>
+plt.fill_between(
+    forecast_ci.index,
+    forecast_ci.lower,
+    forecast_ci.upper,
+    lw=0,
+    color="gray",
+    alpha=0.2,
+)
+plt.plot(forecast_mean.index, forecast_mean, label="forecast", **pred_options)
+plt.plot(test.index, test, label="actual", **actual_options)
+decorate(ylabel="GWh")
+      </input>
+    </program>
+
+    <p>
+      The actual values fall almost entirely within the confidence interval of the predictions.
+      Here's the MAPE of the predictions.
+    </p>
+
+    <program language="python">
+      <input>
+MAPE(forecast_mean, test)
+      </input>
+    </program>
+
+    <p>
+      The predictions are off by 3.38% on average, somewhat better than the results we got from seasonal decomposition (3.81%).
+    </p>
+    <p>
+      ARIMA is more versatile than seasonal decomposition, and can often make better predictions.
+      In this time series, the autocorrelations are not especially strong, so the advantage of ARIMA is modest.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-time-series-glossary">
+    <title>Glossary</title>
+
+    <dl>
+      <li>
+        <title>time series</title>
+        <p>A dataset where each value is associated with a specific time, often representing measurements taken at regular intervals.</p>
+      </li>
+      <li>
+        <title>seasonal decomposition</title>
+        <p>A method of splitting a time series into a long-term trend, a repeating seasonal component, and a residual component.</p>
+      </li>
+      <li>
+        <title>training series</title>
+        <p>Part of a time series used to fit a model.</p>
+      </li>
+      <li>
+        <title>test series</title>
+        <p>Part of a time series used to check the accuracy of predictions generated by a model.</p>
+      </li>
+      <li>
+        <title>retrodiction</title>
+        <p>A prediction for a value observed in the past, often used to test or validate a model.</p>
+      </li>
+      <li>
+        <title>window</title>
+        <p>A sequence of consecutive values in a time series, used to compute a moving average.</p>
+      </li>
+      <li>
+        <title>moving average</title>
+        <p>A time series computed by averaging values in overlapping windows to smooth fluctuations.</p>
+      </li>
+      <li>
+        <title>serial correlation</title>
+        <p>The correlation between successive elements of a time series.</p>
+      </li>
+      <li>
+        <title>autocorrelation</title>
+        <p>A correlation between a time series and a shifted or lagged version of itself.</p>
+      </li>
+      <li>
+        <title>lag</title>
+        <p>The size of the shift in a serial correlation or autocorrelation.</p>
+      </li>
+    </dl>
+
+  </section>
+
+  <exercises xml:id="ex-time-series">
+
+    <exercise xml:id="ex-time-series-1">
+      <title>Exercise 12.1</title>
+      <statement>
+        <p>
+          As an example of seasonal decomposition, let's model monthly average surface temperatures in the United States.
+          We'll use a dataset from Our World in Data that includes "temperature [in Celsius] of the air measured 2 meters above the ground, encompassing land, sea, and in-land water surfaces," for most countries in the world from 1950 to 2024.
+          Instructions for downloading the data are in the notebook for this chapter.
+        </p>
+        <program language="python">
+          <input>
+# The following cell downloads data prepared by Our World in Data,
+# which I Downloaded September 18, 2024
+# from https://ourworldindata.org/grapher/average-monthly-surface-temperature
+
+# Based on modified data from Copernicus Climate Change Service information (2019)
+# with "major processing" by Our World in Data
+          </input>
+        </program>
+        <program language="python">
+          <input>
+filename = "monthly-average-surface-temperatures-by-year.csv"
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
+          </input>
+        </program>
+        <p>
+          We can read the data like this.
+        </p>
+        <program language="python">
+          <input>
+temp = pd.read_csv("monthly-average-surface-temperatures-by-year.csv")
+          </input>
+        </program>
+        <program language="python">
+          <input>
+temp.head()
+          </input>
+        </program>
+        <p>
+          The following cell selects data for the United States from 2001 to the end of the series and packs it into a Pandas <c>Series</c>.
+        </p>
+        <program language="python">
+          <input>
+temp_us = temp.query("Code == 'USA'")
+columns = [str(year) for year in range(2000, 2025)]
+temp_series = temp_us.loc[:, columns].transpose().stack()
+temp_series.index = pd.date_range(start="2000-01", periods=len(temp_series), freq="ME")
+          </input>
+        </program>
+        <p>
+          Here's what it looks like.
+        </p>
+        <program language="python">
+          <input>
+temp_series.plot(label="monthly average", **actual_options)
+decorate(ylabel="Surface temperature (degC)")
+          </input>
+        </program>
+        <p>
+          Not surprisingly, there is a strong seasonal pattern.
+          Compute an additive seasonal decomposition with a period of 12 months.
+          Fit a linear model to the trend line.
+          What is the average annual increase in surface temperature during this interval?
+          If you are curious, repeat this analysis with other intervals or data from other countries.
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-time-series-2">
+      <title>Exercise 12.2</title>
+      <statement>
+        <p>
+          Earlier in this chapter we used a multiplicative seasonal decomposition to model electricity production from small-scale solar power from 2014 to 2019 and forecast production from 2019 to 2024.
+          Now let's do the same with utility-scale solar power.
+          Here's what the time series looks like.
+        </p>
+        <program language="python">
+          <input>
+util_solar = elec["United States : all utility-scale solar"].dropna()
+util_solar = util_solar[util_solar.index.year >= 2014]
+util_solar.plot(**actual_options)
+decorate(ylabel="GWh")
+          </input>
+        </program>
+        <p>
+          Use <c>split_series</c> to split this data into a training and test series.
+          Compute a multiplicative decomposition of the training series with a 12-month period.
+          Fit a linear or quadratic model to the trend and generate a five-year forecast, including a seasonal component.
+          Plot the forecast along with the test series, and compute the mean absolute percentage error (MAPE).
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-time-series-3">
+      <title>Exercise 12.3</title>
+      <statement>
+        <p>
+          Let's see how well an ARIMA model fits production from hydroelectric generators in the United States.
+          Here's what the time series looks like from 2001 to 2024.
+        </p>
+        <program language="python">
+          <input>
+hydro = elec["United States : conventional hydroelectric"]
+hydro.plot(**actual_options)
+decorate(ylabel="GWh")
+          </input>
+        </program>
+        <p>
+          Fit a SARIMA model to this data with a seasonal period of 12 months.
+          Experiment with different lags in the autoregression and moving average parts of the model and see if you can find a combination that maximizes the <m>R^2</m> value of the model.
+          Generate a five-year forecast and plot it along with its confidence interval.
+        </p>
+        <p>
+          NOTE: Depending on what lags you include in the model, you might find that the first 12 to 24 elements of the fitted values are not reliable. You might want to remove them before plotting or computing <m>R^2</m>.
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>
