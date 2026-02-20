@@ -23,6 +23,8 @@
       <c>f</c>, amplitude <c>A</c>, and phase shift <c>phi</c>.
       I'll give these parameters arbitrary values and we'll see if we can recover them.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 f = 1
@@ -30,10 +32,13 @@ A = 1.5
 phi = 0.5
       </input>
     </program>
+    </listing>
     <p>
       To synthesize the signal, I'll evaluate a cosine with these parameters over three
       cycles.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ts = np.linspace(0, 3, endpoint=False)
@@ -41,12 +46,15 @@ ys = A * np.cos(2 * np.pi * f * ts + phi)
 np.mean(ys)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-2.220446049250313e-16)
     </pre>
     <p>
       And add in zero-mean Gaussian noise.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.random.seed(1)
@@ -54,9 +62,12 @@ noise = np.random.normal(0, 0.5, size=len(ts))
 ys += noise - noise.mean()
       </input>
     </program>
+    </listing>
     <p>
       Here's what the signal looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.plot(ts, ys)
@@ -64,6 +75,7 @@ plt.xlabel('t')
 plt.ylabel('y');
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/fourier_001.png" width="80%"/>
     </figure>
@@ -81,6 +93,8 @@ plt.ylabel('y');
       regression with <m>\cos(\omega t)</m> and <m>\sin(\omega t)</m> as explanatory
       variables.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 data = pd.DataFrame(dict(ys=ys, ts=ts))
@@ -88,10 +102,13 @@ data['cos'] = np.cos(2 * np.pi * f * ts)
 data['sin'] = np.sin(2 * np.pi * f * ts)
       </input>
     </program>
+    </listing>
     <p>
       Now we can run the regression model (excluding the intercept, since we didn't include
       one in the synthesized signal).
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import statsmodels.formula.api as smf
@@ -100,6 +117,7 @@ res = smf.ols('ys ~ 0 + cos + sin', data=data).fit()
 res.summary()
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.summary.Summary'&gt;
 """
@@ -134,6 +152,8 @@ Notes:
     <p>
       Here's what the fitted model looks like compared to the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 data['yhat'] = res.fittedvalues
@@ -145,6 +165,7 @@ plt.ylabel('y')
 plt.legend();
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/fourier_002.png" width="80%"/>
     </figure>
@@ -154,6 +175,8 @@ plt.legend();
       the model, but we can compute them<mdash/>basically by converting them from Cartesian
       to polar coordinates.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 a = res.params['cos']
@@ -165,6 +188,7 @@ phi_hat = np.arctan2(-b, a)
 A_hat, phi_hat
       </input>
     </program>
+    </listing>
     <p>
       It looks like we recovered the parameters, at least approximately.
     </p>
@@ -177,21 +201,27 @@ A_hat, phi_hat
       Fourier analysis works on pretty much the same principle.
       Instead of using sine and cosine, it uses a complex exponential.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ws = np.exp(2 * np.pi * 1j * f * ts)
       </input>
     </program>
+    </listing>
     <p>
       We can estimate the parameters by computing the dot product of the complex exponential
       with the signal (which is basically correlation).
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 c = 2 / len(ts) * np.vdot(ws, ys)
 c
       </input>
     </program>
+    </listing>
     <pre>
 np.complex128(1.2602143401738164+0.68455041144776j)
     </pre>
@@ -199,6 +229,8 @@ np.complex128(1.2602143401738164+0.68455041144776j)
       The result is a complex number that represents the estimated amplitude and phase of the
       signal.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 A_hat = np.abs(c)
@@ -207,6 +239,7 @@ phi_hat = np.angle(c)
 A_hat, phi_hat
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(1.4341371792799409), np.float64(0.49760870975866645))
     </pre>

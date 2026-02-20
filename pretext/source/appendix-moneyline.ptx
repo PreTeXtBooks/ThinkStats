@@ -43,21 +43,27 @@
     <p>
       We can write a function to compute the expected value of a wager.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def expected_value(p, wager, payout):
     return p * payout - (1-p) * wager
       </input>
     </program>
+    </listing>
     <p>
       If the Patriots actually have a 25% chance of winning, the first wager has negative
       expected value<mdash/>so you probably don't want to make it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 expected_value(p=0.25, wager=100, payout=195)
       </input>
     </program>
+    </listing>
     <pre>
 -26.25
     </pre>
@@ -65,11 +71,14 @@ expected_value(p=0.25, wager=100, payout=195)
       Now let's compute the expected value of the second wager<mdash/>assuming the Seahawks
       have a 75% chance of winning:
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 expected_value(p=0.75, wager=240, payout=100)
       </input>
     </program>
+    </listing>
     <pre>
 15.0
     </pre>
@@ -87,21 +96,29 @@ expected_value(p=0.75, wager=240, payout=100)
       More generally, we can compute the expected value of each wager for a range of
       probabilities from 0 to 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = np.linspace(0, 1)
 ev_patriots = expected_value(ps, 100, 195)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = np.linspace(0, 1)
 ev_seahawks = expected_value(1-ps, 240, 100)
       </input>
     </program>
+    </listing>
     <p>
       Here's what they look like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.plot(ps, ev_patriots, label='Bet on Patriots')
@@ -112,6 +129,7 @@ decorate(xlabel='Actual probability Patriots win',
         ylabel='Expected value of wager')
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/moneyline_001.png" width="80%"/>
     </figure>
@@ -119,21 +137,27 @@ decorate(xlabel='Actual probability Patriots win',
       To find the crossover point, we can set the expected value to 0 and solve for <c>p</c>.
       This function computes the result:
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def crossover(wager, payout):
     return wager / (wager + payout)
       </input>
     </program>
+    </listing>
     <p>
       Here's the crossover for a bet on the Patriots at the offered odds.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p1 = crossover(100, 195)
 p1
       </input>
     </program>
+    </listing>
     <pre>
 0.3389830508474576
     </pre>
@@ -142,12 +166,15 @@ p1
       has positive expected value.
       And here's the crossover for a bet on the Seahawks.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p2 = crossover(240, 100)
 p2
       </input>
     </program>
+    </listing>
     <pre>
 0.7058823529411765
     </pre>
@@ -160,11 +187,14 @@ p2
       Patriots have a 33.9% chance of winning and the Seahawks have a 70.6% chance.
       But you might notice that the sum of those probabilities exceeds 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p1 + p2
       </input>
     </program>
+    </listing>
     <pre>
 1.0448654037886342
     </pre>
@@ -186,6 +216,8 @@ p1 + p2
     <p>
       Here's the total expected value of all of those wagers.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 total = expected_value(ps, 100_000, 195_000) + expected_value(1-ps, 240_000, 100_000)
@@ -197,6 +229,7 @@ decorate(xlabel='Actual probability Patriots win',
         ylabel='Total expected value of all wagers')
       </input>
     </program>
+    </listing>
     <p>
       The total expected value is negative for all probabilities (or zero if the Patriots
       have no chance at all)<mdash/>which means the house wins.
@@ -206,12 +239,15 @@ decorate(xlabel='Actual probability Patriots win',
       As an example, suppose the actual probability is the midpoint of the probabilities
       implied by the odds:
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p = (p1 + (1-p2)) / 2
 p
       </input>
     </program>
+    </listing>
     <pre>
 0.31655034895314055
     </pre>
@@ -219,20 +255,26 @@ p
       In that case, here's the expected take, assuming that the implied probability is
       correct.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 take = -expected_value(p, 100_000, 195_000) - expected_value(1-p, 240_000, 100_000)
 take
       </input>
     </program>
+    </listing>
     <p>
       As a percentage of the total betting pool, it's a little more than 4%.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 take / (100_000 + 240_000)
       </input>
     </program>
+    </listing>
     <pre>
 0.04189636971438623
     </pre>
@@ -240,11 +282,14 @@ take / (100_000 + 240_000)
       Which we could have approximated by computing the <term>overround</term>, which is the
       amount that the sum of the implied probabilities exceeds 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 (p1 + p2) - 1
       </input>
     </program>
+    </listing>
     <pre>
 0.04486540378863424
     </pre>

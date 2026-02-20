@@ -28,17 +28,22 @@
       The following cell downloads the data, which I downloaded September 17, 2024 from https://www.eia.gov/electricity/data/browser/.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 filename = "Net_generation_for_all_sectors.csv"
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
       </input>
     </program>
+    </listing>
 
     <p>
       After loading the data, we have to make some transformations to get it into a format that's easy to work with.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 elec = (
@@ -51,17 +56,21 @@ elec = (
 )
       </input>
     </program>
+    </listing>
 
     <p>
       In the reformatted dataset, each column is a sequence of monthly totals in gigawatt-hours (GWh).
       Here are the column labels, showing the different sources of electricity, or "sectors".
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 elec.columns
       </input>
     </program>
+    </listing>
     <pre>
 Index(['Net generation for all sectors', 'United States',
        'United States : all fuels (utility-scale)', 'United States : nuclear',
@@ -79,11 +88,14 @@ Index(['Net generation for all sectors', 'United States',
       The labels in the index are strings indicating months and years -- here are the first 12.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 elec.index[:12]
       </input>
     </program>
+    </listing>
     <pre>
 Index(['Jan 2001', 'Feb 2001', 'Mar 2001', 'Apr 2001', 'May 2001', 'Jun 2001',
        'Jul 2001', 'Aug 2001', 'Sep 2001', 'Oct 2001', 'Nov 2001', 'Dec 2001'],
@@ -95,12 +107,15 @@ Index(['Jan 2001', 'Feb 2001', 'Mar 2001', 'Apr 2001', 'May 2001', 'Jun 2001',
       We can use the <c>date_range</c> function to generate a sequence of <c>Timestamp</c> objects, starting in January 2001 with the frequency code <c>"ME"</c>, which stands for "month end", so it fills in the last day of each month.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 elec.index = pd.date_range(start="2001-01", periods=len(elec), freq="ME")
 elec.index[:6]
       </input>
     </program>
+    </listing>
     <pre>
 DatetimeIndex(['2001-01-31', '2001-02-28', '2001-03-31', '2001-04-30',
                '2001-05-31', '2001-06-30'],
@@ -121,6 +136,8 @@ DatetimeIndex(['2001-01-31', '2001-02-28', '2001-03-31', '2001-04-30',
       Here are monthly totals of electricity generation from nuclear reactors in the United States.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 actual_options = dict(color="C0", lw=1, alpha=0.6)
@@ -129,7 +146,10 @@ pred_options = dict(color="C2", alpha=0.6, ls=':')
 model_options = dict(color="gray", alpha=0.6, ls='--')
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nuclear = elec["United States : nuclear"]
@@ -138,6 +158,7 @@ nuclear.plot(label="nuclear", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_001.png" width="80%"/>
     </figure>
@@ -147,11 +168,14 @@ decorate(ylabel="GWh")
       To see the long-term trend more clearly, we can use the <c>rolling</c> and <c>mean</c> methods to compute a <term>moving average</term>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 trend = nuclear.rolling(window=12).mean()
       </input>
     </program>
+    </listing>
 
     <p>
       The <c>window=12</c> argument selects overlapping intervals of 12 months, so the first interval contains 12 measurements starting with the first, the second interval contains 12 measurements starting with the second, and so on.
@@ -161,6 +185,8 @@ trend = nuclear.rolling(window=12).mean()
       Here's what the results look like, along with the original data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nuclear.plot(label="nuclear", **actual_options)
@@ -168,6 +194,7 @@ trend.plot(label="trend", **trend_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_002.png" width="80%"/>
     </figure>
@@ -181,6 +208,8 @@ decorate(ylabel="GWh")
       Here's what it looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 detrended = (nuclear - trend).dropna()
@@ -188,6 +217,7 @@ detrended.plot(label="detrended", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_003.png" width="80%"/>
     </figure>
@@ -198,6 +228,8 @@ decorate(ylabel="GWh")
       Here's what the monthly averages look like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 monthly_averages = detrended.groupby(detrended.index.month).mean()
@@ -205,6 +237,7 @@ monthly_averages.plot(label="monthly average", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_004.png" width="80%"/>
     </figure>
@@ -218,6 +251,8 @@ decorate(ylabel="GWh")
       Here's what it looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 seasonal = monthly_averages[nuclear.index.month]
@@ -226,6 +261,7 @@ seasonal.plot(label="seasonal", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_005.png" width="80%"/>
     </figure>
@@ -237,16 +273,21 @@ decorate(ylabel="GWh")
       The sum of the trend and the seasonal component represents the expected value for each month.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 expected = trend + seasonal
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what it looks like compared to the original series.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 expected.plot(label="expected", **pred_options)
@@ -254,6 +295,7 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_006.png" width="80%"/>
     </figure>
@@ -262,6 +304,8 @@ decorate(ylabel="GWh")
       If we subtract this sum from the original series, the result is the residual component, which represents the departure from the expected value for each month.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resid = nuclear - expected
@@ -269,6 +313,7 @@ resid.plot(label="residual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_007.png" width="80%"/>
     </figure>
@@ -282,6 +327,8 @@ decorate(ylabel="GWh")
       Here's what the distribution of the residuals look like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import plot_kde
@@ -290,6 +337,7 @@ plot_kde(resid.dropna())
 decorate(xlabel="Residual (GWh)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_008.png" width="80%"/>
     </figure>
@@ -301,12 +349,15 @@ decorate(xlabel="Residual (GWh)", ylabel="Density")
       To quantify how well this model describes the original series, we can compute the coefficient of determination, which indicates how much smaller the variance of the residuals is, compared to the variance of the original series.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 rsquared = 1 - resid.var() / nuclear.var()
 rsquared
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9054559977517084)
     </pre>
@@ -320,6 +371,8 @@ np.float64(0.9054559977517084)
       StatsModels provides a function that does it, called <c>seasonal_decompose</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -327,6 +380,7 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 decomposition = seasonal_decompose(nuclear, model="additive", period=12)
       </input>
     </program>
+    </listing>
 
     <p>
       The <c>model="additive"</c> argument indicates the additive model, so the series is decomposed into the sum of a trend, seasonal component, and residual.
@@ -338,6 +392,8 @@ decomposition = seasonal_decompose(nuclear, model="additive", period=12)
       The notebook for this chapter provides a function that plots them.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def plot_decomposition(original, decomposition):
@@ -362,12 +418,16 @@ def plot_decomposition(original, decomposition):
     plt.tight_layout()
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_decomposition(nuclear, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_009.png" width="80%"/>
     </figure>
@@ -390,6 +450,8 @@ plot_decomposition(nuclear, decomposition)
       To demonstrate, we'll use the following function to split the time series into a <term>training series</term>, which we'll use to generate predictions, and a <term>test series</term>, which we'll use to see whether they are accurate.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def split_series(series, n=60):
@@ -398,17 +460,21 @@ def split_series(series, n=60):
     return training, test
       </input>
     </program>
+    </listing>
 
     <p>
       With <c>n=60</c>, the duration of the test series is five years, starting in July 2019.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 training, test = split_series(nuclear)
 test.index[0]
       </input>
     </program>
+    </listing>
     <pre>
 Timestamp('2019-07-31 00:00:00')
     </pre>
@@ -419,18 +485,23 @@ Timestamp('2019-07-31 00:00:00')
       We'll start with a seasonal decomposition of the training data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 decomposition = seasonal_decompose(training, model="additive", period=12)
 trend = decomposition.trend
       </input>
     </program>
+    </listing>
 
     <p>
       Now we'll fit a linear model to the trend.
       The explanatory variable, <c>months</c>, is the number of months from the beginning of the series.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import statsmodels.formula.api as smf
@@ -440,11 +511,14 @@ data = pd.DataFrame({"trend": trend, "months": months}).dropna()
 results = smf.ols("trend ~ months", data=data).fit()
       </input>
     </program>
+    </listing>
 
     <p>
       Here is a summary of the results.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import display_summary
@@ -452,6 +526,7 @@ from thinkstats import display_summary
 display_summary(results)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -465,6 +540,8 @@ display_summary(results)
       We'll use the <c>predict</c> method to compute expected values for the training and test data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 months = np.arange(len(training) + len(test))
@@ -473,11 +550,14 @@ pred_trend = results.predict(df)
 pred_trend.index = nuclear.index
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the trend component and the linear model.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 trend.plot(**trend_options)
@@ -485,6 +565,7 @@ pred_trend.plot(label="linear model", **model_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_010.png" width="80%"/>
     </figure>
@@ -496,38 +577,49 @@ decorate(ylabel="GWh")
       Next we'll use the seasonal component from the decomposition to compute a <c>Series</c> of monthly averages.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 seasonal = decomposition.seasonal
 monthly_averages = seasonal.groupby(seasonal.index.month).mean()
       </input>
     </program>
+    </listing>
 
     <p>
       We can predict the seasonal component by looking up the dates from the fitted line in <c>monthly_averages</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_seasonal = monthly_averages[pred_trend.index.month]
 pred_seasonal.index = pred_trend.index
       </input>
     </program>
+    </listing>
 
     <p>
       Finally, to generate predictions, we'll add the seasonal component to the trend.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred = pred_trend + pred_seasonal
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the training data and the predictions.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred.plot(label="prediction", **pred_options)
@@ -535,6 +627,7 @@ training.plot(label="training", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_011.png" width="80%"/>
     </figure>
@@ -547,6 +640,8 @@ decorate(ylabel="GWh")
       Here are the predicted and actual values for the five-year interval from July 2019.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 forecast = pred[test.index]
@@ -555,6 +650,7 @@ test.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_012.png" width="80%"/>
     </figure>
@@ -566,6 +662,8 @@ decorate(ylabel="GWh")
       To quantify the accuracy of the predictions, we'll use the mean absolute percentage error (MAPE), which the following function computes.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def MAPE(predicted, actual):
@@ -573,16 +671,20 @@ def MAPE(predicted, actual):
     return np.mean(ape) * 100
       </input>
     </program>
+    </listing>
 
     <p>
       In this example, the predictions are off by 3.81% on average.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 MAPE(forecast, test)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.811940747879257)
     </pre>
@@ -603,6 +705,8 @@ np.float64(3.811940747879257)
       As an example that violates this assumption, let's look at small-scale solar electricity production since 2014.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 solar = elec["United States : small-scale solar photovoltaic"].dropna()
@@ -610,6 +714,7 @@ solar.plot(label="solar", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_013.png" width="80%"/>
     </figure>
@@ -625,31 +730,40 @@ decorate(ylabel="GWh")
       To try out this multiplicative model, we'll split this series into training and test sets.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 training, test = split_series(solar)
       </input>
     </program>
+    </listing>
 
     <p>
       And call <c>seasonal_decompose</c> with the <c>model="multiplicative"</c> argument.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 decomposition = seasonal_decompose(training, model="multiplicative", period=12)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the results look like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_decomposition(training, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_014.png" width="80%"/>
     </figure>
@@ -661,6 +775,8 @@ plot_decomposition(training, decomposition)
       We can extract the components of the model like this.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 trend = decomposition.trend
@@ -668,17 +784,21 @@ seasonal = decomposition.seasonal
 resid = decomposition.resid
       </input>
     </program>
+    </listing>
 
     <p>
       The <m>R^2</m> value of this model is very high.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 rsquared = 1 - resid.var() / training.var()
 rsquared
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9999999992978134)
     </pre>
@@ -690,6 +810,8 @@ np.float64(0.9999999992978134)
       To predict the long term trend, we'll use a quadratic model.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 months = range(len(training))
@@ -697,17 +819,21 @@ data = pd.DataFrame({"trend": trend, "months": months}).dropna()
 results = smf.ols("trend ~ months + I(months**2)", data=data).fit()
       </input>
     </program>
+    </listing>
 
     <p>
       In the Patsy formula, the substring <c>I(months**2)</c> adds a quadratic term to the model, so we don't have to compute it explicitly.
       Here are the results.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 display_summary(results)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -722,6 +848,8 @@ display_summary(results)
       Now we can use the model to compute the expected value of the trend for the past and future.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 months = range(len(solar))
@@ -730,11 +858,14 @@ pred_trend = results.predict(df)
 pred_trend.index = solar.index
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what it looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_trend.plot(label="quadratic model", **model_options)
@@ -742,6 +873,7 @@ trend.plot(**trend_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_015.png" width="80%"/>
     </figure>
@@ -751,6 +883,8 @@ decorate(ylabel="GWh")
       Now we can use the seasonal component to predict future seasonal variation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 monthly_averages = seasonal.groupby(seasonal.index.month).mean()
@@ -758,21 +892,27 @@ pred_seasonal = monthly_averages[pred_trend.index.month]
 pred_seasonal.index = pred_trend.index
       </input>
     </program>
+    </listing>
 
     <p>
       Finally, to compute <term>retrodictions</term> for past values and predictions for the future, we multiply the trend and the seasonal component.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred = pred_trend * pred_seasonal
       </input>
     </program>
+    </listing>
 
     <p>
       Here is the result along with the training data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 training.plot(label="training", **actual_options)
@@ -780,6 +920,7 @@ pred.plot(label="prediction", **pred_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_016.png" width="80%"/>
     </figure>
@@ -789,6 +930,8 @@ decorate(ylabel="GWh")
       Here are the predictions along with the test data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 future = pred[test.index]
@@ -797,6 +940,7 @@ test.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_017.png" width="80%"/>
     </figure>
@@ -824,6 +968,8 @@ decorate(ylabel="GWh")
       To see how well that might work, let's go back to <c>nuclear</c>, which contains monthly electricity production from nuclear generators, and compute differences between the same month in successive years, which are called "year-over-year" differences.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff = (nuclear - nuclear.shift(12)).dropna()
@@ -831,6 +977,7 @@ diff.plot(label="year over year differences", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_018.png" width="80%"/>
     </figure>
@@ -847,6 +994,8 @@ decorate(ylabel="GWh")
       These columns are named <c>lag1</c>, <c>lag2</c>, and <c>lag3</c>, because the series they contain have been <term>lagged</term> or delayed.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df_ar = pd.DataFrame({"diff": diff})
@@ -856,16 +1005,20 @@ for lag in [1, 2, 3]:
 df_ar = df_ar.dropna()
       </input>
     </program>
+    </listing>
 
     <p>
       Here are the correlations between these columns.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df_ar.corr()[["diff"]]
       </input>
     </program>
+    </listing>
     <pre>
           diff
 diff  1.000000
@@ -883,6 +1036,8 @@ lag3  0.222228
       The following function uses the columns from the <c>DataFrame</c> to make a Patsy formula with the first column as the response variable and the other columns as explanatory variables.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def make_formula(df):
@@ -892,11 +1047,14 @@ def make_formula(df):
     return f"{y} ~ {xs}"
       </input>
     </program>
+    </listing>
 
     <p>
       Here are the results of a linear model that predicts the next value in a sequence based on the previous three values.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = make_formula(df_ar)
@@ -904,6 +1062,7 @@ results_ar = smf.ols(formula=formula, data=df_ar).fit()
 display_summary(results_ar)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -916,6 +1075,8 @@ display_summary(results_ar)
       Here's what these retrodictions look like compared to the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_ar = results_ar.predict(df_ar)
@@ -924,6 +1085,7 @@ diff.plot(label="differences", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_019.png" width="80%"/>
     </figure>
@@ -932,6 +1094,8 @@ decorate(ylabel="GWh")
       The predictions are good in some places, but the <m>R^2</m> value is only about 0.319, so there is room for improvement.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resid_ar = (diff - pred_ar).dropna()
@@ -939,6 +1103,7 @@ R2 = 1 - resid_ar.var() / diff.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.3190252265690783)
     </pre>
@@ -970,6 +1135,8 @@ np.float64(0.3190252265690783)
       For this example, I'll use lags of 1 and 6 months.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df_ma = pd.DataFrame({"resid": resid_ar})
@@ -980,6 +1147,7 @@ for lag in [1, 6]:
 df_ma = df_ma.dropna()
       </input>
     </program>
+    </listing>
 
     <p>
       We can use <c>ols</c> to make an autoregression model for the residuals.
@@ -990,6 +1158,8 @@ df_ma = df_ma.dropna()
       Anyway, here's a summary of the autoregression model for the residuals.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = make_formula(df_ma)
@@ -997,6 +1167,7 @@ results_ma = smf.ols(formula=formula, data=df_ma).fit()
 display_summary(results_ma)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -1012,26 +1183,34 @@ display_summary(results_ma)
       Now we can use the model to generate retrodictions for the residuals.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_ma = results_ma.predict(df_ma)
       </input>
     </program>
+    </listing>
 
     <p>
       Then, to generate retrodictions for the year-over-year differences, we add the adjustment from the second model to the retrodictions from the first.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_diff = pred_ar + pred_ma
       </input>
     </program>
+    </listing>
 
     <p>
       The <m>R^2</m> value for the sum of the two models is about 0.332, which is just a little better than the result without the moving average adjustment (0.319).
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resid_ma = (diff - pred_diff).dropna()
@@ -1039,6 +1218,7 @@ R2 = 1 - resid_ma.var() / diff.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.3315101001391231)
     </pre>
@@ -1056,22 +1236,28 @@ np.float64(0.3315101001391231)
       To generate retrodictions, we'll start by putting the year-over-year differences in a <c>Series</c> that's aligned with the index of the original.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_diff = pd.Series(pred_diff, index=nuclear.index)
       </input>
     </program>
+    </listing>
 
     <p>
       Using <c>isna</c> to check for <c>NaN</c> values, we find that the first 21 elements of the new <c>Series</c> are missing.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n_missing = pred_diff.isna().sum()
 n_missing
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(21)
     </pre>
@@ -1084,39 +1270,50 @@ np.int64(21)
       So before we can generate retrodictions, we have to prime the pump by copying the first 21 elements from the original into a new <c>Series</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_series = pd.Series(index=nuclear.index, dtype=float)
 pred_series.iloc[:n_missing] = nuclear.iloc[:n_missing]
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can run the following loop, which fills in the elements from index 21 (which is the 22nd element) to the end.
       Each element is the sum of the value from the previous year and the predicted year-over-year difference.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for i in range(n_missing, len(pred_series)):
     pred_series.iloc[i] = pred_series.iloc[i - 12] + pred_diff.iloc[i]
       </input>
     </program>
+    </listing>
 
     <p>
       Now we'll replace the elements we copied with <c>NaN</c> so we don't get credit for "predicting" the first 21 values perfectly.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_series[:n_missing] = np.nan
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the retrodictions look like compared to the original.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pred_series.plot(label="predicted", **pred_options)
@@ -1124,6 +1321,7 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_020.png" width="80%"/>
     </figure>
@@ -1132,6 +1330,8 @@ decorate(ylabel="GWh")
       They look pretty good, and the <m>R^2</m> value is about 0.86.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resid = (nuclear - pred_series).dropna()
@@ -1139,6 +1339,7 @@ R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8586566911201015)
     </pre>
@@ -1170,11 +1371,14 @@ np.float64(0.8586566911201015)
       Here are the values in <c>order</c> that correspond to the model we used in the previous sections.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 order = ([1, 2, 3], 0, [1, 6])
       </input>
     </program>
+    </listing>
 
     <p>
       The values in <c>order</c> indicate:
@@ -1188,11 +1392,14 @@ order = ([1, 2, 3], 0, [1, 6])
       Now here are the values in <c>seasonal_order</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 seasonal_order = (0, 1, 0, 12)
       </input>
     </program>
+    </listing>
 
     <p>
       The first and third elements are 0, which means that this model does not include seasonal AR or seasonal MA.
@@ -1202,6 +1409,8 @@ seasonal_order = (0, 1, 0, 12)
       Here's how we use <c>ARIMA</c> to make and fit this model.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import statsmodels.tsa.api as tsa
@@ -1211,6 +1420,7 @@ results_arima = model.fit()
 display_summary(results_arima)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -1223,16 +1433,21 @@ display_summary(results_arima)
       For the same reason there were missing values at the beginning of the retrodictions we computed, there are incorrect values at the beginning of <c>fittedvalues</c>, which we'll drop.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fittedvalues = results_arima.fittedvalues[n_missing:]
       </input>
     </program>
+    </listing>
 
     <p>
       The fitted values are similar to the ones we computed, but not exactly the same -- probably because <c>ARIMA</c> handles the initial conditions differently.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fittedvalues.plot(label="ARIMA model", **pred_options)
@@ -1240,6 +1455,7 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_021.png" width="80%"/>
     </figure>
@@ -1248,6 +1464,8 @@ decorate(ylabel="GWh")
       The <m>R^2</m> value is also similar but not precisely the same.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resid = fittedvalues - nuclear
@@ -1255,6 +1473,7 @@ R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8262717330822065)
     </pre>
@@ -1276,6 +1495,8 @@ np.float64(0.8262717330822065)
       To demonstrate, we'll split the time series into a training and test set, and fit the same model to the training set.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 training, test = split_series(nuclear)
@@ -1283,21 +1504,27 @@ model = tsa.ARIMA(training, order=order, seasonal_order=seasonal_order)
 results_training = model.fit()
       </input>
     </program>
+    </listing>
 
     <p>
       We can use the result to generate a forecast for the test set.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 forecast = results_training.get_forecast(steps=len(test))
       </input>
     </program>
+    </listing>
 
     <p>
       The result is an object that contains an attribute called <c>forecast_mean</c> and a function that returns a confidence interval.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 forecast_mean = forecast.predicted_mean
@@ -1305,11 +1532,14 @@ forecast_ci = forecast.conf_int()
 forecast_ci.columns = ["lower", "upper"]
       </input>
     </program>
+    </listing>
 
     <p>
       We can plot the results like this and compare them to the actual time series.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.fill_between(
@@ -1325,6 +1555,7 @@ plt.plot(test.index, test, label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_022.png" width="80%"/>
     </figure>
@@ -1334,11 +1565,14 @@ decorate(ylabel="GWh")
       Here's the MAPE of the predictions.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 MAPE(forecast_mean, test)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.3817549248044547)
     </pre>
@@ -1411,6 +1645,8 @@ np.float64(3.3817549248044547)
           We'll use a dataset from Our World in Data that includes "temperature [in Celsius] of the air measured 2 meters above the ground, encompassing land, sea, and in-land water surfaces," for most countries in the world from 1950 to 2024.
           Instructions for downloading the data are in the notebook for this chapter.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 # The following cell downloads data prepared by Our World in Data,
@@ -1421,25 +1657,35 @@ np.float64(3.3817549248044547)
 # with "major processing" by Our World in Data
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 filename = "monthly-average-surface-temperatures-by-year.csv"
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
           </input>
         </program>
+        </listing>
         <p>
           We can read the data like this.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 temp = pd.read_csv("monthly-average-surface-temperatures-by-year.csv")
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 temp.head()
           </input>
         </program>
+        </listing>
     <pre>
         Entity Code  Year       2024       2023       2022       2021  \
 0  Afghanistan  AFG     1   3.300064  -4.335608  -0.322859  -1.001608   
@@ -1467,6 +1713,8 @@ temp.head()
         <p>
           The following cell selects data for the United States from 2001 to the end of the series and packs it into a Pandas <c>Series</c>.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 temp_us = temp.query("Code == 'USA'")
@@ -1475,15 +1723,19 @@ temp_series = temp_us.loc[:, columns].transpose().stack()
 temp_series.index = pd.date_range(start="2000-01", periods=len(temp_series), freq="ME")
           </input>
         </program>
+        </listing>
         <p>
           Here's what it looks like.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 temp_series.plot(label="monthly average", **actual_options)
 decorate(ylabel="Surface temperature (degC)")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_023.png" width="80%"/>
     </figure>
@@ -1505,6 +1757,8 @@ decorate(ylabel="Surface temperature (degC)")
           Now let's do the same with utility-scale solar power.
           Here's what the time series looks like.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 util_solar = elec["United States : all utility-scale solar"].dropna()
@@ -1513,6 +1767,7 @@ util_solar.plot(**actual_options)
 decorate(ylabel="GWh")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_027.png" width="80%"/>
     </figure>
@@ -1532,6 +1787,8 @@ decorate(ylabel="GWh")
           Let's see how well an ARIMA model fits production from hydroelectric generators in the United States.
           Here's what the time series looks like from 2001 to 2024.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 hydro = elec["United States : conventional hydroelectric"]
@@ -1539,6 +1796,7 @@ hydro.plot(**actual_options)
 decorate(ylabel="GWh")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_032.png" width="80%"/>
     </figure>

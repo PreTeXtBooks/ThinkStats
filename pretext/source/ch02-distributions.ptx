@@ -24,28 +24,37 @@
       <c>empiricaldist</c> provides a class called <c>FreqTab</c> that we can use to compute and plot frequency tables.
       We can import it like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import FreqTab
       </input>
     </program>
+    </listing>
     <p>
       To show how it works, we'll start with a small list of values.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t = [1.0, 2.0, 2.0, 3.0, 5.0]
       </input>
     </program>
+    </listing>
     <p>
       <c>FreqTab</c> provides a method called <c>from_seq</c> that takes a sequence and makes a <c>FreqTab</c> object.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab = FreqTab.from_seq(t)
 ftab
       </input>
     </program>
+    </listing>
     <pre>
 1.0    1
 2.0    2
@@ -60,79 +69,100 @@ Name: , dtype: int64
     <p>
       <c>FreqTab</c> provides a method called <c>bar</c> that plots the frequency table as a bar chart.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab.bar()
 decorate(xlabel="Value", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_001.png" width="80%"/>
     </figure>
     <p>
       Because a <c>FreqTab</c> is a Pandas <c>Series</c>, we can use the bracket operator to look up a value and get its frequency.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab[2.0]
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(2)
     </pre>
     <p>
       But unlike a Pandas <c>Series</c>, we can also call a <c>FreqTab</c> object like a function to look up a value.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab(2.0)
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(2)
     </pre>
     <p>
       If we look up a value that does not appear in the <c>FreqTab</c>, the function syntax returns <c>0</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab(4.0)
       </input>
     </program>
+    </listing>
     <pre>
 0
     </pre>
     <p>
       A <c>FreqTab</c> object has an attribute called <c>qs</c> that returns an array of values <mdash/> <c>qs</c> stands for quantities, although technically not all values are quantities.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab.qs
       </input>
     </program>
+    </listing>
     <pre>
 array([1., 2., 3., 5.])
     </pre>
     <p>
       <c>FreqTab</c> also has an attribute called <c>fs</c> that returns an array of frequencies.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab.fs
       </input>
     </program>
+    </listing>
     <pre>
 array([1, 2, 1, 1])
     </pre>
     <p>
       <c>FreqTab</c> provides an <c>items</c> method we can use to loop through quantity-frequency pairs:
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for x, freq in ftab.items():
     print(x, freq)
       </input>
     </program>
+    </listing>
     <pre>
 1.0 1
 2.0 2
@@ -159,6 +189,8 @@ for x, freq in ftab.items():
     <p>
       We can import it and read the pregnancy file like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import read_fem_preg
@@ -166,15 +198,19 @@ from nsfg import read_fem_preg
 preg = read_fem_preg()
       </input>
     </program>
+    </listing>
     <p>
       For the examples in this chapter, we'll focus on pregnancies that ended in live birth.
       We can use the <c>query</c> method to select the rows where <c>outcome</c> is 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 live = preg.query("outcome == 1")
       </input>
     </program>
+    </listing>
     <p>
       In the string that's passed to <c>query</c>, variable names like <c>outcome</c> refer to column names in the <c>DataFrame</c>.
       This string can also contain operators like <c>==</c> and operands like <c>1</c>.
@@ -183,20 +219,26 @@ live = preg.query("outcome == 1")
       Now we can use <c>FreqTab.from_seq</c> to count the number of times each quantity appears in <c>birthwgt_lb</c>, which is the pounds part of the birth weights.
       The <c>name</c> argument gives the <c>FreqTab</c> object a name, which is used as a label when we plot it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_lb = FreqTab.from_seq(live["birthwgt_lb"], name="birthwgt_lb")
       </input>
     </program>
+    </listing>
     <p>
       Here's what the distribution looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_lb.bar()
 decorate(xlabel="Pounds", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_002.png" width="80%"/>
     </figure>
@@ -205,22 +247,28 @@ decorate(xlabel="Pounds", ylabel="Frequency")
       The other notable feature of the distribution is the <term>mode</term>, which is the most common value.
       To find the mode, we can use the method <c>idxmax</c>, which finds the quantity associated with the highest frequency.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_lb.idxmax()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.0)
     </pre>
     <p>
       <c>FreqTab</c> provides a method called <c>mode</c> that does the same thing.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_lb.mode()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.0)
     </pre>
@@ -230,6 +278,8 @@ np.float64(7.0)
     <p>
       As another example, here's the frequency table of <c>birthwgt_oz</c>, which is the ounces part of birth weight.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_oz = FreqTab.from_seq(live["birthwgt_oz"], name="birthwgt_oz")
@@ -237,6 +287,7 @@ ftab_oz.bar()
 decorate(xlabel="Ounces", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_003.png" width="80%"/>
     </figure>
@@ -247,21 +298,27 @@ decorate(xlabel="Ounces", ylabel="Frequency")
     <p>
       As another example, let's look at the frequency table of <c>agepreg</c>, which is the mother's age at the end of pregnancy.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_age = FreqTab.from_seq(live["agepreg"], name="agepreg")
       </input>
     </program>
+    </listing>
     <p>
       In the NSFG, age is recorded in years and months, so there are more unique values than in the other distributions we've looked at.
       For that reason, we'll pass <c>width=0.1</c> as a keyword argument to the <c>bar</c> method, which adjusts the width of the bars so they don't overlap too much.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_age.bar(width=0.1)
 decorate(xlabel="Age", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_004.png" width="80%"/>
     </figure>
@@ -272,6 +329,8 @@ decorate(xlabel="Age", ylabel="Frequency")
       Finally, let's look at the frequency table of <c>prglngth</c>, which is the length of the pregnancy in weeks.
       The <c>xlim</c> argument sets the limit of the x-axis to the range from 20 to 50 weeks <mdash/> there are not many values outside this range, and they are probably errors.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_length = FreqTab.from_seq(live["prglngth"], name="prglngth")
@@ -279,6 +338,7 @@ ftab_length.bar()
 decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_005.png" width="80%"/>
     </figure>
@@ -298,20 +358,26 @@ decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
     <p>
       To identify outliers, the following function takes a <c>FreqTab</c> object and an integer <c>n</c>, and uses a slice index to select the <c>n</c> smallest quantities and their frequencies.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def smallest(ftab, n=10):
     return ftab[:n]
       </input>
     </program>
+    </listing>
     <p>
       In the frequency table of <c>prglngth</c>, here are the 10 smallest values.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 smallest(ftab_length)
       </input>
     </program>
+    </listing>
     <pre>
 prglngth
 0     1
@@ -335,20 +401,26 @@ Name: prglngth, dtype: int64
     <p>
       The following function selects the largest values from a <c>FreqTab</c> object.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def largest(ftab, n=10):
     return ftab[-n:]
       </input>
     </program>
+    </listing>
     <p>
       Here are the longest pregnancy lengths in the dataset.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 largest(ftab_length)
       </input>
     </program>
+    </listing>
     <pre>
 prglngth
 40    1116
@@ -385,24 +457,32 @@ Name: prglngth, dtype: int64
       Now let's compare the distribution of pregnancy lengths for first babies and others.
       We can use the <c>query</c> method to select rows that represent first babies and others.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 firsts = live.query("birthord == 1")
 others = live.query("birthord != 1")
       </input>
     </program>
+    </listing>
     <p>
       And make a <c>FreqTab</c> of pregnancy lengths for each group.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ftab_first = FreqTab.from_seq(firsts["prglngth"], name="firsts")
 ftab_other = FreqTab.from_seq(others["prglngth"], name="others")
       </input>
     </program>
+    </listing>
     <p>
       The following function plots two frequency tables side-by-side.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def two_bar_plots(ftab1, ftab2, width=0.45):
@@ -410,15 +490,19 @@ def two_bar_plots(ftab1, ftab2, width=0.45):
     ftab2.bar(align="edge", width=width, alpha=0.5)
       </input>
     </program>
+    </listing>
     <p>
       Here's what they look like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 two_bar_plots(ftab_first, ftab_other)
 decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_006.png" width="80%"/>
     </figure>
@@ -426,17 +510,22 @@ decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
       There is no obvious difference in the shape of the distributions or in the outliers.
       It looks like more of the non-first babies are born during week 39, but there are more non-first babies in the dataset, so we should not compare the counts directly.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 firsts["prglngth"].count(), others["prglngth"].count()
       </input>
     </program>
+    </listing>
     <pre>
 (np.int64(4413), np.int64(4735))
     </pre>
     <p>
       Comparing the means of the distributions, it looks like first babies are a little bit later on average.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 first_mean = firsts["prglngth"].mean()
@@ -444,18 +533,22 @@ other_mean = others["prglngth"].mean()
 first_mean, other_mean
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(38.60095173351461), np.float64(38.52291446673706))
     </pre>
     <p>
       But the difference is only 0.078 weeks, which is about 13 hours.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff = first_mean - other_mean
 diff, diff * 7 * 24
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.07803726677754952), np.float64(13.11026081862832))
     </pre>
@@ -493,11 +586,14 @@ diff, diff * 7 * 24
       Another is to report the difference in relative terms.
       For example, we might say that first pregnancies are 0.2% longer than others, on average.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff / live["prglngth"].mean() * 100
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.20237586646738304)
     </pre>
@@ -508,11 +604,14 @@ np.float64(0.20237586646738304)
       Standardizing means we express the difference as a multiple of the standard deviation.
       So we might be tempted to write something like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff / live["prglngth"].std()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.028877623375210403)
     </pre>
@@ -528,44 +627,59 @@ np.float64(0.028877623375210403)
       A common solution is to use <term>pooled standard deviation</term>, which is the square root of pooled variance, which is the weighted sum of the variances in the groups.
       To compute it, we'll start with the variances.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 group1, group2 = firsts["prglngth"], others["prglngth"]
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 v1, v2 = group1.var(), group2.var()
       </input>
     </program>
+    </listing>
     <p>
       Here is the weighted sum, with the group sizes as weights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n1, n2 = group1.count(), group2.count()
 pooled_var = (n1 * v1 + n2 * v2) / (n1 + n2)
       </input>
     </program>
+    </listing>
     <p>
       Finally, here is the pooled standard deviation.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.sqrt(pooled_var)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(2.7022108144953862)
     </pre>
     <p>
       The pooled standard deviation is between the standard deviations of the groups.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 firsts["prglngth"].std(), others["prglngth"].std()
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(2.7919014146687204), np.float64(2.6158523504392375))
     </pre>
@@ -573,6 +687,8 @@ firsts["prglngth"].std(), others["prglngth"].std()
       A standardized effect size that uses pooled standard deviation is called <term>Cohen's effect size</term>.
       Here's a function that computes it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def cohen_effect_size(group1, group2):
@@ -585,14 +701,18 @@ def cohen_effect_size(group1, group2):
     return diff / np.sqrt(pooled_var)
       </input>
     </program>
+    </listing>
     <p>
       And here's the effect size for the difference in mean pregnancy lengths.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cohen_effect_size(firsts["prglngth"], others["prglngth"])
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.028879044654449834)
     </pre>
@@ -700,6 +820,8 @@ np.float64(0.028879044654449834)
     <p>
       The <c>nsfg.py</c> module provides a function that reads the female respondent file, cleans some of the variables, and returns a <c>DataFrame</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import read_fem_resp
@@ -708,6 +830,7 @@ resp = read_fem_resp()
 resp.shape
       </input>
     </program>
+    </listing>
     <pre>
 (7643, 3092)
     </pre>

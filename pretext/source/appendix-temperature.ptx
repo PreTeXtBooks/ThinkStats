@@ -25,6 +25,8 @@
     <p>
       The following code uses the API to download metadata about the dataset.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import requests
@@ -40,20 +42,26 @@ response = requests.get(url, params=query_params, headers=headers)
 metadata = response.json()
       </input>
     </program>
+    </listing>
     <p>
       The result is a nested dictionary. Here are the top-level keys.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 metadata.keys()
       </input>
     </program>
+    </listing>
     <pre>
 dict_keys(['chart', 'columns', 'dateDownloaded'])
     </pre>
     <p>
       Here's the chart-level documentation.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from pprint import pprint
@@ -61,6 +69,7 @@ from pprint import pprint
 pprint(metadata["chart"])
       </input>
     </program>
+    </listing>
     <pre>
 {'citation': 'Contains modified Copernicus Climate Change Service information '
              '(2019)',
@@ -74,11 +83,14 @@ pprint(metadata["chart"])
     <p>
       And here's the documentation of the column we'll use.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pprint(metadata["columns"]["temperature_2m"])
       </input>
     </program>
+    </listing>
     <pre>
 {'citationLong': 'Contains modified Copernicus Climate Change Service '
                  'information (2019) – with major processing by Our World in '
@@ -117,6 +129,8 @@ pprint(metadata["columns"]["temperature_2m"])
       another country, change <c>country_code</c> to almost any three-letter ISO 3166
       country code.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 country_code = "USA"  # replace this with other three-letter country codes
@@ -134,11 +148,14 @@ query_params = {
 }
       </input>
     </program>
+    </listing>
     <p>
       In general, you can find out which query parameters are supported by exploring the
       dataset online and pressing the download icon, which displays a URL with query
       parameters corresponding to the filters you selected by interacting with the chart.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from urllib.parse import urlencode
@@ -147,6 +164,7 @@ url = f"{base_url}?{urlencode(query_params)}"
 temp_df = pd.read_csv(url, storage_options=headers)
       </input>
     </program>
+    </listing>
     <p>
       The resulting <c>DataFrame</c> includes the column that's documented in the metadata,
       <c>temperature_2m</c>, and an additional undocumented column, which might be an annual
@@ -155,21 +173,27 @@ temp_df = pd.read_csv(url, storage_options=headers)
     <p>
       For this example, we'll use the monthly data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 temp_series = temp_df['temperature_2m']
 temp_series.index = pd.to_datetime(temp_df['Day'])
       </input>
     </program>
+    </listing>
     <p>
       Here's what it looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 temp_series.plot(label=country_code)
 plt.ylabel("Surface temperature (℃)");
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/temperature_001.png" width="80%"/>
     </figure>
@@ -178,6 +202,8 @@ plt.ylabel("Surface temperature (℃)");
       We can use <c>seasonal_decompose</c> from StatsModels to identify a long-term trend,
       a seasonal component, and a residual.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from statsmodels.tsa.seasonal import seasonal_decompose
@@ -185,9 +211,12 @@ from statsmodels.tsa.seasonal import seasonal_decompose
 decomposition = seasonal_decompose(temp_series, model="additive", period=12)
       </input>
     </program>
+    </listing>
     <p>
       We'll use the following function to plot the results.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def plot_decomposition(original, decomposition):
@@ -212,11 +241,15 @@ def plot_decomposition(original, decomposition):
     plt.tight_layout()
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_decomposition(temp_series, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/temperature_002.png" width="80%"/>
     </figure>

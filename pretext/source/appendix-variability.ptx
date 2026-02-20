@@ -24,20 +24,26 @@
     <p>
       Rather than download the whole dataset, we can get just an excerpt.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/LLCP2022.hdf5")
       </input>
     </program>
+    </listing>
     <p>
       Here are the first few rows.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 brfss = pd.read_hdf("LLCP2022.hdf5", key="brfss")
 brfss.describe()
       </input>
     </program>
+    </listing>
     <pre>
                 _SEX           HTM4          WTKG3        _LLCPWT
 count  445132.000000  416480.000000  403054.000000  445132.000000
@@ -54,6 +60,8 @@ max         2.000000     241.000000   29257.000000   54390.520926
       women.
       Here are numbers of males and females with the shortest recorded heights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xtab = pd.crosstab(brfss["HTM4"], brfss["_SEX"])
@@ -61,6 +69,7 @@ xtab.columns = ["Male", "Female"]
 xtab.head()
       </input>
     </program>
+    </listing>
     <pre>
       Male  Female
 HTM4              
@@ -73,11 +82,14 @@ HTM4
     <p>
       And the tallest recorded heights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xtab.tail()
       </input>
     </program>
+    </listing>
     <pre>
        Male  Female
 HTM4               
@@ -98,6 +110,8 @@ HTM4
       To draw a bootstrap sample from this <c>DataFrame</c>, we'll use the following
       function.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def resample(df):
@@ -111,14 +125,18 @@ def resample(df):
     return df.sample(n, replace=True, weights="_LLCPWT")
       </input>
     </program>
+    </listing>
     <p>
       Here's a single sample we'll use for testing.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample = resample(brfss)
       </input>
     </program>
+    </listing>
   </section>
 
   <section xml:id="app-variability-diff-means">
@@ -132,6 +150,8 @@ sample = resample(brfss)
       The following is a utility function that computes the difference between the first two
       elements of a sequence.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff(seq):
@@ -144,10 +164,13 @@ def diff(seq):
     return np.diff(seq)[0]
       </input>
     </program>
+    </listing>
     <p>
       We'll use it to compute the difference in means in a sample, which is the
       <q>test statistic</q>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff_means(sample):
@@ -161,15 +184,19 @@ def diff_means(sample):
     return -diff(grouped_heights.mean())
       </input>
     </program>
+    </listing>
     <p>
       The difference is defined so a positive value indicates that men are taller.
       Here's an example using the bootstrapped sample.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_means(sample)
       </input>
     </program>
+    </listing>
     <pre>
 14.455796580284954
     </pre>
@@ -182,6 +209,8 @@ diff_means(sample)
       It runs resample many times, computes the test statistic for each sample, and returns
       a list of test statistics.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def sampling_dist(df, test_stat, iters=201):
@@ -196,16 +225,20 @@ def sampling_dist(df, test_stat, iters=201):
     return [test_stat(resample(df)) for i in range(iters)]
       </input>
     </program>
+    </listing>
     <p>
       Here's how we call it.
       The result is a sample from the sampling distribution of differences in means.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t1 = sampling_dist(brfss, diff_means)
 np.mean(t1)
       </input>
     </program>
+    </listing>
     <pre>
 14.433755828000592
     </pre>
@@ -214,6 +247,8 @@ np.mean(t1)
       uses the estimated density to compute a confidence interval, and generates a plot that
       shows the sampling distribution, the mean, and the 95% CI.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import gaussian_kde
@@ -231,15 +266,19 @@ def plot_sampling_distribution(data, format_str=".2f", **options):
     pmf.plot(**options)
       </input>
     </program>
+    </listing>
     <p>
       Here are the results for the sampling distribution of the difference in means.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_sampling_distribution(t1)
 plt.title("Difference in means (cm)", fontsize=14)
       </input>
     </program>
+    </listing>
     <p>
       The difference in means is about 14.4 cm.
       If we simulate the data collection process and compute the difference in means many
@@ -250,6 +289,8 @@ plt.title("Difference in means (cm)", fontsize=14)
       exceeds 0, which is the p-value for the hypothesis that men are taller than women on
       average.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import norm
@@ -263,11 +304,15 @@ def p_value(t):
         return norm.sf(0, m, s)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p_value(t1)
       </input>
     </program>
+    </listing>
     <pre>
 0.0
     </pre>
@@ -290,6 +335,8 @@ p_value(t1)
       To see if it is, all we have to do is provide a function that takes a sample and
       computes the difference in standard deviations.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff_stds(sample):
@@ -303,47 +350,60 @@ def diff_stds(sample):
     return -diff(grouped_heights.std())
       </input>
     </program>
+    </listing>
     <p>
       Based on a single resampling, it looks like the standard deviation of heights is higher
       for men.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_stds(sample)
       </input>
     </program>
+    </listing>
     <pre>
 0.7755433526023632
     </pre>
     <p>
       We can use <c>sampling_dist</c> again with a different test statistic.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t2 = sampling_dist(brfss, diff_stds)
 np.mean(t2)
       </input>
     </program>
+    </listing>
     <p>
       Here's the sampling distribution with its mean and 95% CI.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_sampling_distribution(t2)
 plt.title("Difference in standard deviation (cm)", fontsize=14)
       </input>
     </program>
+    </listing>
     <p>
       The 95% CI does not contain zero, which indicates that the difference is significant
       at the 5% level.
       Assuming that the tails of the distribution drop off like the tails of a normal
       distribution, we can estimate the p-value like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p_value(t2)
       </input>
     </program>
+    </listing>
     <p>
       This p-value is just barely big enough to compute, but still so small we can conclude
       that the apparent difference is very unlikely to be due to chance.
@@ -367,6 +427,8 @@ p_value(t2)
       Here's a function that takes a sample and computes the difference in coefficients of
       variation for men and women.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff_cvs(sample):
@@ -382,37 +444,49 @@ def diff_cvs(sample):
     return -diff(stds / means)
       </input>
     </program>
+    </listing>
     <p>
       And here's a sample from the sampling distribution of the differences.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t3 = sampling_dist(brfss, diff_cvs)
 np.mean(t3)
       </input>
     </program>
+    </listing>
     <p>
       Here's the sampling distribution and a 95% CI.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_sampling_distribution(t3, format_str="0.4f")
 plt.title("Difference in coefficient of variation", fontsize=14)
       </input>
     </program>
+    </listing>
     <p>
       The CI does not contain zero, so the difference is statistically significant.
       And the p-value is small.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p_value(t3)
       </input>
     </program>
+    </listing>
     <p>
       But in practical terms, the difference is very small.
       The coefficients of variation are about 0.048.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 grouped_heights = sample.groupby("_SEX")["HTM4"]
@@ -422,14 +496,18 @@ CVs = stds / means
 CVs
       </input>
     </program>
+    </listing>
     <p>
       If we express the difference in CVs as a percentage of the CVs, it is only about 1.4%.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.mean(t3) / CVs * 100
       </input>
     </program>
+    </listing>
     <p>
       By this measure of variability, men's heights are slightly more variable than women's,
       but the difference is so small, it is unlikely to have any practical consequences.
@@ -455,6 +533,8 @@ np.mean(t3) / CVs * 100
       One option is the ratio of the median absolute deviation (MAD) to the median.
       Here's a function that computes it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def robust_cv(series):
@@ -469,11 +549,14 @@ def robust_cv(series):
     return deviations.abs().median() / m
       </input>
     </program>
+    </listing>
     <p>
       The following function computes the difference in robust CVs.
       The first line jitters the data<mdash/>otherwise we would get the same results from
       every resampling.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff_robust_cv(sample):
@@ -489,38 +572,51 @@ def diff_robust_cv(sample):
     return -diff(rcvs)
       </input>
     </program>
+    </listing>
     <p>
       The robust CV of the sample is negative, which suggests that women's heights are more
       variable.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_robust_cv(sample)
       </input>
     </program>
+    </listing>
     <p>
       Here's the sampling distribution.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t4 = sampling_dist(brfss, diff_robust_cv)
 np.mean(t4)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_sampling_distribution(t4, format_str="0.4f")
 plt.title("Difference in robust CV", fontsize=14)
       </input>
     </program>
+    </listing>
     <p>
       And the p-value.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p_value(t4)
       </input>
     </program>
+    </listing>
     <p>
       According to the robust CV, women are more variable, but again the difference is so
       small it has no practical consequences.
@@ -533,6 +629,8 @@ p_value(t4)
     <p>
       Here's one more robust measure of variability.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def diff_relative_iqr(sample):
@@ -552,28 +650,41 @@ def diff_relative_iqr(sample):
     return -diff(iqrs / medians)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_relative_iqr(sample)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t5 = sampling_dist(brfss, diff_relative_iqr)
 np.mean(t5)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_sampling_distribution(t5, format_str="0.4f")
 plt.title("Difference in IQR / median", fontsize=14)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 p_value(t5)
       </input>
     </program>
+    </listing>
   </section>
 
   <section xml:id="app-variability-discussion">

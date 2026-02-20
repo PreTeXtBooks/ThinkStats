@@ -45,6 +45,8 @@
       The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download(
@@ -52,17 +54,21 @@ download(
 )
       </input>
     </program>
+    </listing>
 
     <p>
       We can use <c>read_csv</c> to read the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
 penguins.shape
       </input>
     </program>
+    </listing>
     <pre>
 (342, 17)
     </pre>
@@ -72,12 +78,15 @@ penguins.shape
       We can use <c>query</c> to select the rows that contain this data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 adelie = penguins.query('Species.str.startswith("Adelie")')
 len(adelie)
       </input>
     </program>
+    </listing>
     <pre>
 151
     </pre>
@@ -87,6 +96,8 @@ len(adelie)
       First we'll select these columns from the <c>DataFrame</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xvar = "Flipper Length (mm)"
@@ -96,17 +107,21 @@ flipper_length = adelie[xvar]
 body_mass = adelie[yvar]
       </input>
     </program>
+    </listing>
 
     <p>
       Here's a scatter plot showing the relationship between these quantities.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_001.png" width="80%"/>
     </figure>
@@ -115,11 +130,14 @@ decorate(xlabel=xvar, ylabel=yvar)
       It looks like they are related -- we can quantify the strength of the relationship by computing the coefficient of correlation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.corrcoef(flipper_length, body_mass)[0, 1]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
@@ -138,6 +156,8 @@ np.float64(0.4682016942179394)
       The arguments of <c>linregress</c> are the <c>x</c> values and the <c>y</c> values, in that order.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import linregress
@@ -146,6 +166,7 @@ result = linregress(flipper_length, body_mass)
 result
       </input>
     </program>
+    </listing>
     <pre>
 LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535.8368022002514), rvalue=np.float64(0.46820169421793933), pvalue=np.float64(1.3432645947790051e-09), stderr=np.float64(5.076138407990821), intercept_stderr=np.float64(964.7984274994059))
     </pre>
@@ -159,6 +180,8 @@ LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535
       It might make more sense if we use the slope and intercept to evaluate the fitted line at the average flipper length.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 x = flipper_length.mean()
@@ -166,6 +189,7 @@ y = result.intercept + result.slope * x
 x, y
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(189.95364238410596), np.float64(3700.662251655629))
     </pre>
@@ -177,6 +201,8 @@ x, y
       The following function takes the result from <c>linregress</c> and a sequence of <c>xs</c> and finds the point on the fitted line for each value of <c>x</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def predict(result, xs):
@@ -184,6 +210,7 @@ def predict(result, xs):
     return ys
       </input>
     </program>
+    </listing>
 
     <p>
       The name <c>predict</c> might seem odd here -- in natural language, a <term>prediction</term> usually pertains to something happening in the future, but in the context of regression, the points on the fitted line are also called predictions.
@@ -192,17 +219,22 @@ def predict(result, xs):
       We can use <c>predict</c> to compute the points on the line for a range of flipper sizes.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fit_xs = np.linspace(np.min(flipper_length), np.max(flipper_length))
 fit_ys = predict(result, fit_xs)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the fitted line along with the scatter plot of the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
@@ -210,6 +242,7 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_002.png" width="80%"/>
     </figure>
@@ -221,6 +254,8 @@ decorate(xlabel=xvar, ylabel=yvar)
       The following function computes these errors, which are also called <term>residuals</term>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def compute_residuals(result, xs, ys):
@@ -228,21 +263,27 @@ def compute_residuals(result, xs, ys):
     return ys - fit_ys
       </input>
     </program>
+    </listing>
 
     <p>
       Here are the residuals for body mass as a function of flipper length.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 residuals = compute_residuals(result, flipper_length, body_mass)
       </input>
     </program>
+    </listing>
 
     <p>
       As an example, we can look at the results for the first penguin in the dataset.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 x = flipper_length[0]
@@ -250,6 +291,7 @@ y = predict(result, x)
 x, y
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(181.0), np.float64(3406.699042757914))
     </pre>
@@ -259,11 +301,14 @@ x, y
       Now let's see what the actual mass is.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 body_mass[0], residuals[0]
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(3750.0), np.float64(343.30095724208604))
     </pre>
@@ -275,12 +320,15 @@ body_mass[0], residuals[0]
       The average of the squared residuals is the mean squared error (MSE) of the predictions.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mse = np.mean(residuals**2)
 mse
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(163098.85902884745)
     </pre>
@@ -305,21 +353,27 @@ np.float64(163098.85902884745)
       If we always guess the mean, the prediction errors are the deviations from the mean.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 deviations = body_mass - np.mean(body_mass)
       </input>
     </program>
+    </listing>
 
     <p>
       And the MSE is the mean squared deviation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.mean(deviations**2)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(208890.28989956583)
     </pre>
@@ -328,11 +382,14 @@ np.float64(208890.28989956583)
       You might remember that the mean squared deviation is the variance.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.var(body_mass)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(208890.28989956583)
     </pre>
@@ -345,23 +402,29 @@ np.float64(208890.28989956583)
       The following function computes this value, which is technically called the <term>coefficient of determination</term>, but because it is denoted <m>R^2</m>, most people call it "R squared".
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def coefficient_of_determination(ys, residuals):
     return 1 - np.var(residuals) / np.var(ys)
       </input>
     </program>
+    </listing>
 
     <p>
       In the example, <m>R^2</m> is about 0.22, which means that the fitted line reduces MSE by 22%.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 R2 = coefficient_of_determination(body_mass, residuals)
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.21921282646854912)
     </pre>
@@ -374,12 +437,15 @@ np.float64(0.21921282646854912)
       We can show that's true by computing the square root of <m>R^2</m>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 r = np.sqrt(R2)
 r
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179397)
     </pre>
@@ -388,12 +454,15 @@ np.float64(0.4682016942179397)
       And comparing it to the correlation we computed earlier.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 corr = np.corrcoef(flipper_length, body_mass)[0, 1]
 corr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
@@ -405,11 +474,14 @@ np.float64(0.4682016942179394)
       The <c>linregress</c> function also computes this value and returns it as an attribute in the <c>RegressionResult</c> object.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result.rvalue
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.46820169421793933)
     </pre>
@@ -435,17 +507,22 @@ np.float64(0.46820169421793933)
       We won't prove that, but we can test it by adding small random values to the intercept and slope, and checking whether the MSE gets worse.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 intercept = result.intercept + np.random.normal(0, 1)
 slope = result.slope + np.random.normal(0, 1)
       </input>
     </program>
+    </listing>
 
     <p>
       To run the test, we need to make an object with <c>intercept</c> and <c>slope</c> attributes -- we'll use the <c>SimpleNamespace</c> object provided by the <c>types</c> module.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from types import SimpleNamespace
@@ -454,6 +531,7 @@ fake_result = SimpleNamespace(intercept=intercept, slope=slope)
 fake_result
       </input>
     </program>
+    </listing>
     <pre>
 namespace(intercept=np.float64(-2533.193389187175),
           slope=np.float64(32.15393529728294))
@@ -463,22 +541,28 @@ namespace(intercept=np.float64(-2533.193389187175),
       We can pass this object to <c>compute_residuals</c> and use the residuals to compute the MSE.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fake_residuals = compute_residuals(fake_result, flipper_length, body_mass)
 fake_mse = np.mean(fake_residuals**2)
       </input>
     </program>
+    </listing>
 
     <p>
       If we compare the result to the MSE of the least squares line, it is always worse.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mse, fake_mse, fake_mse > mse
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(163098.85902884745), np.float64(179019.20812685465), np.True_)
     </pre>
@@ -495,6 +579,8 @@ mse, fake_mse, fake_mse > mse
       The following function shows how.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def least_squares(xs, ys):
@@ -510,17 +596,21 @@ def least_squares(xs, ys):
     return intercept, slope
       </input>
     </program>
+    </listing>
 
     <p>
       To test this function, we'll use flipper length and body mass again.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 intercept, slope = least_squares(flipper_length, body_mass)
 intercept, slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002524), np.float64(32.831689751150094))
     </pre>
@@ -529,11 +619,14 @@ intercept, slope
       And we can confirm that we get the same results we got from <c>linregress</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.allclose([intercept, slope], [result.intercept, result.slope])
       </input>
     </program>
+    </listing>
     <pre>
 True
     </pre>
@@ -559,6 +652,8 @@ True
       The following function takes a <c>DataFrame</c> and uses the <c>sample</c> method to resample the rows and return a new <c>DataFrame</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def resample(df):
@@ -566,11 +661,14 @@ def resample(df):
     return df.sample(n, replace=True)
       </input>
     </program>
+    </listing>
 
     <p>
       And the following function takes a <c>DataFrame</c>, finds the least squares fit, and returns the slope of the fitted line.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def estimate_slope(df):
@@ -579,11 +677,14 @@ def estimate_slope(df):
     return result.slope
       </input>
     </program>
+    </listing>
 
     <p>
       We can use these functions to generate many simulated datasets and compute the slope for each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 # Seed the random number generator so we get the same results every time
@@ -591,18 +692,24 @@ def estimate_slope(df):
 np.random.seed(1)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resampled_slopes = [estimate_slope(resample(adelie)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       The result is a sample from the sampling distribution of the slope.
       Here's what it looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import plot_kde
@@ -611,6 +718,7 @@ plot_kde(resampled_slopes)
 decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_003.png" width="80%"/>
     </figure>
@@ -619,12 +727,15 @@ decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
       We can use <c>percentile</c> to compute a 90% confidence interval.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ci90 = np.percentile(resampled_slopes, [5, 95])
 print(result.slope, ci90)
       </input>
     </program>
+    </listing>
     <pre>
 32.83168975115009 [25.39604591 40.21054526]
 
@@ -637,12 +748,15 @@ print(result.slope, ci90)
       The standard error of the estimate is the standard deviation of the sampling distribution.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 stderr = np.std(resampled_slopes)
 stderr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(4.570238986584832)
     </pre>
@@ -651,11 +765,14 @@ np.float64(4.570238986584832)
       The <c>RegressionResult</c> object we got from <c>linregress</c> provides an approximation of the standard error, based on some assumptions about the shape of the distribution.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result.stderr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(5.076138407990821)
     </pre>
@@ -675,6 +792,8 @@ np.float64(5.076138407990821)
       The following function takes a resampled <c>DataFrame</c>, computes a least squares fit, and generates predicted values for a sequence of <c>xs</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def fit_line(df, fit_xs):
@@ -684,22 +803,28 @@ def fit_line(df, fit_xs):
     return fit_ys
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the sequence of <c>xs</c> we'll use.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xs = adelie["Flipper Length (mm)"]
 fit_xs = np.linspace(np.min(xs), np.max(xs))
       </input>
     </program>
+    </listing>
 
     <p>
       And here's what the fitted lines look like, along with a scatter plot of the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
@@ -711,6 +836,7 @@ for i in range(101):
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_004.png" width="80%"/>
     </figure>
@@ -723,11 +849,14 @@ decorate(xlabel=xvar, ylabel=yvar)
       We can do that by collecting the fitted lines as a list of arrays.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fitted_ys = [fit_line(resample(adelie), fit_xs) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       We can think of this list of arrays as a two-dimensional array with one row for each fitted line and one column corresponding to each of the <c>xs</c>.
@@ -736,16 +865,21 @@ fitted_ys = [fit_line(resample(adelie), fit_xs) for i in range(1001)]
       We can use <c>percentile</c> with the <c>axis=0</c> argument to find the 5th, 50th, and 95th percentiles of the <c>ys</c> corresponding to each of the <c>xs</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 low, median, high = np.percentile(fitted_ys, [5, 50, 95], axis=0)
       </input>
     </program>
+    </listing>
 
     <p>
       Now we'll use <c>fill_between</c> to plot a region between the 5th and 95 percentiles, which represents the 90% CI, along with the median value in each column and a scatter plot of the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
@@ -756,6 +890,7 @@ plt.plot(fit_xs, median, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_005.png" width="80%"/>
     </figure>
@@ -777,16 +912,21 @@ decorate(xlabel=xvar, ylabel=yvar)
       The following cell downloads the BRFSS data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
       </input>
     </program>
+    </listing>
 
     <p>
       We can load the BRFSS data like this.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import read_brfss
@@ -794,28 +934,35 @@ from thinkstats import read_brfss
 brfss = read_brfss()
       </input>
     </program>
+    </listing>
 
     <p>
       Next we'll find the rows with valid data and select the columns containing heights and weights.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid = brfss.dropna(subset=["htm3", "wtkg2"])
 heights, weights = valid["htm3"], valid["wtkg2"]
       </input>
     </program>
+    </listing>
 
     <p>
       We can use <c>linregress</c> to compute the slope and intercept of the least squares fit.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_brfss = linregress(heights, weights)
 result_brfss.intercept, result_brfss.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-82.65926054409877), np.float64(0.957074585033226))
     </pre>
@@ -825,17 +972,22 @@ result_brfss.intercept, result_brfss.slope
       We can use <c>predict</c> again to generate predicted values for a range of <c>xs</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fit_xs = np.linspace(heights.min(), heights.max())
 fit_ys = predict(result_brfss, fit_xs)
       </input>
     </program>
+    </listing>
 
     <p>
       Before we make a scatter plot of the data, it's useful to jitter the heights and weights.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import jitter
@@ -844,11 +996,14 @@ jittered_heights = jitter(heights, 2)
 jittered_weights = jitter(weights, 1.5)
       </input>
     </program>
+    </listing>
 
     <p>
       And we'll use the mean and standard deviation of the heights to choose the limits of the <m>x</m> axis.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 m, s = heights.mean(), heights.std()
@@ -856,11 +1011,14 @@ xlim = m - 4 * s, m + 4 * s
 ylim = 0, 200
       </input>
     </program>
+    </listing>
 
     <p>
       Here's a scatter plot of the jittered data along with the fitted line.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(jittered_heights, jittered_weights, alpha=0.01, s=0.1)
@@ -868,6 +1026,7 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_006.png" width="80%"/>
     </figure>
@@ -881,12 +1040,17 @@ decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       Another cause for concern is the distribution of the residuals, which looks like this.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 residuals = compute_residuals(result_brfss, heights, weights)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import make_pmf
@@ -897,6 +1061,7 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_007.png" width="80%"/>
     </figure>
@@ -910,6 +1075,8 @@ decorate(xlabel="Residual (kg)", ylabel="Density")
       So let's see what happens if we fit a line to the logarithms of weight as a function of height.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 log_weights = np.log10(weights)
@@ -917,6 +1084,7 @@ result_brfss2 = linregress(heights, log_weights)
 result_brfss2.intercept, result_brfss2.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.9930804163932876), np.float64(0.005281454169417777))
     </pre>
@@ -926,17 +1094,22 @@ result_brfss2.intercept, result_brfss2.slope
       But we can use <c>predict</c> to compute the fitted line.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fit_xs = np.linspace(heights.min(), heights.max())
 fit_ys = predict(result_brfss2, fit_xs)
       </input>
     </program>
+    </listing>
 
     <p>
       And then plot it along with a scatter plot of the transformed data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 jittered_log_weights = jitter(log_weights, 1.5)
@@ -945,6 +1118,7 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (log10 kg)", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_008.png" width="80%"/>
     </figure>
@@ -953,12 +1127,17 @@ decorate(xlabel="Height (cm)", ylabel="Weight (log10 kg)", xlim=xlim)
       The fitted line passes through the densest part of the plot, and the actual values extend about the same distance above and below the line -- so the distribution of the residuals is roughly symmetric.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 residuals = compute_residuals(result_brfss2, heights, log_weights)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_kde = make_pmf(residuals, -0.6, 0.6)
@@ -967,6 +1146,7 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_009.png" width="80%"/>
     </figure>
@@ -976,11 +1156,14 @@ decorate(xlabel="Residual (kg)", ylabel="Density")
       If we compare the <m>r</m> values of the two regressions, we see that the correlation of height with log-transformed weights is slightly higher.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_brfss.rvalue, result_brfss2.rvalue
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.5087364789734582), np.float64(0.5317282605983435))
     </pre>
@@ -989,11 +1172,14 @@ result_brfss.rvalue, result_brfss2.rvalue
       Which means that the <m>R^2</m> value is slightly higher, too.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_brfss.rvalue**2, result_brfss2.rvalue**2
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.2588128050383119), np.float64(0.28273494311893993))
     </pre>
@@ -1007,6 +1193,8 @@ result_brfss.rvalue**2, result_brfss2.rvalue**2
       Here's what the fitted line looks like after the inverse transformation, along with the untransformed data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(jittered_heights, jittered_weights, alpha=0.01, s=0.1)
@@ -1014,6 +1202,7 @@ plt.plot(fit_xs, 10**fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_010.png" width="80%"/>
     </figure>
@@ -1086,6 +1275,8 @@ decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
           What is the coefficient of determination?
           Which is a better predictor of weight, culmen length or flipper length?
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 xvar = "Culmen Length (mm)"
@@ -1095,6 +1286,7 @@ culmen_length = adelie[xvar]
 body_mass = adelie[yvar]
           </input>
         </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1122,12 +1314,15 @@ body_mass = adelie[yvar]
           A person's Body Mass Index (BMI) is their weight in kilograms divided by their height in meters raised to the second power.
           In the BRFSS dataset, we can compute BMI like this, after converting heights from centimeters to meters.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 heights_m = heights / 100
 bmis = weights / heights_m**2
           </input>
         </program>
+        </listing>
         <p>
           In this definition, heights are squared, rather than raised to some other exponent, because of the observation -- early in the history of statistics -- that average weight increases roughly in proportion to height squared.
         </p>

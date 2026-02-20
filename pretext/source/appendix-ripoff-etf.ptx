@@ -32,6 +32,8 @@
       at several points to make the values comparable.
       The following cells download and read this data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 DATA_PATH = "https://github.com/AllenDowney/ThinkStats/raw/v3/data/"
@@ -39,12 +41,16 @@ filename = "DJA.csv"
 download(DATA_PATH + filename)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 djia = pd.read_csv(filename, skiprows=4, parse_dates=[0], index_col=0)
 djia.head()
       </input>
     </program>
+    </listing>
     <pre>
                DJIA
 Date               
@@ -58,12 +64,15 @@ Date
       To compute annual returns, we'll start by selecting the closing price on the last
       trading day of each year (dropping 2024 because we don't have a complete year).
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 annual = djia.groupby(djia.index.year).last().drop(2024)
 annual
       </input>
     </program>
+    </listing>
     <pre>
             DJIA
 Date            
@@ -85,12 +94,15 @@ Date
       Next we'll compute the annual price return, which is the ratio of successive year-end
       closing prices.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 annual['Ratio'] = annual['DJIA'] / annual['DJIA'].shift(1)
 annual
       </input>
     </program>
+    </listing>
     <pre>
             DJIA     Ratio
 Date                      
@@ -111,20 +123,26 @@ Date
     <p>
       And the relative return as a percentage.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 annual['Return'] = (annual['Ratio'] - 1) * 100
       </input>
     </program>
+    </listing>
     <p>
       Looking at the years with the biggest losses and gains, we can see that most of the
       extremes were before the 1960s<mdash/>with the exception of the 2008 financial crisis.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 annual.dropna().sort_values(by='Return')
       </input>
     </program>
+    </listing>
     <pre>
            DJIA     Ratio     Return
 Date                                
@@ -145,6 +163,8 @@ Date
     <p>
       Here's what the distribution of annual returns looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Cdf
@@ -155,15 +175,19 @@ cdf_return.plot()
 decorate(xlabel='Annual return (percent)', ylabel='CDF')
       </input>
     </program>
+    </listing>
     <p>
       Immediately we see why capping returns at 10% might be a bad idea<mdash/>this cap is
       exceeded almost 45% of the time, and sometimes by a lot!
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 1 - cdf_return(10)
       </input>
     </program>
+    </listing>
     <pre>
 0.4492753623188406
     </pre>
@@ -189,6 +213,8 @@ decorate(xlabel='Annual return (percent)', ylabel='CDF')
         </p>
       </li>
     </ul>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def compute_ratios(start=1993, duration=30):
@@ -201,16 +227,20 @@ def compute_ratios(start=1993, duration=30):
     return start, end, ratio, ratio_clipped
       </input>
     </program>
+    </listing>
     <p>
       With this function, we can replicate the analysis <em>The Economist</em> did with the
       S&amp;P 500.
       Here are the results for the DJIA from the beginning of 1980 to the end of 2023.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_ratios(1980, 43)
       </input>
     </program>
+    </listing>
     <pre>
 (1980, 2023, 44.93751117788029, 15.356490985533199)
     </pre>
@@ -224,11 +254,14 @@ compute_ratios(1980, 43)
       However, if we go back to the bad old days, an investor in 1900 would have been
       substantially better off with a buffer ETF held for 43 years.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_ratios(1900, 43)
       </input>
     </program>
+    </listing>
     <pre>
 (1900, 1943, 2.8071864303140583, 7.225624631784611)
     </pre>
@@ -238,6 +271,8 @@ compute_ratios(1900, 43)
       Starting in 1886, we'll compute price returns for all 30-year intervals, ending with
       the interval from 1993 to 2023.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 duration = 30
@@ -247,6 +282,7 @@ ratios.index = ratios['Start']
 ratios.tail()
       </input>
     </program>
+    </listing>
     <pre>
        Start   End  Index Fund  Buffer ETF
 Start                                     
@@ -259,6 +295,8 @@ Start
     <p>
       Here's what the returns look like for an index fund compared to a buffer ETF.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ratios['Index Fund'].plot()
@@ -267,6 +305,7 @@ ratios['Buffer ETF'].plot()
 decorate(xlabel='Start year', ylabel='30-year price return')
       </input>
     </program>
+    </listing>
     <p>
       The buffer ETF performs as advertised, substantially reducing volatility.
       But it has only occasionally been a good deal, and not in my lifetime.
