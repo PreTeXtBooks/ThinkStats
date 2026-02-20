@@ -5,11 +5,1051 @@
 
   <introduction>
     <p>
-      This chapter explores relationships between variables, including scatter plots,
-      covariance, correlation, and nonlinear relationships.
+      So far we have only looked at one variable at a time.
+      In this chapter we start looking at relationships between variables.
+      Two variables are related if knowing one gives you information about the other.
+      For example, height and weight are related -- people who are taller tend to be heavier.
+      Of course, it is not a perfect relationship: there are short heavy people and tall light ones.
+      But if you are trying to guess someone's weight, you will be more accurate if you know their height than if you don't.
+    </p>
+    <p>
+      This chapter presents several ways to visualize relationships between variables, and one way to quantify the strength of a relationship, correlation.
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-relationships-scatter-plots">
+    <title>Scatter Plots</title>
+
+    <p>
+      If you meet someone who is unusually good at math, do you expect their verbal skills to be better or worse than average?
+      On one hand, you might imagine that people specialize in one area or the other, so someone who excels at one might be less good at the other.
+      On the other hand, you might expect someone who is generally smart to be above average in both areas.
+      Let's find out which it is.
+    </p>
+    <p>
+      We'll use data from the National Longitudinal Survey of Youth 1997 (NLSY97), which "follows the lives of a sample of 8,984 American youth born between 1980-84".
+      The public data set includes the participants' scores on several standardized tests, including the tests most often used in college admissions, the SAT and ACT.
+      Because test-takers get separate scores for the math and verbal sections, we can use this data to explore the relationship between mathematical and verbal ability.
+    </p>
+    <p>
+      I used the NLS Investigator to create an excerpt that contains the variables I'll use for this analysis.
+      With their permission, I can redistribute this excerpt.
+      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/nlsy97-extract.csv.gz")
+      </input>
+    </program>
+
+    <p>
+      We can use <c>read_csv</c> to read the data and <c>replace</c> to replace the special codes for missing data with <c>np.nan</c>.
+    </p>
+
+    <program language="python">
+      <input>
+missing_codes = [-1, -2, -3, -4, -5]
+nlsy = pd.read_csv("nlsy97-extract.csv.gz").replace(missing_codes, np.nan)
+nlsy.shape
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+nlsy.head()
+      </input>
+    </program>
+
+    <p>
+      The <c>DataFrame</c> contains one row for each of the 8984 participants in the survey and one column for each of the 34 variables I selected.
+      The column names don't mean much by themselves, so let's replace the ones we'll use with more interpretable names.
+    </p>
+
+    <program language="python">
+      <input>
+nlsy["sat_verbal"] = nlsy["R9793800"]
+nlsy["sat_math"] = nlsy["R9793900"]
+      </input>
+    </program>
+
+    <p>
+      Both columns contain a few values less than 200, which is not possible because 200 is the lowest score, so we'll replace them with <c>np.nan</c>.
+    </p>
+
+    <program language="python">
+      <input>
+columns = ["sat_verbal", "sat_math"]
+
+for column in columns:
+    invalid = nlsy[column] &lt; 200
+    nlsy.loc[invalid, column] = np.nan
+      </input>
+    </program>
+
+    <p>
+      Next we'll use <c>dropna</c> to select only rows where both scores are valid.
+    </p>
+
+    <program language="python">
+      <input>
+nlsy_valid = nlsy.dropna(subset=columns).copy()
+nlsy_valid.shape
+      </input>
+    </program>
+
+    <p>
+      SAT scores are standardized so the mean is 500 and the standard deviation is 100.
+      In the NLSY sample, the means and standard deviations are close to these values.
+    </p>
+
+    <program language="python">
+      <input>
+sat_verbal = nlsy_valid["sat_verbal"]
+sat_verbal.mean(), sat_verbal.std()
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+sat_math = nlsy_valid["sat_math"]
+sat_math.mean(), sat_math.std()
+      </input>
+    </program>
+
+    <p>
+      Now, to see whether there is a relationship between these variables, let's look at a <term>scatter plot</term>.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(sat_verbal, sat_math)
+
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      Using the default options of the <c>scatter</c> function, we can see the general shape of the relationship.
+      People who do well on one section of the test tend to do better on the other, too.
+    </p>
+    <p>
+      However, this version of the figure is <term>overplotted</term>, which means there are a lot of overlapping points, which can create a misleading impression of the relationship.
+      The center, where the density of points is highest, is not as dark as it should be -- by comparison, the extreme values are darker than they should be.
+      Overplotting tends to give too much visual weight to outliers.
+    </p>
+    <p>
+      We can improve the plot by reducing the size of the markers so they overlap less.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(sat_verbal, sat_math, s=5)
+
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      Now we can see that the markers are aligned in rows and columns, because scores are rounded off to the nearest multiple of 10.
+      Some information is lost in the process.
+    </p>
+    <p>
+      We can't get that information back, but we can minimize the effect on the scatter plot by <term>jittering</term> the data, which means adding random noise to reverse the effect of rounding off.
+      The following function takes a sequence and jitters it by adding random values from a normal distribution with mean 0 and the given standard deviation.
+      The result is a NumPy array.
+    </p>
+
+    <program language="python">
+      <input>
+def jitter(seq, std=1):
+    n = len(seq)
+    return np.random.normal(0, std, n) + seq
+      </input>
+    </program>
+
+    <p>
+      If we jitter the scores with a standard deviation of 3, the rows and columns are no longer visible in the scatter plot.
+    </p>
+
+    <program language="python">
+      <input>
+sat_verbal_jittered = jitter(sat_verbal, 3)
+sat_math_jittered = jitter(sat_math, 3)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5)
+
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      Jittering reduces the visual effect of rounding and makes the shape of the relationship clearer.
+      But in general you should only jitter data for purposes of visualization and avoid using jittered data for analysis.
+    </p>
+    <p>
+      In this example, even after adjusting the marker size and jittering the data, there is still some overplotting.
+      So let's try one more thing: we can use the <c>alpha</c> keyword to make the markers partly transparent.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5, alpha=0.2)
+
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      With transparency, overlapping data points look darker, so darkness is proportional to density.
+    </p>
+    <p>
+      Although scatter plots are a simple and widely-used visualization, they can be hard to get right.
+      In general, it takes some trial and error to adjust marker sizes, transparency, and jittering to find the best visual representation of the relationship between variables.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-decile-plots">
+    <title>Decile Plots</title>
+
+    <p>
+      Scatter plots provide a general impression of the relationship between variables, but there are other visualizations that provide more insight into the nature of the relationship.
+      One of them is a <term>decile plot</term>.
+    </p>
+    <p>
+      To generate a decile plot, we'll sort the respondents by verbal score and divide them into 10 groups, called <term>deciles</term>.
+      We can use the <c>qcut</c> method to compute the deciles.
+    </p>
+
+    <program language="python">
+      <input>
+deciles = pd.qcut(nlsy_valid["sat_verbal"], 10, labels=False) + 1
+deciles.value_counts().sort_index()
+      </input>
+    </program>
+
+    <p>
+      The number of respondents in each decile is roughly equal.
+    </p>
+    <p>
+      Now we can use the <c>groupby</c> method to divide the <c>DataFrame</c> into groups by <c>decile</c>.
+    </p>
+
+    <program language="python">
+      <input>
+df_groupby = nlsy_valid.groupby(deciles)
+df_groupby
+      </input>
+    </program>
+
+    <p>
+      The result is a <c>DataFrameGroupBy</c> object that represents the groups.
+      We can select the <c>sat_math</c> column from it.
+    </p>
+
+    <program language="python">
+      <input>
+series_groupby = df_groupby["sat_math"]
+series_groupby
+      </input>
+    </program>
+
+    <p>
+      The result is a <c>SeriesGroupBy</c> object that represents the math scores in each decile.
+      We can use the <c>quantile</c> function to compute the 10th, 50th, and 90th percentiles in each group.
+    </p>
+
+    <program language="python">
+      <input>
+low = series_groupby.quantile(0.1)
+median = series_groupby.quantile(0.5)
+high = series_groupby.quantile(0.9)
+      </input>
+    </program>
+
+    <p>
+      A decile plot shows these percentiles for each decile group.
+      In the following figure, the line shows the median and the shaded region shows the area between the 10th and 90th percentiles.
+    </p>
+
+    <program language="python">
+      <input>
+xs = median.index
+plt.fill_between(xs, low, high, alpha=0.2)
+plt.plot(xs, median, label="median")
+
+decorate(xlabel="SAT Verbal Decile", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      As an alternative, we can compute the median verbal score in each group and plot those values on the x-axis, rather than the decile numbers.
+    </p>
+
+    <program language="python">
+      <input>
+xs = df_groupby["sat_verbal"].median()
+
+plt.fill_between(xs, low, high, alpha=0.2)
+plt.plot(xs, median, color="C0", label="median")
+
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      It looks like the relationship between these variables is linear -- that is, each increase in the median verbal scores corresponds to a roughly equal increase in median math scores.
+    </p>
+    <p>
+      More generally, we could divide the respondents into any number of groups, not necessarily 10, and we could compute other summary statistics in each group, not just these percentiles.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-correlation">
+    <title>Correlation</title>
+
+    <p>
+      When the NLSY participants were in 9th grade, many of them took the mathematics section of the Peabody Individual Achievement Test (PIAT).
+      Let's give the column that contains the results a more interpretable name.
+    </p>
+
+    <program language="python">
+      <input>
+nlsy["piat_math"] = nlsy["R1318200"]
+nlsy["piat_math"].describe()
+      </input>
+    </program>
+
+    <p>
+      Here's what the distribution of scores looks like.
+    </p>
+
+    <program language="python">
+      <input>
+from empiricaldist import Cdf
+
+cdf_piat_math = Cdf.from_seq(nlsy["piat_math"], name="PIAT math")
+cdf_piat_math.step()
+decorate(ylabel="CDF")
+      </input>
+    </program>
+
+    <p>
+      Students who do well on the PIAT in 9th grade are likely to do well on the SAT math section in 12th grade.
+      For the NLSY participants who took both tests, the following scatter plot shows the relationship between their scores.
+      It uses the <c>scatter</c> function in <c>thinkstats</c>, which adjusts the marker size and transparency, and optionally jitters the data.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import scatter
+
+scatter(nlsy, "piat_math", "sat_math")
+
+decorate(xlabel="PIAT Math", ylabel="SAT Math")
+      </input>
+    </program>
+
+    <p>
+      As expected, students who do well on the PIAT are likely to do well on the SAT math.
+      And if math and verbal ability are related, we expect them do well on the SAT verbal section, too.
+      The following figure shows the relationship between the PIAT and SAT verbal scores.
+    </p>
+
+    <program language="python">
+      <input>
+scatter(nlsy, "piat_math", "sat_verbal")
+
+decorate(xlabel="PIAT Math", ylabel="SAT Verbal")
+      </input>
+    </program>
+
+    <p>
+      Students with higher PIAT scores also have higher SAT verbal scores, on average.
+    </p>
+    <p>
+      Comparing the scatter plots, the points in the first figure might be more compact, and the points in the second figure more dispersed.
+      If so, that means that the PIAT math scores predict SAT math scores more accurately than they predict SAT verbal scores -- and it makes sense if they do.
+    </p>
+    <p>
+      To quantify the strength of these relationships, we can use the <term>Pearson correlation coefficient</term>, often just called "correlation".
+      To understand correlation, let's start with standardization.
+    </p>
+    <p>
+      To standardize a variable, we subtract off the mean and divide through by the standard deviation, as in this function.
+    </p>
+
+    <program language="python">
+      <input>
+def standardize(xs):
+    """Standardizes a sequence of numbers.
+
+    xs: sequence of numbers
+
+    returns: NumPy array
+    """
+    return (xs - np.mean(xs)) / np.std(xs)
+      </input>
+    </program>
+
+    <p>
+      To show how it's used, we'll select the rows where <c>piat_math</c> and <c>sat_math</c> are valid.
+    </p>
+
+    <program language="python">
+      <input>
+valid = nlsy.dropna(subset=["piat_math", "sat_math"])
+piat_math = valid["piat_math"]
+sat_math = valid["sat_math"]
+      </input>
+    </program>
+
+    <p>
+      And standardize the PIAT math scores.
+    </p>
+
+    <program language="python">
+      <input>
+piat_math_standard = standardize(piat_math)
+np.mean(piat_math_standard), np.std(piat_math_standard)
+      </input>
+    </program>
+
+    <p>
+      The results are <term>standard scores</term>, also called "z-scores".
+      Because of the way the standard scores are calculated, the mean is close to 0 and the standard deviation is close to 1.
+    </p>
+    <p>
+      Let's also standardize the SAT math scores.
+    </p>
+
+    <program language="python">
+      <input>
+sat_math_standard = standardize(sat_math)
+np.mean(sat_math_standard), np.std(sat_math_standard)
+      </input>
+    </program>
+
+    <p>
+      The following figure shows sequences of these scores for the first 100 participants.
+    </p>
+    <p>
+      Calling <c>subplot</c> with the arguments <c>2, 1, 1</c> tells Matplotlib to create multiple plots, arranged in two rows and one column, and initializes the first plot.
+      Calling it again with the arguments <c>2, 1, 2</c> initializes the second plot.
+      <c>axhline</c> draws a horizontal line that spans the width of the axes.
+    </p>
+
+    <program language="python">
+      <input>
+plt.subplot(2, 1, 1)
+plt.axhline(0, color="gray", lw=1, alpha=0.5)
+plt.plot(piat_math_standard.values[:100], label="PIAT math")
+decorate(ylabel="z-score", xticks=[])
+
+plt.subplot(2, 1, 2)
+plt.axhline(0, color="gray", lw=1, alpha=0.5)
+plt.plot(sat_math_standard.values[:100], label="SAT math", color="C1")
+decorate(ylabel="z-score", xticks=[])
+      </input>
+    </program>
+
+    <p>
+      These variables are clearly related: when one is above the mean, the other is likely to be above the mean, too.
+      To quantify the strength of this relationship, we'll multiply the standard scores element-wise and compute the average of the products.
+    </p>
+    <p>
+      When both scores are positive, their product is positive, so it tends to increase the average product.
+      And when both scores are negative, their product is positive, so it also tends to increase the average product.
+      When the scores have opposite signs, the product is negative, so it decreases the average product.
+      As a result, the average product measures the similarity between the sequences.
+    </p>
+
+    <program language="python">
+      <input>
+np.mean(piat_math_standard * sat_math_standard)
+      </input>
+    </program>
+
+    <p>
+      The result, which is about 0.64, is the correlation coefficient.
+      Here's one way to interpret it: if someone's PIAT math score is 1 standard deviation above the mean, we expect their SAT math score to be 0.64 standard deviations above the mean, on average.
+    </p>
+    <p>
+      The result is the same if we multiply the elements in the other order.
+    </p>
+
+    <program language="python">
+      <input>
+np.mean(sat_math_standard * piat_math_standard)
+      </input>
+    </program>
+
+    <p>
+      So the correlation coefficient is symmetric: if someone's SAT math score is 1 standard deviation above the mean, we expect their PIAT math score to be 0.64 standard deviations above the mean, on average.
+    </p>
+    <p>
+      Correlation is a commonly-used statistic, so NumPy provides a function that computes it.
+    </p>
+
+    <program language="python">
+      <input>
+np.corrcoef(piat_math, sat_math)
+      </input>
+    </program>
+
+    <p>
+      The result is a <term>correlation matrix</term>, with one row and one column for each variable.
+      The value in the upper left is the correlation of <c>piat_math</c> with itself.
+      The value in the lower right is the correlation of <c>sat_math</c> with itself.
+      The correlation of any variable with itself is 1, which indicates perfect correlation.
+    </p>
+    <p>
+      The values in the upper right and lower left are the correlation of <c>piat_math</c> with <c>sat_math</c> and the correlation of <c>sat_math</c> with <c>piat_math</c>, which are necessarily equal.
+    </p>
+    <p>
+      <c>thinkstats</c> provides a <c>corrcoef</c> function that takes a <c>DataFrame</c> and two column names, selects the rows where both columns are valid, and computes their correlation.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import corrcoef
+
+corrcoef(nlsy, "piat_math", "sat_math")
+      </input>
+    </program>
+
+    <p>
+      We can use this function to compute the correlation of <c>piat_math</c> and <c>sat_verbal</c>.
+    </p>
+
+    <program language="python">
+      <input>
+corrcoef(nlsy, "piat_math", "sat_verbal")
+      </input>
+    </program>
+
+    <p>
+      The correlation is about 0.51, so if someone's PIAT math score is one standard deviation above the mean, we expect their SAT verbal score to be 0.51 standard deviations above the mean, on average.
+    </p>
+    <p>
+      As we might expect, PIAT math scores predict SAT math scores better than they predict SAT verbal scores.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-strength-of-correlation">
+    <title>Strength of Correlation</title>
+
+    <p>
+      As you look at more scatter plots, you will get a sense of what different correlations look like.
+      To help you develop this sense, the following figure shows scatter plots for randomly-generated data with the different correlations.
+    </p>
+
+    <program language="python">
+      <input>
+np.random.seed(17)
+xs = np.random.normal(size=300)
+ys = np.random.normal(size=300)
+      </input>
+    </program>
+
+    <program language="python">
+      <input>
+from thinkstats import make_correlated_scatter
+
+plt.figure(figsize=(10, 2.5))
+
+for i, rho in enumerate([0, 0.3, 0.7, 0.99]):
+    plt.subplot(1, 4, i + 1)
+    make_correlated_scatter(xs, ys, rho)
+decorate()
+      </input>
+    </program>
+
+    <p>
+      The Greek letter ρ, which is spelled "rho" and pronounced like "row", is the conventional symbol for the correlation coefficient.
+    </p>
+    <p>
+      Correlation can also be negative.
+      Here are scatter plots for random data with a range of negative correlations.
+    </p>
+
+    <program language="python">
+      <input>
+plt.figure(figsize=(10, 2.5))
+
+for i, rho in enumerate([-0.1, -0.3, -0.7, -0.99]):
+    plt.subplot(1, 4, i + 1)
+    make_correlated_scatter(xs, ys, rho)
+decorate()
+      </input>
+    </program>
+
+    <p>
+      The correlation coefficient is always between -1 and 1.
+      If there is no relationship between two variables, their correlation is 0 -- but if the correlation is 0, that doesn't necessarily mean there is no relationship.
+    </p>
+    <p>
+      In particular, if there is a non-linear relationship, the correlation coefficient can be close to 0.
+      In each of the following examples, there is a clear relationship between the variables in the sense that if we are given one of the values, we can make a substantially better prediction of the other.
+      But in each case the correlation coefficient is close to 0.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import make_nonlinear_scatter
+
+plt.figure(figsize=(10, 2.5))
+
+for i, kind in enumerate(["abs", "quadratic", "sinusoid"]):
+    plt.subplot(1, 4, i + 1)
+    make_nonlinear_scatter(xs, ys, kind)
+decorate()
+      </input>
+    </program>
+
+    <p>
+      Correlation quantifies the strength of a <em>linear</em> relationship between variables.
+      If there is a non-linear relationship, the correlation coefficient can be misleading.
+      And if the correlation is close to 0, that does <em>not</em> mean there is no relationship.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-rank-correlation">
+    <title>Rank Correlation</title>
+
+    <p>
+      The NLSY is longitudinal, which means that it follows the same group of people over time.
+      The group we've been studying includes people born between 1980 and 1984.
+      The ones who took the SAT probably took it in the late 1990s, when they were about 18 years old.
+      So when they were asked about their income in 2021, they were in their late 30s or early 40s.
+      Let's give the column with the income data a more interpretable name.
+    </p>
+
+    <program language="python">
+      <input>
+nlsy["income"] = nlsy["U4949700"]
+nlsy["income"].describe()
+      </input>
+    </program>
+
+    <p>
+      The values in this column are gross family income, which is total income of the respondent and the other members of their household, from all sources, reported in U.S. dollars (USD).
+      Here's what the distribution of income looks like.
+    </p>
+
+    <program language="python">
+      <input>
+cdf_income = Cdf.from_seq(nlsy["income"])
+cdf_income.step()
+
+decorate(xlabel="Income (USD)", ylabel="CDF")
+      </input>
+    </program>
+
+    <p>
+      Notice the step near $600,000 -- values above this threshold were capped to protect the anonymity of the participants.
+      Now here's a scatter plot of the respondents' SAT math scores and their income later in life.
+    </p>
+
+    <program language="python">
+      <input>
+scatter(nlsy, "piat_math", "income")
+
+decorate(xlabel="PIAT math", ylabel="Gross Family Income (USD)")
+      </input>
+    </program>
+
+    <p>
+      It looks like there is a relationship between these variables.
+      Here is the correlation.
+    </p>
+
+    <program language="python">
+      <input>
+corrcoef(nlsy, "piat_math", "income")
+      </input>
+    </program>
+
+    <p>
+      The correlation is about 0.3, which means that if someone gets a PIAT math score one standard deviation above the mean when they are 15 years old, we expect their income to be about 0.3 standard deviations above the mean when they are 40.
+      That's not as strong as the correlation between PIAT scores and SAT scores, but considering the number of factors that affect income, it's pretty strong.
+    </p>
+    <p>
+      In fact, Pearson's correlation coefficient might understate the strength of the relationship.
+      As we can see in the previous scatter plot, both variables have an apparent excess of values at the extremes.
+      Because the correlation coefficient is based on the product of deviations from the mean, it is sensitive to these extreme values.
+    </p>
+    <p>
+      A more robust alternative is the <term>rank correlation</term>, which is based on the ranks of the scores rather than standardized scores.
+      We can use the Pandas method <c>rank</c> to compute the rank of each score and each income.
+    </p>
+
+    <program language="python">
+      <input>
+valid = nlsy.dropna(subset=["piat_math", "income"])
+
+piat_math_rank = valid["piat_math"].rank(method="first")
+income_rank = valid["income"].rank(method="first")
+      </input>
+    </program>
+
+    <p>
+      With the <c>method="first"</c> argument, <c>rank</c> assigns ranks from 1 to the length of the sequence, which is 4101.
+    </p>
+
+    <program language="python">
+      <input>
+income_rank.min(), income_rank.max()
+      </input>
+    </program>
+
+    <p>
+      Here's a scatter plot of income ranks versus math score ranks.
+    </p>
+
+    <program language="python">
+      <input>
+plt.scatter(piat_math_rank, income_rank, s=5, alpha=0.2)
+
+decorate(xlabel="PIAT math rank", ylabel="Income rank")
+      </input>
+    </program>
+
+    <p>
+      And here's the correlation of the ranks.
+    </p>
+
+    <program language="python">
+      <input>
+np.corrcoef(piat_math_rank, income_rank)[0, 1]
+      </input>
+    </program>
+
+    <p>
+      The result is about 0.38, somewhat higher than the Pearson correlation, which is 0.30.
+      Because rank correlation is less sensitive to the effect of extreme values, it is probably a better measure of the strength of the relationship between these variables.
+    </p>
+    <p>
+      <c>thinkstats</c> provides a <c>rankcorr</c> function that encapsulates the code in this section.
+    </p>
+
+    <program language="python">
+      <input>
+from thinkstats import rankcorr
+
+rankcorr(nlsy, "piat_math", "income")
+      </input>
+    </program>
+
+    <p>
+      And SciPy provides a similar function called <c>spearmanr</c>, because rank correlation is also called Spearman's correlation.
+    </p>
+
+    <program language="python">
+      <input>
+from scipy.stats import spearmanr
+
+spearmanr(valid["piat_math"], valid["income"]).statistic
+      </input>
+    </program>
+
+    <p>
+      As an exercise, you'll have a chance to compute the correlation between SAT verbal scores and income, using both Pearson correlation and rank correlation.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-correlation-and-causation">
+    <title>Correlation and Causation</title>
+
+    <p>
+      If variables A and B are correlated, the apparent correlation might be due to random sampling, or it might be the result of non-representative sampling, or it might indicate a real correlation between quantities in the population.
+    </p>
+    <p>
+      If the correlation is real, there are three possible explanations: A causes B, or B causes A, or some other set of factors causes both A and B. These explanations are called "causal relationships".
+    </p>
+    <p>
+      Correlation alone does not distinguish between these explanations, so it does not tell you which ones are true.
+      This rule is often summarized with the phrase "Correlation does not imply causation," which is so pithy it has its own Wikipedia page.
+    </p>
+
+    <p>
+      <url href="http://wikipedia.org/wiki/Correlation_does_not_imply_causation">http://wikipedia.org/wiki/Correlation_does_not_imply_causation</url>
+    </p>
+
+    <p>
+      So what can you do to provide evidence of causation?
+    </p>
+
+    <ol>
+      <li>
+        <p>
+          Use time. If A comes before B, then A can cause B but not the other way around.
+          The order of events can help us infer the direction of causation, but it does not preclude the possibility that something else causes both A and B.
+        </p>
+      </li>
+      <li>
+        <p>
+          Use randomness.
+          If you divide a large sample into two groups at random and compute the means of almost any variable, you expect the difference to be small.
+          If the groups are nearly identical in all variables but A and B, you can rule out the possibility that something else causes both A and B.
+        </p>
+      </li>
+    </ol>
+
+    <p>
+      These ideas are the motivation for the <term>randomized controlled trial</term>, in which subjects are assigned randomly to two (or more) groups: a <term>treatment group</term> that receives some kind of intervention, like a new medicine, and a <term>control group</term> that receives no intervention, or another treatment whose effects are known.
+      A randomized controlled trial is the most reliable way to demonstrate a causal relationship, and the foundation of evidence-based medicine.
+    </p>
+    <p>
+      Unfortunately, controlled trials are sometimes impossible or unethical.
+      An alternative is to look for a <term>natural experiment</term>, where similar groups are exposed to different conditions due to circumstances beyond the control of the experimenter.
+    </p>
+    <p>
+      Identifying and measuring causal relationships is the topic of a branch of statistics called <term>causal inference</term>.
+    </p>
+
+  </section>
+
+  <section xml:id="sec-relationships-glossary">
+    <title>Glossary</title>
+
+    <dl>
+      <li>
+        <title>scatter plot</title>
+        <p>A visualization that shows the relationship between two variables by plotting one point for each observation in the dataset.</p>
+      </li>
+      <li>
+        <title>overplotted</title>
+        <p>A scatter plot is overplotted if many markers overlap, making it hard to distinguish areas of different density, which can misrepresent the relationship.</p>
+      </li>
+      <li>
+        <title>jitter</title>
+        <p>Random noise added to data points in a plot to make overlapping values more visible.</p>
+      </li>
+      <li>
+        <title>decile plot</title>
+        <p>A plot that divides data into deciles (ten groups) based on one variable, then summarizes another variable for each group.</p>
+      </li>
+      <li>
+        <title>decile</title>
+        <p>One of the groups created by sorting data and dividing it into ten roughly equal parts.</p>
+      </li>
+      <li>
+        <title>Pearson correlation coefficient</title>
+        <p>A statistic that measures the strength and sign (positive or negative) of the linear relationship between two variables.</p>
+      </li>
+      <li>
+        <title>standard score</title>
+        <p>A quantity that has been standardized so that it is expressed in standard deviations from the mean.</p>
+      </li>
+      <li>
+        <title>correlation matrix</title>
+        <p>A table showing the correlation coefficients for each pair of variables in a dataset.</p>
+      </li>
+      <li>
+        <title>rank correlation</title>
+        <p>A robust way to quantify the strength of a relationship by using the ranks of values instead of the actual values.</p>
+      </li>
+      <li>
+        <title>randomized controlled trial</title>
+        <p>An experiment where subjects are randomly assigned to groups that receive different treatments.</p>
+      </li>
+      <li>
+        <title>treatment group</title>
+        <p>In an experiment, the group that receives the intervention being tested.</p>
+      </li>
+      <li>
+        <title>control group</title>
+        <p>In an experiment, the group that does not receive the intervention, or receives a treatment whose effect is known.</p>
+      </li>
+      <li>
+        <title>natural experiment</title>
+        <p>An experiment that uses naturally occurring groups, which can sometimes mimic random assignment.</p>
+      </li>
+      <li>
+        <title>causal inference</title>
+        <p>Methods for identifying and quantifying cause-and-effect relationships.</p>
+      </li>
+    </dl>
+
+  </section>
+
+  <exercises xml:id="ex-relationships">
+
+    <exercise xml:id="ex-relationships-1">
+      <title>Exercise 7.1</title>
+      <statement>
+        <p>
+          The <c>thinkstats</c> module provides a function called <c>decile_plot</c> that encapsulates the code from earlier in this chapter.
+          We can call it like this to visualize the relationship between SAT verbal and math scores.
+        </p>
+        <program language="python">
+          <input>
+from thinkstats import decile_plot
+
+decile_plot(nlsy, "sat_verbal", "sat_math")
+decorate(xlabel="SAT Verbal", ylabel="SAT Math")
+          </input>
+        </program>
+        <p>
+          Make a decile plot of PIAT math scores and income.
+          Does it appear to be a linear relationship?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-relationships-2">
+      <title>Exercise 7.2</title>
+      <statement>
+        <p>
+          Make a scatter plot of income versus SAT math scores.
+          Compute Pearson's correlation and rank correlation.
+          Are they substantially different?
+        </p>
+        <p>
+          Make a scatter plot of income versus SAT verbal scores, and compute both correlations.
+          Which is a stronger prediction of future income, math or verbal scores?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-relationships-3">
+      <title>Exercise 7.3</title>
+      <statement>
+        <p>
+          Let's see how a student's high school grade point average (GPA) is correlated with their SAT scores.
+          Here's the variable in the NLSY dataset that encodes GPA.
+        </p>
+        <program language="python">
+          <input>
+missing_codes = [-6, -7, -8, -9]
+nlsy["gpa"] = nlsy["R9871900"].replace(missing_codes, np.nan) / 100
+nlsy["gpa"].describe()
+          </input>
+        </program>
+        <p>
+          And here's what the distribution of GPAs looks like.
+        </p>
+        <program language="python">
+          <input>
+cdf_income = Cdf.from_seq(nlsy["gpa"])
+cdf_income.step()
+decorate(xlabel="GPA", ylabel="CDF")
+          </input>
+        </program>
+        <p>
+          Make a scatter plot that shows the relationship between GPA and SAT math scores and compute the correlation coefficient.
+          Do the same for the relationship between GPA and SAT verbal scores.
+          Which SAT score is a better predictor of GPA?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-relationships-4">
+      <title>Exercise 7.4</title>
+      <statement>
+        <p>
+          Let's investigate the relationship between education and income.
+          The NLSY dataset includes a column that reports the highest degree earned by each respondent.
+          The values are encoded as integers.
+        </p>
+        <program language="python">
+          <input>
+nlsy["degree"] = nlsy["Z9083900"]
+nlsy["degree"].value_counts().sort_index()
+          </input>
+        </program>
+        <p>
+          But we can use these lists to decode them.
+        </p>
+        <program language="python">
+          <input>
+positions = [0, 1, 2, 3, 4, 5, 6, 7]
+labels = [
+    "None",
+    "GED",
+    "High school diploma",
+    "Associate's degree",
+    "Bachelor's degree",
+    "Master's degree",
+    "PhD",
+    "Professional degree",
+]
+          </input>
+        </program>
+        <p>
+          And make a <c>Pmf</c> that represents the distribution of educational attainment.
+        </p>
+        <program language="python">
+          <input>
+from empiricaldist import Pmf
+
+Pmf.from_seq(nlsy["degree"]).bar()
+
+plt.xticks(positions, labels, rotation=30, ha="right")
+decorate(ylabel="PMF")
+          </input>
+        </program>
+        <p>
+          Make a scatter plot of <c>income</c> versus <c>degree</c>.
+          To avoid overplotting, jitter the values of <c>degree</c> and adjust the marker size and transparency.
+        </p>
+        <p>
+          Use the <c>groupby</c> method to group respondents by <c>degree</c>.
+          From the <c>DataFrameGroupBy</c> object, select the <c>income</c> column; then use the <c>quantile</c> method to compute the median, 10th and 90th percentiles in each group.
+          Use <c>fill_between</c> to plot the region between the 10th and 90th percentiles, and use <c>plot</c> to plot the medians.
+        </p>
+        <p>
+          What can you say about the income premium associated with each additional degree?
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-relationships-5">
+      <title>Exercise 7.5</title>
+      <statement>
+        <p>
+          The Behavioral Risk Factor Surveillance System (BRFSS) dataset includes self-reported heights and weights for about 400,000 respondents.
+          Instructions for downloading the data are in the notebook for this chapter.
+        </p>
+        <p>
+          Make a scatter plot that shows the relationship between height and weight.
+          You might have to jitter the data to blur the visible rows and columns due to rounding.
+          And with such a large sample, you will have to adjust the marker size and transparency to avoid overplotting.
+          Also, because there are outliers in both measurements, you might want to use <c>xlim</c> and <c>ylim</c> to zoom in on a region that covers most of the respondents.
+        </p>
+        <p>
+          Here's how we can load the data.
+        </p>
+        <program language="python">
+          <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
+          </input>
+        </program>
+        <program language="python">
+          <input>
+from thinkstats import read_brfss
+
+brfss = read_brfss()
+brfss["htm3"].describe()
+          </input>
+        </program>
+        <p>
+          Make a decile plot of weight versus height. Does the relationship seem to be linear?
+          Compute the correlation coefficient and rank correlation. Are they substantially different? Which one do you think better quantifies the relationship between these variables?
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>
