@@ -5,12 +5,842 @@
 
   <introduction>
     <p>
-      This chapter introduces exploratory data analysis using a real dataset from the
-      National Survey of Family Growth (NSFG), which is conducted by the CDC to gather
-      information about families and health in the United States.
+      The thesis of this book is we can use data to answer questions, resolve debates, and make better decisions.
+    </p>
+    <p>
+      This chapter introduces the steps we'll use to do that: loading and validating data, exploring, and choosing statistics that measure what we are interested in.
+      As an example, we'll use data from the National Survey of Family Growth (NSFG) to answer a question I heard when my wife and I were expecting our first child: do first babies tend to arrive late?
     </p>
   </introduction>
 
-  <!-- Sections will be added here -->
+  <section xml:id="sec-evidence">
+    <title>Evidence</title>
+
+    <p>
+      You might have heard that first babies are more likely to be late.
+      If you search the web with this question, you will find plenty of discussion.
+      Some people claim it's true, others say it's a myth, and some people say it's the other way around: first babies come early.
+    </p>
+    <p>
+      In many of these discussions, people provide data to support their claims.
+      I found many examples like these:
+    </p>
+    <blockquote>
+      <p>
+        "My two friends that have given birth recently to their first babies, BOTH went almost 2 weeks overdue before going into labour or being induced."
+      </p>
+    </blockquote>
+    <blockquote>
+      <p>
+        "My first one came 2 weeks late and now I think the second one is going to come out two weeks early!!"
+      </p>
+    </blockquote>
+    <blockquote>
+      <p>
+        "I don't think that can be true because my sister was my mother's first and she was early, as with many of my cousins."
+      </p>
+    </blockquote>
+    <p>
+      Reports like these are called <term>anecdotal evidence</term> because they are based on data that is unpublished and usually personal.
+      In casual conversation, there is nothing wrong with anecdotes, so I don't mean to pick on the people I quoted.
+    </p>
+    <p>
+      But we might want evidence that is more persuasive and an answer that is more reliable.
+      By those standards, anecdotal evidence usually fails, because:
+    </p>
+    <ul>
+      <li>
+        <p>
+          <term>Small number of observations</term>: If pregnancy length is longer for first babies, the difference is probably small compared to natural variation.
+          In that case, we might have to compare a large number of pregnancies to know whether there is a difference.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Selection bias</term>: People who join a discussion of this question might be interested because their first babies were late.
+          In that case the process of selecting data would bias the results.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Confirmation bias</term>: People who believe the claim might be more likely to contribute examples that confirm it.
+          People who doubt the claim are more likely to cite counterexamples.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Inaccuracy</term>: Anecdotes are often personal stories, and might be misremembered, misrepresented, repeated inaccurately, etc.
+        </p>
+      </li>
+    </ul>
+    <p>
+      To address the limitations of anecdotes, we will use the tools of statistics, which include:
+    </p>
+    <ul>
+      <li>
+        <p>
+          <term>Data collection</term>: We will use data from a large national survey that was designed explicitly with the goal of generating statistically valid inferences about the U.S. population.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Descriptive statistics</term>: We will generate statistics that summarize the data concisely, and evaluate different ways to visualize data.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Exploratory data analysis</term>: We will look for patterns, differences, and other features that address the questions we are interested in.
+          At the same time we will check for inconsistencies and identify limitations.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Estimation</term>: We will use data from a sample to estimate characteristics of the general population.
+        </p>
+      </li>
+      <li>
+        <p>
+          <term>Hypothesis testing</term>: Where we see apparent effects, like a difference between two groups, we will evaluate whether the effect might have happened by chance.
+        </p>
+      </li>
+    </ul>
+    <p>
+      By performing these steps with care to avoid pitfalls, we can reach conclusions that are more justified and more likely to be correct.
+    </p>
+  </section>
+
+  <section xml:id="sec-nsfg">
+    <title>The National Survey of Family Growth</title>
+
+    <p>
+      Since 1973 the U.S. Centers for Disease Control and Prevention (CDC) have conducted the National Survey of Family Growth (NSFG), which is intended to gather "information on family life, marriage and divorce, pregnancy, infertility, use of contraception, and men's and women's health.
+      The survey results are used...to plan health services and health education programs, and to do statistical studies of families, fertility, and health."
+    </p>
+    <p>
+      You can read more about the NSFG at <url href="http://cdc.gov/nchs/nsfg.htm" visual="cdc.gov/nchs/nsfg.htm"/>.
+    </p>
+    <p>
+      We will use data collected by this survey to investigate whether first babies tend to be born late, and other questions.
+      In order to use this data effectively, we have to understand the design of the study.
+    </p>
+    <p>
+      In general, the goal of a statistical study is to draw conclusions about a <term>population</term>.
+      In the NSFG, the target population is people in the United States aged 15-44.
+    </p>
+    <p>
+      Ideally surveys would collect data from every member of the population, but that's seldom possible.
+      Instead we collect data from a subset of the population called a <term>sample</term>.
+      The people who participate in a survey are called <term>respondents</term>.
+    </p>
+    <p>
+      The NSFG is a <term>cross-sectional</term> study, which means that it captures a snapshot of a population at a point in time.
+      The NSFG has been conducted several times now; each deployment is called a <term>cycle</term>.
+      We will use data from Cycle 6, which was conducted from January 2002 to March 2003.
+    </p>
+    <p>
+      In general, cross-sectional studies are meant to be <term>representative</term>, which means that the sample is similar to the target population in all ways that are important for the purposes of the study.
+      That ideal is hard to achieve in practice, but people who conduct surveys come as close as they can.
+    </p>
+    <p>
+      The NSFG is not representative; instead it is <term>stratified</term>, which means that it deliberately <term>oversamples</term> some groups.
+      The designers of the study recruited three groups <mdash/> Hispanics, African-Americans and teenagers <mdash/> at rates higher than their representation in the U.S. population, in order to make sure that the number of respondents in each group is large enough to draw valid conclusions.
+      The drawback of oversampling is that it is not as easy to draw conclusions about the population based on statistics from the sample.
+      We will come back to this point later.
+    </p>
+    <p>
+      When working with this kind of data, it is important to be familiar with the <term>codebook</term>, which documents the design of the study, the survey questions, and the encoding of the responses.
+    </p>
+    <p>
+      The codebook and user's guide for the NSFG data are available from <url href="http://www.cdc.gov/nchs/nsfg/nsfg_cycle6.htm" visual="cdc.gov/nchs/nsfg/nsfg_cycle6.htm"/>.
+    </p>
+  </section>
+
+  <section xml:id="sec-reading-data">
+    <title>Reading the Data</title>
+
+    <p>
+      Before downloading NSFG data, you have to agree to the terms of use:
+    </p>
+    <blockquote>
+      <p>
+        Any intentional identification or disclosure of an individual or establishment violates the assurances of confidentiality given to the providers of the information.
+        Therefore, users will:
+      </p>
+      <ul>
+        <li>
+          <p>Use the data in this dataset for statistical reporting and analysis only.</p>
+        </li>
+        <li>
+          <p>Make no attempt to learn the identity of any person or establishment included in these data.</p>
+        </li>
+        <li>
+          <p>Not link this dataset with individually identifiable data from other NCHS or non-NCHS datasets.</p>
+        </li>
+        <li>
+          <p>Not engage in any efforts to assess disclosure methodologies applied to protect individuals and establishments or any research on methods of re-identification of individuals and establishments.</p>
+        </li>
+      </ul>
+    </blockquote>
+    <p>
+      If you agree to comply with these terms, instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      The data files are available directly from the NSFG web site at <url href="https://www.cdc.gov/nchs/data_access/ftp_dua.htm?url_redirect=ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG" visual="cdc.gov/nchs/data_access"/>, but we will download them from the repository for this book, which provides a compressed version of the data file.
+    </p>
+    <p>
+      The data is stored in two files, a "dictionary" that describes the format of the data, and a data file.
+    </p>
+    <program language="python">
+      <input>
+dct_file = "2002FemPreg.dct"
+dat_file = "2002FemPreg.dat.gz"
+      </input>
+    </program>
+    <p>
+      The notebook for this chapter defines a function that reads these files.
+      It is called <c>read_stata</c> because this data format is compatible with a statistical software package called Stata.
+    </p>
+    <p>
+      The following function takes these file names as arguments, reads the dictionary, and uses the results to read the data file.
+    </p>
+    <program language="python">
+      <input>
+from statadict import parse_stata_dict
+
+
+def read_stata(dct_file, dat_file):
+    stata_dict = parse_stata_dict(dct_file)
+    resp = pd.read_fwf(
+        dat_file,
+        names=stata_dict.names,
+        colspecs=stata_dict.colspecs,
+        compression="gzip",
+    )
+    return resp
+      </input>
+    </program>
+    <p>
+      Here's how we use it.
+    </p>
+    <program language="python">
+      <input>
+preg = read_stata(dct_file, dat_file)
+      </input>
+    </program>
+    <p>
+      The result is a <c>DataFrame</c>, which is a Pandas data structure that represents tabular data in rows and columns.
+      This <c>DataFrame</c> contains a row for each pregnancy reported by a respondent and a column for each <term>variable</term>.
+      A variable can contain responses to a survey question or values that are calculated based on responses to one or more questions.
+    </p>
+    <p>
+      In addition to the data, a <c>DataFrame</c> also contains the variable names and their types, and it provides methods for accessing and modifying the data.
+      The <c>DataFrame</c> has an attribute called <c>shape</c> that contains the number of rows and columns.
+    </p>
+    <program language="python">
+      <input>
+preg.shape
+      </input>
+    </program>
+    <p>
+      This dataset has 243 variables with information about 13,593 pregnancies.
+      The <c>DataFrame</c> provides a method called <c>head</c> that displays the first few rows.
+    </p>
+    <program language="python">
+      <input>
+preg.head()
+      </input>
+    </program>
+    <p>
+      The left column is the index of the <c>DataFrame</c>, which contains a label for each row.
+      In this case, the labels are integers starting from 0, but they can also be strings and other types.
+    </p>
+    <p>
+      The <c>DataFrame</c> has an attribute called <c>columns</c> that contains the names of the variables.
+    </p>
+    <program language="python">
+      <input>
+preg.columns
+      </input>
+    </program>
+    <p>
+      The column names are contained in an <c>Index</c> object, which is another Pandas data structure.
+      To access a column from a <c>DataFrame</c>, you can use the column name as a key.
+    </p>
+    <program language="python">
+      <input>
+pregordr = preg["pregordr"]
+type(pregordr)
+      </input>
+    </program>
+    <p>
+      The result is a Pandas <c>Series</c>, which represents a sequence of values.
+      <c>Series</c> also provides <c>head</c>, which displays the first few values and their labels.
+    </p>
+    <program language="python">
+      <input>
+pregordr.head()
+      </input>
+    </program>
+    <p>
+      The last line includes the name of the <c>Series</c> and <c>dtype</c>, which is the type of the values.
+      In this example, <c>int64</c> indicates that the values are 64-bit integers.
+    </p>
+    <p>
+      The NSFG dataset contains 243 variables in total.
+      Here are some of the ones we'll use for the explorations in this book.
+    </p>
+    <ul>
+      <li>
+        <p><c>caseid</c> is the integer ID of the respondent.</p>
+      </li>
+      <li>
+        <p><c>pregordr</c> is a pregnancy serial number: the code for a respondent's first pregnancy is 1, for the second pregnancy is 2, and so on.</p>
+      </li>
+      <li>
+        <p><c>prglngth</c> is the integer duration of the pregnancy in weeks.</p>
+      </li>
+      <li>
+        <p><c>outcome</c> is an integer code for the outcome of the pregnancy. The code 1 indicates a live birth.</p>
+      </li>
+      <li>
+        <p><c>birthord</c> is a serial number for live births: the code for a respondent's first child is 1, and so on. For outcomes other than live birth, this field is blank.</p>
+      </li>
+      <li>
+        <p><c>birthwgt_lb</c> and <c>birthwgt_oz</c> contain the pounds and ounces parts of the birth weight of the baby.</p>
+      </li>
+      <li>
+        <p><c>agepreg</c> is the mother's age at the end of the pregnancy.</p>
+      </li>
+      <li>
+        <p><c>finalwgt</c> is the statistical weight associated with the respondent. It is a floating-point value that indicates the number of people in the U.S. population this respondent represents.</p>
+      </li>
+    </ul>
+    <p>
+      If you read the codebook carefully, you will see that many of the variables are <term>recodes</term>, which means that they are not part of the <term>raw data</term> collected by the survey <mdash/> they are calculated using the raw data.
+    </p>
+    <p>
+      For example, <c>prglngth</c> for live births is equal to the raw variable <c>wksgest</c> (weeks of gestation) if it is available; otherwise it is estimated using <c>mosgest * 4.33</c> (months of gestation times the average number of weeks in a month).
+    </p>
+    <p>
+      Recodes are often based on logic that checks the consistency and accuracy of the data.
+      In general it is a good idea to use recodes when they are available, unless there is a compelling reason to process the raw data yourself.
+    </p>
+  </section>
+
+  <section xml:id="sec-validation">
+    <title>Validation</title>
+
+    <p>
+      When data is exported from one software environment and imported into another, errors might be introduced.
+      And when you are getting familiar with a new dataset, you might decode data incorrectly or misunderstand its meaning.
+      If you invest time to validate the data, you can save time later and avoid errors.
+    </p>
+    <p>
+      One way to validate data is to compute basic statistics and compare them with published results.
+      For example, the NSFG codebook includes tables that summarize each variable.
+      Here is the table for <c>outcome</c>, which encodes the outcome of each pregnancy.
+    </p>
+    <table xml:id="table-outcome-codebook">
+      <title>Codebook values for <c>outcome</c></title>
+      <tabular halign="left">
+        <row header="yes" bottom="minor">
+          <cell>Value</cell>
+          <cell>Label</cell>
+          <cell>Total</cell>
+        </row>
+        <row>
+          <cell>1</cell>
+          <cell>LIVE BIRTH</cell>
+          <cell>9148</cell>
+        </row>
+        <row>
+          <cell>2</cell>
+          <cell>INDUCED ABORTION</cell>
+          <cell>1862</cell>
+        </row>
+        <row>
+          <cell>3</cell>
+          <cell>STILLBIRTH</cell>
+          <cell>120</cell>
+        </row>
+        <row>
+          <cell>4</cell>
+          <cell>MISCARRIAGE</cell>
+          <cell>1921</cell>
+        </row>
+        <row>
+          <cell>5</cell>
+          <cell>ECTOPIC PREGNANCY</cell>
+          <cell>190</cell>
+        </row>
+        <row>
+          <cell>6</cell>
+          <cell>CURRENT PREGNANCY</cell>
+          <cell>352</cell>
+        </row>
+        <row top="minor">
+          <cell>Total</cell>
+          <cell></cell>
+          <cell>13593</cell>
+        </row>
+      </tabular>
+    </table>
+    <p>
+      The "Total" column indicates the number of pregnancies with each outcome.
+      To check these totals, we'll use the <c>value_counts</c> method, which counts the number of times each value appears, and <c>sort_index</c>, which sorts the results according to the values in the <c>Index</c> (the left column).
+    </p>
+    <program language="python">
+      <input>
+preg["outcome"].value_counts().sort_index()
+      </input>
+    </program>
+    <p>
+      Comparing the results with the published table, we can confirm that the values in <c>outcome</c> are correct.
+      Similarly, here is the published table for <c>birthwgt_lb</c>.
+    </p>
+    <table xml:id="table-birthwgt-lb-codebook">
+      <title>Codebook values for <c>birthwgt_lb</c></title>
+      <tabular halign="left">
+        <row header="yes" bottom="minor">
+          <cell>Value</cell>
+          <cell>Label</cell>
+          <cell>Total</cell>
+        </row>
+        <row>
+          <cell>.</cell>
+          <cell>inapplicable</cell>
+          <cell>4449</cell>
+        </row>
+        <row>
+          <cell>0-5</cell>
+          <cell>UNDER 6 POUNDS</cell>
+          <cell>1125</cell>
+        </row>
+        <row>
+          <cell>6</cell>
+          <cell>6 POUNDS</cell>
+          <cell>2223</cell>
+        </row>
+        <row>
+          <cell>7</cell>
+          <cell>7 POUNDS</cell>
+          <cell>3049</cell>
+        </row>
+        <row>
+          <cell>8</cell>
+          <cell>8 POUNDS</cell>
+          <cell>1889</cell>
+        </row>
+        <row>
+          <cell>9-95</cell>
+          <cell>9 POUNDS OR MORE</cell>
+          <cell>799</cell>
+        </row>
+        <row>
+          <cell>97</cell>
+          <cell>Not ascertained</cell>
+          <cell>1</cell>
+        </row>
+        <row>
+          <cell>98</cell>
+          <cell>REFUSED</cell>
+          <cell>1</cell>
+        </row>
+        <row>
+          <cell>99</cell>
+          <cell>DON'T KNOW</cell>
+          <cell>57</cell>
+        </row>
+        <row top="minor">
+          <cell>Total</cell>
+          <cell></cell>
+          <cell>13593</cell>
+        </row>
+      </tabular>
+    </table>
+    <p>
+      Birth weight is only recorded for pregnancies that ended in a live birth.
+      The table indicates that there are 4449 cases where this variable is inapplicable.
+      In addition, there is one case where the question was not asked, one where the respondent did not answer, and 57 cases where they did not know.
+    </p>
+    <p>
+      Again, we can use <c>value_counts</c> to compare the counts in the dataset to the counts in the codebook.
+    </p>
+    <program language="python">
+      <input>
+counts = preg["birthwgt_lb"].value_counts(dropna=False).sort_index()
+counts
+      </input>
+    </program>
+    <p>
+      The argument <c>dropna=False</c> means that <c>value_counts</c> does not ignore values that are "NA" or "Not applicable".
+      These values appear in the results as <c>NaN</c>, which stands for "Not a number" <mdash/> and the count of these values is consistent with the count of inapplicable cases in the codebook.
+    </p>
+    <p>
+      The counts for 6, 7, and 8 pounds are consistent with the codebook.
+      To check the counts for the weight range from 0 to 5 pounds, we can use an attribute called <c>loc</c> <mdash/> which is short for "location" <mdash/> and a slice index to select a subset of the counts.
+    </p>
+    <program language="python">
+      <input>
+counts.loc[0:5]
+      </input>
+    </program>
+    <p>
+      And we can use the <c>sum</c> method to add them up.
+    </p>
+    <program language="python">
+      <input>
+counts.loc[0:5].sum()
+      </input>
+    </program>
+    <p>
+      The total is consistent with the codebook.
+    </p>
+    <p>
+      The values 97, 98, and 99 represent cases where the birth weight is unknown.
+      There are several ways we might handle missing data.
+      A simple option is to replace these values with <c>NaN</c>.
+      At the same time, we will also replace a value that is clearly wrong, 51 pounds.
+    </p>
+    <p>
+      We can use the replace method like this:
+    </p>
+    <program language="python">
+      <input>
+preg["birthwgt_lb"] = preg["birthwgt_lb"].replace([51, 97, 98, 99], np.nan)
+      </input>
+    </program>
+    <p>
+      The first argument is a list of values to be replaced.
+      The second argument, <c>np.nan</c>, gets the <c>NaN</c> value from NumPy.
+    </p>
+    <p>
+      When you read data like this, you often have to check for errors and deal with special values.
+      Operations like this are called <term>data cleaning</term>.
+    </p>
+  </section>
+
+  <section xml:id="sec-transformation">
+    <title>Transformation</title>
+
+    <p>
+      As another kind of data cleaning, sometimes we have to convert data into different formats, and perform other calculations.
+    </p>
+    <p>
+      For example, <c>agepreg</c> contains the mother's age at the end of the pregnancy.
+      According to the codebook, it is an integer number of centiyears (hundredths of a year), as we can tell if we use the <c>mean</c> method to compute its average.
+    </p>
+    <program language="python">
+      <input>
+preg["agepreg"].mean()
+      </input>
+    </program>
+    <p>
+      To convert it to years, we can divide through by 100.
+    </p>
+    <program language="python">
+      <input>
+preg["agepreg"] /= 100.0
+preg["agepreg"].mean()
+      </input>
+    </program>
+    <p>
+      Now the average is more credible.
+    </p>
+    <p>
+      As another example, <c>birthwgt_lb</c> and <c>birthwgt_oz</c> contain birth weights with the pounds and ounces in separate columns.
+      It will be more convenient to combine them into a single column that contains weights in pounds and fractions of a pound.
+    </p>
+    <p>
+      First we'll clean <c>birthwgt_oz</c> as we did with <c>birthwgt_lb</c>.
+    </p>
+    <program language="python">
+      <input>
+preg["birthwgt_oz"].value_counts(dropna=False).sort_index()
+      </input>
+    </program>
+    <program language="python">
+      <input>
+preg["birthwgt_oz"] = preg["birthwgt_oz"].replace([97, 98, 99], np.nan)
+      </input>
+    </program>
+    <p>
+      Now we can use the cleaned values to create a new column that combines pounds and ounces into a single quantity.
+    </p>
+    <program language="python">
+      <input>
+preg["totalwgt_lb"] = preg["birthwgt_lb"] + preg["birthwgt_oz"] / 16.0
+preg["totalwgt_lb"].mean()
+      </input>
+    </program>
+    <p>
+      The average of the result seems plausible.
+    </p>
+  </section>
+
+  <section xml:id="sec-summary-statistics">
+    <title>Summary Statistics</title>
+
+    <p>
+      A <term>statistic</term> is a number derived from a dataset, usually intended to quantify some aspect of the data.
+      Examples include the count, mean, variance, and standard deviation.
+    </p>
+    <p>
+      A <c>Series</c> object has a <c>count</c> method that returns the number of values that are not <c>nan</c>.
+    </p>
+    <program language="python">
+      <input>
+weights = preg["totalwgt_lb"]
+n = weights.count()
+n
+      </input>
+    </program>
+    <p>
+      It also provides a <c>sum</c> method that returns the sum of the values <mdash/> we can use it to compute the mean like this.
+    </p>
+    <program language="python">
+      <input>
+mean = weights.sum() / n
+mean
+      </input>
+    </program>
+    <p>
+      But as we've already seen, there's also a <c>mean</c> method that does the same thing.
+    </p>
+    <program language="python">
+      <input>
+weights.mean()
+      </input>
+    </program>
+    <p>
+      In this dataset, the average birth weight is about 7.3 pounds.
+    </p>
+    <p>
+      Variance is a statistic that quantifies the spread of a set of values.
+      It is the mean of the squared deviations, which are the distances of each point from the mean.
+    </p>
+    <program language="python">
+      <input>
+squared_deviations = (weights - mean) ** 2
+      </input>
+    </program>
+    <p>
+      We can compute the mean of the squared deviations like this.
+    </p>
+    <program language="python">
+      <input>
+var = squared_deviations.sum() / n
+var
+      </input>
+    </program>
+    <p>
+      As you might expect, <c>Series</c> provides a <c>var</c> method that does <em>almost</em> the same thing.
+    </p>
+    <program language="python">
+      <input>
+weights.var()
+      </input>
+    </program>
+    <p>
+      The result is slightly different because when the <c>var</c> method computes the mean of the squared deviations, it divides by <c>n-1</c> rather than <c>n</c>.
+      That's because there are two ways to compute the variance of a sample, depending on what you are trying to do.
+      I'll explain the difference in <xref ref="sec-estimating-variance" text="custom">Chapter 8</xref> <mdash/> but in practice it usually doesn't matter.
+      If you prefer the version with <c>n</c> in the denominator, you can get it by passing <c>ddof=0</c> as a keyword argument to the <c>var</c> method.
+    </p>
+    <program language="python">
+      <input>
+weights.var(ddof=0)
+      </input>
+    </program>
+    <p>
+      In this dataset, the variance of the birth weights is about 1.98, but that value is hard to interpret <mdash/> for one thing, it is in units of pounds squared.
+      Variance is useful in some computations, but not a good way to describe a dataset.
+      A better option is the <term>standard deviation</term>, which is the square root of variance.
+      We can compute it like this.
+    </p>
+    <program language="python">
+      <input>
+std = np.sqrt(var)
+std
+      </input>
+    </program>
+    <p>
+      Or, we can use the <c>std</c> method.
+    </p>
+    <program language="python">
+      <input>
+weights.std(ddof=0)
+      </input>
+    </program>
+    <p>
+      In this dataset, the standard deviation of birth weights is about 1.4 pounds.
+      Informally, values that are one or two standard deviations from the mean are common <mdash/> values farther from the mean are rare.
+    </p>
+  </section>
+
+  <section xml:id="sec-interpretation">
+    <title>Interpretation</title>
+
+    <p>
+      To work with data effectively, you have to think on two levels at the same time: the level of statistics and the level of context.
+      As an example, let's select the rows in the pregnancy file with <c>caseid</c> 10229.
+      The <c>query</c> method takes a string that can contain column names, comparison operators, and numbers, among other things.
+    </p>
+    <program language="python">
+      <input>
+subset = preg.query("caseid == 10229")
+subset.shape
+      </input>
+    </program>
+    <p>
+      The result is a <c>DataFrame</c> that contains only the rows where the query is <c>True</c>.
+      This respondent reported seven pregnancies <mdash/> here are their outcomes, which are recorded in chronological order.
+    </p>
+    <program language="python">
+      <input>
+subset["outcome"].values
+      </input>
+    </program>
+    <p>
+      The outcome code <c>1</c> indicates a live birth.
+      Code <c>4</c> indicates a miscarriage <mdash/> that is, a pregnancy loss, usually with no known medical cause.
+    </p>
+    <p>
+      Statistically this respondent is not unusual.
+      Pregnancy loss is common and there are other respondents who reported as many instances.
+      But remembering the context, this data tells the story of a woman who was pregnant six times, each time ending in miscarriage.
+      Her seventh and most recent pregnancy ended in a live birth.
+      If we consider this data with empathy, it is natural to be moved by the story it tells.
+    </p>
+    <p>
+      Each row in the NSFG dataset represents a person who provided honest answers to many personal and difficult questions.
+      We can use this data to answer statistical questions about family life, reproduction, and health.
+      At the same time, we have an obligation to consider the people represented by the data, and to afford them respect and gratitude.
+    </p>
+  </section>
+
+  <glossary xml:id="glossary-ch01">
+    <title>Glossary</title>
+
+    <gi xml:id="term-anecdotal-evidence">
+      <title>anecdotal evidence</title>
+      <p>Data collected informally from a small number of individual cases, often without systematic sampling.</p>
+    </gi>
+
+    <gi xml:id="term-cross-sectional-study">
+      <title>cross-sectional study</title>
+      <p>A study that collects data from a representative sample of a population at a single point or interval in time.</p>
+    </gi>
+
+    <gi xml:id="term-cycle">
+      <title>cycle</title>
+      <p>One data-collection interval in a study that collects data at multiple intervals in time.</p>
+    </gi>
+
+    <gi xml:id="term-population">
+      <title>population</title>
+      <p>The entire group of individuals or items that is the subject of a study.</p>
+    </gi>
+
+    <gi xml:id="term-sample">
+      <title>sample</title>
+      <p>A subset of a population, often chosen at random.</p>
+    </gi>
+
+    <gi xml:id="term-respondents">
+      <title>respondents</title>
+      <p>People who participate in a survey and respond to questions.</p>
+    </gi>
+
+    <gi xml:id="term-representative">
+      <title>representative</title>
+      <p>A sample is representative if it is similar to the population in ways that are important for the purposes of the study.</p>
+    </gi>
+
+    <gi xml:id="term-stratified">
+      <title>stratified</title>
+      <p>A sample is stratified if it deliberately oversamples some groups, usually to make sure that enough members are included to support valid conclusions.</p>
+    </gi>
+
+    <gi xml:id="term-oversampled">
+      <title>oversampled</title>
+      <p>A group is oversampled if its members have a higher chance of appearing in a sample.</p>
+    </gi>
+
+    <gi xml:id="term-variable">
+      <title>variable</title>
+      <p>In survey data, a variable is a collection of responses to questions or values computed from responses.</p>
+    </gi>
+
+    <gi xml:id="term-codebook">
+      <title>codebook</title>
+      <p>A document that describes the variables in a dataset, and provides other information about the data.</p>
+    </gi>
+
+    <gi xml:id="term-recode">
+      <title>recode</title>
+      <p>A variable that is computed based on other variables in a dataset.</p>
+    </gi>
+
+    <gi xml:id="term-raw-data">
+      <title>raw data</title>
+      <p>Data that has not been processed after collection.</p>
+    </gi>
+
+    <gi xml:id="term-data-cleaning">
+      <title>data cleaning</title>
+      <p>A process for identifying and correcting errors in a dataset, dealing with missing values, and computing recodes.</p>
+    </gi>
+
+    <gi xml:id="term-statistic">
+      <title>statistic</title>
+      <p>A value that describes or summarizes a property of a sample.</p>
+    </gi>
+
+    <gi xml:id="term-standard-deviation">
+      <title>standard deviation</title>
+      <p>A statistic that quantifies the spread of data around the mean.</p>
+    </gi>
+
+  </glossary>
+
+  <exercises xml:id="exercises-ch01">
+    <title>Exercises</title>
+
+    <p>The exercises for this chapter are based on the NSFG pregnancy file.</p>
+
+    <exercise xml:id="ex-ch01-01">
+      <title>Exercise 1.1</title>
+      <statement>
+        <p>
+          Select the <c>birthord</c> column from <c>preg</c>, print the value counts, and compare to results published in the codebook at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Pregnancy.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Pregnancy.pdf"/>.
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-ch01-02">
+      <title>Exercise 1.2</title>
+      <statement>
+        <p>
+          Create a new column named <c>totalwgt_kg</c> that contains birth weight in kilograms (there are approximately 2.2 pounds per kilogram).
+          Compute the mean and standard deviation of the new column.
+        </p>
+      </statement>
+    </exercise>
+
+    <exercise xml:id="ex-ch01-03">
+      <title>Exercise 1.3</title>
+      <statement>
+        <p>
+          What are the pregnancy lengths for the respondent with <c>caseid</c> 2298?
+        </p>
+        <p>
+          What was the birth weight of the first baby born to the respondent with <c>caseid</c> 5013?
+          Hint: You can use <c>and</c> to check more than one condition in a query.
+        </p>
+      </statement>
+    </exercise>
+
+  </exercises>
 
 </chapter>
