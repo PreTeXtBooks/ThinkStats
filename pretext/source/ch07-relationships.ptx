@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-relationships" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Relationships Between Variables</title>
+
+  <introduction>
+    <p>
+      This chapter explores relationships between variables, including scatter plots,
+      covariance, correlation, and nonlinear relationships.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

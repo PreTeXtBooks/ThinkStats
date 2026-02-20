@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-multiple-regression" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Multiple Regression</title>
+
+  <introduction>
+    <p>
+      This chapter extends simple linear regression to multiple regression, including
+      how to include multiple explanatory variables and how to deal with interactions.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

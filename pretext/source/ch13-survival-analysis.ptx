@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-survival-analysis" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Survival Analysis</title>
+
+  <introduction>
+    <p>
+      This chapter introduces survival analysis, including survival functions,
+      hazard functions, and the Kaplan-Meier estimator.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

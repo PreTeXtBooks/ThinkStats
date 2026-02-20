@@ -1,0 +1,37 @@
+<?xml version='1.0' encoding='utf-8'?>
+<!-- Think Stats: Exploratory Data Analysis in Python -->
+<!-- by Allen B. Downey -->
+
+<pretext xml:lang="en-US" xmlns:xi="http://www.w3.org/2001/XInclude">
+
+  <!-- we first include a file which contains the docinfo element: -->
+  <xi:include href="./meta_docinfo.ptx" />
+
+  <!-- The <book> tags wrap all the content -->
+  <book xml:id="think-stats">
+    <title>Think Stats</title>
+    <subtitle>Exploratory Data Analysis in Python</subtitle>
+
+    <!-- Frontmatter for prefaces and such -->
+    <xi:include href="./meta_frontmatter.ptx" />
+
+    <!-- Chapters -->
+    <xi:include href="./ch01-exploratory-data-analysis.ptx" />
+    <xi:include href="./ch02-distributions.ptx" />
+    <xi:include href="./ch03-pmf.ptx" />
+    <xi:include href="./ch04-cdf.ptx" />
+    <xi:include href="./ch05-modeling-distributions.ptx" />
+    <xi:include href="./ch06-pdf.ptx" />
+    <xi:include href="./ch07-relationships.ptx" />
+    <xi:include href="./ch08-estimation.ptx" />
+    <xi:include href="./ch09-hypothesis-testing.ptx" />
+    <xi:include href="./ch10-least-squares.ptx" />
+    <xi:include href="./ch11-multiple-regression.ptx" />
+    <xi:include href="./ch12-time-series-analysis.ptx" />
+    <xi:include href="./ch13-survival-analysis.ptx" />
+    <xi:include href="./ch14-analytic-methods.ptx" />
+
+    <!-- Backmatter -->
+    <xi:include href="./meta_backmatter.ptx" />
+  </book>
+</pretext>

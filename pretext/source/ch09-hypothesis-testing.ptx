@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-hypothesis-testing" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Hypothesis Testing</title>
+
+  <introduction>
+    <p>
+      This chapter introduces hypothesis testing, including the classical approach
+      and a Bayesian resampling-based approach to testing statistical hypotheses.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>

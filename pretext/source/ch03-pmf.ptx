@@ -1,0 +1,15 @@
+<?xml version='1.0' encoding='utf-8'?>
+
+<chapter xml:id="ch-pmf" xmlns:xi="http://www.w3.org/2001/XInclude">
+  <title>Probability Mass Functions</title>
+
+  <introduction>
+    <p>
+      This chapter introduces probability mass functions (PMFs), a way to represent
+      the distribution of a discrete variable.
+    </p>
+  </introduction>
+
+  <!-- Sections will be added here -->
+
+</chapter>
