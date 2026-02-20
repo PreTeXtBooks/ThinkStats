@@ -644,7 +644,7 @@ weights.var()
     <p>
       The result is slightly different because when the <c>var</c> method computes the mean of the squared deviations, it divides by <c>n-1</c> rather than <c>n</c>.
       That's because there are two ways to compute the variance of a sample, depending on what you are trying to do.
-      I'll explain the difference in <xref ref="sec-estimating-variance" text="custom">Chapter 8</xref> <mdash/> but in practice it usually doesn't matter.
+      I'll explain the difference in <xref ref="sec-estimation-estimating-variance" text="custom">Chapter 8</xref> <mdash/> but in practice it usually doesn't matter.
       If you prefer the version with <c>n</c> in the denominator, you can get it by passing <c>ddof=0</c> as a keyword argument to the <c>var</c> method.
     </p>
     <program language="python">
