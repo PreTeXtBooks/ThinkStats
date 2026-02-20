@@ -31,6 +31,13 @@ ftab = FreqTab.from_seq([1, 2, 2, 3, 5])
 ftab
       </input>
     </program>
+    <pre>
+1    1
+2    2
+3    1
+5    1
+Name: , dtype: int64
+    </pre>
     <p>
       The sum of the frequencies is the size of the original sequence.
     </p>
@@ -40,6 +47,9 @@ n = ftab.sum()
 n
       </input>
     </program>
+    <pre>
+np.int64(5)
+    </pre>
     <p>
       If we divide the frequencies by <c>n</c>, they represent proportions, rather than counts.
     </p>
@@ -49,6 +59,13 @@ pmf = ftab / n
 pmf
       </input>
     </program>
+    <pre>
+1    0.2
+2    0.4
+3    0.2
+5    0.2
+Name: , dtype: float64
+    </pre>
     <p>
       This result indicates that 20% of the values in the sequence are 1, 40% are 2, and so on.
     </p>
@@ -63,6 +80,9 @@ pmf
 pmf.sum()
       </input>
     </program>
+    <pre>
+np.float64(0.8500000000000001)
+    </pre>
     <p>
       A normalized <c>FreqTab</c> object represents a <term>probability mass function</term> (PMF), so-called because probabilities associated with discrete values are also called "probability masses".
     </p>
@@ -77,6 +97,13 @@ pmf = Pmf.from_seq([1, 2, 2, 3, 5])
 pmf
       </input>
     </program>
+    <pre>
+1    0.2
+2    0.4
+3    0.2
+5    0.2
+Name: , dtype: float64
+    </pre>
     <p>
       The <c>Pmf</c> is normalized so the total probability is 1.
     </p>
@@ -85,6 +112,9 @@ pmf
 pmf.sum()
       </input>
     </program>
+    <pre>
+np.float64(0.8500000000000001)
+    </pre>
     <p>
       <c>Pmf</c> and <c>FreqTab</c> objects are similar in many ways.
       To look up the probability associated with a value, we can use the bracket operator.
@@ -94,6 +124,9 @@ pmf.sum()
 pmf[2]
       </input>
     </program>
+    <pre>
+np.float64(0.4)
+    </pre>
     <p>
       Or use parentheses to call the <c>Pmf</c> like a function.
     </p>
@@ -102,6 +135,9 @@ pmf[2]
 pmf(2)
       </input>
     </program>
+    <pre>
+np.float64(0.4)
+    </pre>
     <p>
       To assign a probability to a value, you have to use the bracket operator.
     </p>
@@ -111,6 +147,9 @@ pmf[2] = 0.2
 pmf(2)
       </input>
     </program>
+    <pre>
+np.float64(0.2)
+    </pre>
     <p>
       You can modify an existing <c>Pmf</c> by incrementing the probability associated with a value:
     </p>
@@ -120,6 +159,9 @@ pmf[2] += 0.3
 pmf[2]
       </input>
     </program>
+    <pre>
+np.float64(0.5)
+    </pre>
     <p>
       Or you can multiply a probability by a factor:
     </p>
@@ -129,6 +171,9 @@ pmf[2] *= 0.5
 pmf[2]
       </input>
     </program>
+    <pre>
+np.float64(0.25)
+    </pre>
     <p>
       If you modify a <c>Pmf</c>, the result may not be normalized <mdash/> that is, the probabilities may no longer add up to 1.
     </p>
@@ -137,6 +182,9 @@ pmf[2]
 pmf.sum()
       </input>
     </program>
+    <pre>
+np.float64(0.8500000000000001)
+    </pre>
     <p>
       The <c>normalize</c> method renormalizes the <c>Pmf</c> by dividing through by the sum <mdash/> and returning the sum.
     </p>
@@ -145,6 +193,9 @@ pmf.sum()
 pmf.normalize()
       </input>
     </program>
+    <pre>
+np.float64(0.8500000000000001)
+    </pre>
     <p>
       <c>Pmf</c> objects provide a <c>copy</c> method so you can make and modify a copy without affecting the original.
     </p>
@@ -153,6 +204,13 @@ pmf.normalize()
 pmf.copy()
       </input>
     </program>
+    <pre>
+1    0.235294
+2    0.294118
+3    0.235294
+5    0.235294
+Name: , dtype: float64
+    </pre>
     <p>
       Like a <c>FreqTab</c> object, a <c>Pmf</c> object has a <c>qs</c> attribute that accesses the quantities and a <c>ps</c> attribute that accesses the probabilities.
       It also has a <c>bar</c> method that plots the <c>Pmf</c> as a bar graph and a <c>plot</c> method that plots it as a line graph.
@@ -175,6 +233,9 @@ mean = np.sum(seq) / n
 mean
       </input>
     </program>
+    <pre>
+np.float64(2.6)
+    </pre>
     <p>
       Now suppose we compute the PMF of the values in the sequence.
     </p>
@@ -192,6 +253,9 @@ mean = np.sum(pmf.ps * pmf.qs)
 mean
       </input>
     </program>
+    <pre>
+np.float64(2.6)
+    </pre>
     <p>
       Notice that we <em>don't</em> have to divide by <c>n</c>, because we already did that when we normalized the <c>Pmf</c>.
       <c>Pmf</c> objects have a <c>mean</c> method that does the same thing.
@@ -201,6 +265,9 @@ mean
 pmf.mean()
       </input>
     </program>
+    <pre>
+np.float64(2.6)
+    </pre>
     <p>
       Given a <c>Pmf</c>, we can compute the variance by computing the deviation of each quantity from the mean.
     </p>
@@ -218,6 +285,9 @@ var = np.sum(pmf.ps * deviations**2)
 var
       </input>
     </program>
+    <pre>
+np.float64(1.84)
+    </pre>
     <p>
       The <c>var</c> method does the same thing.
     </p>
@@ -226,6 +296,9 @@ var
 pmf.var()
       </input>
     </program>
+    <pre>
+np.float64(1.84)
+    </pre>
     <p>
       From the variance, we can compute the standard deviation in the usual way.
     </p>
@@ -234,6 +307,9 @@ pmf.var()
 np.sqrt(var)
       </input>
     </program>
+    <pre>
+np.float64(1.3564659966250536)
+    </pre>
     <p>
       Or the <c>std</c> method does the same thing.
     </p>
@@ -242,6 +318,9 @@ np.sqrt(var)
 pmf.std()
       </input>
     </program>
+    <pre>
+np.float64(1.3564659966250536)
+    </pre>
     <p>
       <c>Pmf</c> also provides a <c>mode</c> method that finds the value with the highest probability.
     </p>
@@ -250,6 +329,9 @@ pmf.std()
 pmf.mode()
       </input>
     </program>
+    <pre>
+np.int64(2)
+    </pre>
     <p>
       We'll see more methods as we go along, but that's enough to get started.
     </p>
@@ -289,6 +371,19 @@ data["count"] = [8, 8, 14, 4, 6, 12, 8, 3, 2]
 data
       </input>
     </program>
+    <pre>
+            count
+class size       
+[5, 10)         8
+[10, 15)        8
+[15, 20)       14
+[20, 25)        4
+[25, 30)        6
+[30, 35)       12
+[35, 40)        8
+[40, 45)        3
+[45, 50)        2
+    </pre>
     <p>
       The Pandas function <c>interval_range</c> makes an <c>Index</c> where each label represents a range of values.
       The notation <c>[5, 10)</c> means that <c>5</c> is included in the interval and <c>10</c> is not.
@@ -300,6 +395,9 @@ sizes = ranges.left + 2
 sizes
       </input>
     </program>
+    <pre>
+Index([7, 12, 17, 22, 27, 32, 37, 42, 47], dtype='int64')
+    </pre>
     <p>
       Now let's make a <c>Pmf</c> that represents the distribution of class sizes.
       Because we know the sizes and their frequencies, we can create a <c>Pmf</c> directly, passing as arguments the counts, sizes, and a name.
@@ -312,6 +410,9 @@ actual_pmf = Pmf(counts, sizes, name="actual")
 actual_pmf.normalize()
       </input>
     </program>
+    <pre>
+np.int64(65)
+    </pre>
     <p>
       If you ask the college for the average class size, they report the mean of this distribution, which is 23.7.
     </p>
@@ -320,6 +421,9 @@ actual_pmf.normalize()
 actual_pmf.mean()
       </input>
     </program>
+    <pre>
+np.float64(23.692307692307693)
+    </pre>
     <p>
       But if you survey a group of students, ask them how many students are in their classes, and compute the mean, the average is bigger.
       Let's see how much bigger.
@@ -360,6 +464,9 @@ two_bar_plots(actual_pmf, observed_pmf, width=2)
 decorate(xlabel="Class size", ylabel="PMF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap03_001.png" width="80%"/>
+    </figure>
     <p>
       In the observed distribution there are fewer small classes and more large ones.
       And the biased mean is 29.1, almost 25% higher than the actual mean.
@@ -369,6 +476,9 @@ decorate(xlabel="Class size", ylabel="PMF")
 observed_pmf.mean()
       </input>
     </program>
+    <pre>
+np.float64(29.123376623376622)
+    </pre>
     <p>
       It is also possible to invert this operation.
       Suppose you want to find the distribution of class sizes at a college, but you can't get reliable data.
@@ -398,6 +508,9 @@ debiased_pmf = unbias(observed_pmf, "debiased")
 debiased_pmf.mean()
       </input>
     </program>
+    <pre>
+np.float64(23.692307692307693)
+    </pre>
     <p>
       The mean of the debiased <c>Pmf</c> is the same as the mean of the actual distribution we started with.
     </p>
@@ -444,6 +557,9 @@ two_bar_plots(first_pmf, other_pmf)
 decorate(xlabel="Weeks", ylabel="Probability", xlim=[20, 50])
       </input>
     </program>
+    <figure>
+      <image source="images/chap03_002.png" width="80%"/>
+    </figure>
     <p>
       By plotting the PMF instead of the frequency table, we can compare the two distributions without being misled by the difference in sizes of the samples.
       Based on this figure, first babies seem to be less likely than others to arrive on time (week 39) and more likely to be late (weeks 41 and 42).
@@ -470,11 +586,21 @@ weeks = range(35, 46)
 first_pmf(weeks)
       </input>
     </program>
+    <pre>
+array([0.03602991, 0.03897575, 0.04713347, 0.06163608, 0.4790392 ,
+       0.12145932, 0.08157716, 0.04645366, 0.01971448, 0.00521187,
+       0.00135962])
+    </pre>
     <program language="python">
       <input>
 other_pmf(weeks)
       </input>
     </program>
+    <pre>
+array([0.03210137, 0.03146779, 0.05216473, 0.07074974, 0.54466737,
+       0.12249208, 0.04794087, 0.02597677, 0.01288279, 0.00485744,
+       0.00084477])
+    </pre>
     <p>
       So we can compute the differences in the probabilities like this.
     </p>
@@ -484,6 +610,11 @@ diffs = first_pmf(weeks) - other_pmf(weeks)
 diffs
       </input>
     </program>
+    <pre>
+array([ 0.00392854,  0.00750796, -0.00503126, -0.00911366, -0.06562817,
+       -0.00103276,  0.03363629,  0.02047689,  0.00683169,  0.00035443,
+        0.00051485])
+    </pre>
     <p>
       Here's what they look like, multiplied by 100 to express the differences in percentage points.
     </p>
@@ -493,6 +624,9 @@ plt.bar(weeks, diffs * 100)
 decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
       </input>
     </program>
+    <figure>
+      <image source="images/chap03_003.png" width="80%"/>
+    </figure>
     <p>
       This figure makes the pattern clearer: first babies are less likely to be born in week 39, and somewhat more likely to be born in weeks 41 and 42.
     </p>
@@ -538,6 +672,9 @@ resp = read_fem_resp()
 resp.shape
       </input>
     </program>
+    <pre>
+(7643, 3092)
+    </pre>
     <p>
       This <c>DataFrame</c> contains 7643 rows and 3092 columns.
     </p>

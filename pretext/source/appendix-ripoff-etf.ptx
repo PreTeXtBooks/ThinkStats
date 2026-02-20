@@ -45,6 +45,15 @@ djia = pd.read_csv(filename, skiprows=4, parse_dates=[0], index_col=0)
 djia.head()
       </input>
     </program>
+    <pre>
+               DJIA
+Date               
+1885-02-16  30.9226
+1885-02-17  31.3365
+1885-02-18  31.4744
+1885-02-19  31.6765
+1885-02-20  31.4252
+    </pre>
     <p>
       To compute annual returns, we'll start by selecting the closing price on the last
       trading day of each year (dropping 2024 because we don't have a complete year).
@@ -55,6 +64,23 @@ annual = djia.groupby(djia.index.year).last().drop(2024)
 annual
       </input>
     </program>
+    <pre>
+            DJIA
+Date            
+1885     39.4859
+1886     41.2391
+1887     37.7693
+1888     39.5866
+1889     42.0394
+...          ...
+2019  28538.4400
+2020  30606.4800
+2021  36338.3000
+2022  33147.2500
+2023  37689.5400
+
+[139 rows x 1 columns]
+    </pre>
     <p>
       Next we'll compute the annual price return, which is the ratio of successive year-end
       closing prices.
@@ -65,6 +91,23 @@ annual['Ratio'] = annual['DJIA'] / annual['DJIA'].shift(1)
 annual
       </input>
     </program>
+    <pre>
+            DJIA     Ratio
+Date                      
+1885     39.4859       NaN
+1886     41.2391  1.044401
+1887     37.7693  0.915861
+1888     39.5866  1.048116
+1889     42.0394  1.061960
+...          ...       ...
+2019  28538.4400  1.223384
+2020  30606.4800  1.072465
+2021  36338.3000  1.187275
+2022  33147.2500  0.912185
+2023  37689.5400  1.137034
+
+[139 rows x 2 columns]
+    </pre>
     <p>
       And the relative return as a percentage.
     </p>
@@ -82,6 +125,23 @@ annual['Return'] = (annual['Ratio'] - 1) * 100
 annual.dropna().sort_values(by='Return')
       </input>
     </program>
+    <pre>
+           DJIA     Ratio     Return
+Date                                
+1931    77.9000  0.473326 -52.667396
+1907    43.0382  0.622683 -37.731743
+2008  8776.3900  0.661629 -33.837097
+1930   164.5800  0.662347 -33.765293
+1920    71.9500  0.670988 -32.901240
+...         ...       ...        ...
+1954   404.3900  1.439623  43.962264
+1908    63.1104  1.466381  46.638103
+1928   300.0000  1.482213  48.221344
+1933    99.9000  1.666945  66.694477
+1915    99.1500  1.816599  81.659949
+
+[138 rows x 3 columns]
+    </pre>
     <p>
       Here's what the distribution of annual returns looks like.
     </p>
@@ -104,6 +164,9 @@ decorate(xlabel='Annual return (percent)', ylabel='CDF')
 1 - cdf_return(10)
       </input>
     </program>
+    <pre>
+0.4492753623188406
+    </pre>
   </section>
 
   <section xml:id="app-ripoff-etf-long-term">
@@ -148,6 +211,9 @@ def compute_ratios(start=1993, duration=30):
 compute_ratios(1980, 43)
       </input>
     </program>
+    <pre>
+(1980, 2023, 44.93751117788029, 15.356490985533199)
+    </pre>
     <p>
       A buffer ETF over this period would have grown by a factor of more than 15 in nominal
       dollars, with no risk of loss.
@@ -163,6 +229,9 @@ compute_ratios(1980, 43)
 compute_ratios(1900, 43)
       </input>
     </program>
+    <pre>
+(1900, 1943, 2.8071864303140583, 7.225624631784611)
+    </pre>
     <p>
       It seems we can cherry-pick the data to make the comparison go either way<mdash/>so
       let's see how things look more generally.
@@ -178,6 +247,15 @@ ratios.index = ratios['Start']
 ratios.tail()
       </input>
     </program>
+    <pre>
+       Start   End  Index Fund  Buffer ETF
+Start                                     
+1989    1989  2019   13.160027    6.532125
+1990    1990  2020   11.116693    6.368615
+1991    1991  2021   13.797643    7.005476
+1992    1992  2022   10.460407    6.368615
+1993    1993  2023   11.417232    6.724757
+    </pre>
     <p>
       Here's what the returns look like for an index fund compared to a buffer ETF.
     </p>
