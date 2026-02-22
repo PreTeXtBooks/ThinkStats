@@ -836,7 +836,13 @@ resp.shape
         <program language="python">
           <input>
 numbabes = resp["numbabes"].replace(97, np.nan)
-
+          </input>
+        </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
 deviations = numbabes - numbabes.mean()
 skewness = np.mean(deviations**3) / numbabes.std(ddof=0) ** 3
 skewness
