@@ -35,12 +35,15 @@
       For purposes of demonstration, we'll assume that penguin weights are drawn from a normal distribution with known mean and standard deviation, which I'll denote <c>mu</c> and <c>sigma</c> and assign values in kilograms.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mu = 3.7
 sigma = 0.46
       </input>
     </program>
+    </listing>
 
     <p>
       These values are the <term>parameters</term> of the normal distribution, which means that they specify a particular distribution.
@@ -48,19 +51,25 @@ sigma = 0.46
       For example, here's a hypothetical sample of 10 weights.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 # Seed the random number generator so we get the same results every time
 np.random.seed(1)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample = np.random.normal(mu, sigma, size=10)
 sample
       </input>
     </program>
+    </listing>
     <pre>
 array([4.44719887, 3.41859205, 3.45704099, 3.20643443, 4.09808751,
        2.6412922 , 4.50261341, 3.34984483, 3.84675798, 3.58528963])
@@ -70,11 +79,14 @@ array([4.44719887, 3.41859205, 3.45704099, 3.20643443, 4.09808751,
       And here are the mean and median of the sample.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.mean(sample), np.median(sample)
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(3.6553151902291945), np.float64(3.521165310619601))
     </pre>
@@ -84,43 +96,55 @@ np.mean(sample), np.median(sample)
       To find out, we'll use the following function to generate hypothetical samples with the given size, <c>n</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def make_sample(n):
     return np.random.normal(mu, sigma, size=n)
       </input>
     </program>
+    </listing>
 
     <p>
       As a first experiment, let's see how the sample mean and sample median behave as the sample size increases.
       We'll use the NumPy function <c>logspace</c> to make a range of <c>ns</c> from 10 to 100,000, equally spaced on a logarithmic scale.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ns = np.logspace(1, 5).astype(int)
       </input>
     </program>
+    </listing>
 
     <p>
       We can use a list comprehension to generate a hypothetical sample for each value of <c>n</c>, compute the mean, and collect the results:
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 means = [np.mean(make_sample(n)) for n in ns]
       </input>
     </program>
+    </listing>
 
     <p>
       And we'll do the same for the median.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 medians = [np.median(make_sample(n)) for n in ns]
       </input>
     </program>
+    </listing>
 
     <p>
       A statistic, like the sample mean or median, that's used to estimate a property of a population is called an <term>estimator</term>.
@@ -130,6 +154,8 @@ medians = [np.median(make_sample(n)) for n in ns]
       The horizontal line shows the actual mean in the population.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.axhline(mu, color="gray", lw=1, alpha=0.5)
@@ -139,6 +165,7 @@ plt.plot(ns, medians, alpha=0.5, label="median")
 decorate(xlabel="Sample size", xscale="log", ylabel="Estimate")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_001.png" width="80%"/>
     </figure>
@@ -156,12 +183,15 @@ decorate(xlabel="Sample size", xscale="log", ylabel="Estimate")
       The following loop simulates this scenario by generating 10,001 samples of 10 penguins and computing the mean of each sample.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 means = [np.mean(make_sample(n=10)) for i in range(10001)]
 np.mean(means)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.7003450849286907)
     </pre>
@@ -173,12 +203,15 @@ np.float64(3.7003450849286907)
       The following loop simulates the same scenario, but this time it computes the median of each sample.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 medians = [np.median(make_sample(n=10)) for i in range(10001)]
 np.mean(medians)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.701214089907223)
     </pre>
@@ -198,6 +231,8 @@ np.float64(3.701214089907223)
       The following function computes the differences between the estimates and the actual value, and returns the mean of the squares of these errors.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def mse(estimates, actual):
@@ -206,6 +241,7 @@ def mse(estimates, actual):
     return np.mean(errors**2)
       </input>
     </program>
+    </listing>
 
     <p>
       Notice that we can only compute MSE if we know the actual value.
@@ -213,11 +249,14 @@ def mse(estimates, actual):
       But in our experiment, we know that the actual population mean is 3.7 kg, so we can use it to compute the MSE of the sample means.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mse(means, mu)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.020871984891289382)
     </pre>
@@ -227,11 +266,14 @@ np.float64(0.020871984891289382)
       Now here's the MSE of the sample medians.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mse(medians, mu)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.029022273128644173)
     </pre>
@@ -251,6 +293,8 @@ np.float64(0.029022273128644173)
       The following function computes MAE for a sequence of estimates.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def mae(estimates, actual):
@@ -259,16 +303,20 @@ def mae(estimates, actual):
     return np.mean(np.abs(errors))
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the MAE of the sample means.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mae(means, mu)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.1154043374950527)
     </pre>
@@ -277,11 +325,14 @@ np.float64(0.1154043374950527)
       And the sample medians.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mae(medians, mu)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.13654429774596036)
     </pre>
@@ -306,6 +357,8 @@ np.float64(0.13654429774596036)
       conversion factor 2.2 pounds per kilogram.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def make_sample_with_errors(n):
@@ -314,21 +367,27 @@ def make_sample_with_errors(n):
     return sample * factor
       </input>
     </program>
+    </listing>
 
     <p>
       To see what effect this has on the distribution, we'll generate a large sample.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample = make_sample_with_errors(n=1000)
       </input>
     </program>
+    </listing>
 
     <p>
       To plot the distribution of the sample, we'll use KDE and the <c>Pdf</c> object from Chapter 6.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import gaussian_kde
@@ -341,6 +400,7 @@ pdf.plot(label='estimated density')
 decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_002.png" width="80%"/>
     </figure>
@@ -352,12 +412,15 @@ decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       Now let's repeat the previous experiment, simulating many samples with size 10, computing the mean of each sample, and then computing the average of the sample means.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 means = [np.mean(make_sample_with_errors(n=10)) for i in range(10001)]
 np.mean(means)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.786352945690677)
     </pre>
@@ -369,12 +432,15 @@ np.float64(3.786352945690677)
       Now here's the same experiment using sample medians.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 medians = [np.median(make_sample_with_errors(n=10)) for i in range(10001)]
 np.mean(medians)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.7121869836715353)
     </pre>
@@ -384,11 +450,14 @@ np.float64(3.7121869836715353)
       If we compare the MSE of the estimates, we see that the sample medians are substantially more accurate.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mse(means, mu), mse(medians, mu)
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.06853430354724438), np.float64(0.031164467796883765))
     </pre>
@@ -414,6 +483,8 @@ mse(means, mu), mse(medians, mu)
       The following function computes the biased estimator, which is the sum of the squared deviations divided by <c>n</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def biased_var(xs):
@@ -423,17 +494,21 @@ def biased_var(xs):
     return np.sum(deviations**2) / n
       </input>
     </program>
+    </listing>
 
     <p>
       To test it, we'll simulate many samples with size 10, compute the biased variance of each sample, and then compute the average of the variances.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 biased_vars = [biased_var(make_sample(n=10)) for i in range(10001)]
 np.mean(biased_vars)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.19049277659404473)
     </pre>
@@ -442,12 +517,15 @@ np.float64(0.19049277659404473)
       The result is about 0.19, but in this case, we know that the actual population variance is about 0.21, so this version of the sample variance is too low on average -- which confirms that it is biased.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 actual_var = sigma**2
 actual_var
       </input>
     </program>
+    </listing>
     <pre>
 0.2116
     </pre>
@@ -456,6 +534,8 @@ actual_var
       The following function computes the unbiased estimator, which is the sum of the squared deviations divided by <c>n-1</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def unbiased_var(xs):
@@ -465,17 +545,21 @@ def unbiased_var(xs):
     return np.sum(deviations**2) / (n - 1)
       </input>
     </program>
+    </listing>
 
     <p>
       We can test it by generating many samples and computing the unbiased variance for each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 unbiased_vars = [unbiased_var(make_sample(n=10)) for i in range(10001)]
 np.mean(unbiased_vars)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.21159109492300626)
     </pre>
@@ -488,22 +572,28 @@ np.float64(0.21159109492300626)
       With sample size 100, the difference is only 1%, which is small enough that it probably doesn't matter in practice.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n = 10
 1 - (n - 1) / n
       </input>
     </program>
+    </listing>
     <pre>
 0.09999999999999998
     </pre>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n = 100
 1 - (n - 1) / n
       </input>
     </program>
+    </listing>
     <pre>
 0.010000000000000009
     </pre>
@@ -532,6 +622,8 @@ n = 100
       The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download(
@@ -539,17 +631,21 @@ download(
 )
       </input>
     </program>
+    </listing>
 
     <p>
       We can use Pandas to read the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
 penguins.shape
       </input>
     </program>
+    </listing>
     <pre>
 (342, 17)
     </pre>
@@ -558,11 +654,14 @@ penguins.shape
       The dataset includes three penguin species.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 penguins["Species"].value_counts()
       </input>
     </program>
+    </listing>
     <pre>
 Species
 Adelie Penguin (Pygoscelis adeliae)          151
@@ -575,16 +674,21 @@ Name: count, dtype: int64
       For the first example we'll select just the Chinstrap penguins.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 chinstrap = penguins.query('Species.str.startswith("Chinstrap")')
       </input>
     </program>
+    </listing>
 
     <p>
       We'll use this function to plot estimated PDFs.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def plot_kde(sample, name="estimated density", **options):
@@ -597,12 +701,15 @@ def plot_kde(sample, name="estimated density", **options):
     pdf.plot(**options)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's the distribution of chinstrap penguin weights in kilograms.
       The vertical dotted line shows the sample mean.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights = chinstrap["Body Mass (g)"] / 1000
@@ -610,6 +717,7 @@ plot_kde(weights, "weights")
 decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_003.png" width="80%"/>
     </figure>
@@ -618,12 +726,15 @@ decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       The sample mean is about 3.7 kg.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample_mean = np.mean(weights)
 sample_mean
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.733088235294118)
     </pre>
@@ -648,6 +759,8 @@ np.float64(3.733088235294118)
       Notice that the new samples are the same size as the original.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def resample(sample):
@@ -656,27 +769,34 @@ def resample(sample):
     return np.random.normal(m, s, len(sample))
       </input>
     </program>
+    </listing>
 
     <p>
       This loop uses <c>resample</c> to generate many samples and compute the mean of each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample_means = [np.mean(resample(weights)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       The following figure shows the distribution of these sample means.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_kde(sample_means, "sample means")
 decorate(xlabel="Sample mean of weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_004.png" width="80%"/>
     </figure>
@@ -698,12 +818,15 @@ decorate(xlabel="Sample mean of weight (kg)", ylabel="Density")
       To quantify the width of the sampling distribution, one option is to compute its standard deviation -- the result is called the <term>standard error</term>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 standard_error = np.std(sample_means)
 standard_error
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.04626531069684985)
     </pre>
@@ -724,11 +847,14 @@ np.float64(0.04626531069684985)
       In this dataset, the standard deviation of penguin weights is about 0.38 kg for chinstrap penguins.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.std(weights)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.3814986213564681)
     </pre>
@@ -737,11 +863,14 @@ np.float64(0.3814986213564681)
       The standard error of the average weight is about 0.046 kg.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.std(sample_means)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.04626531069684985)
     </pre>
@@ -756,6 +885,8 @@ np.float64(0.04626531069684985)
       If we know the standard deviation and sample size, we can approximate the standard error of the means like this:
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def approximate_standard_error(sample):
@@ -763,12 +894,16 @@ def approximate_standard_error(sample):
     return np.std(sample) / np.sqrt(n)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 approximate_standard_error(weights)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.046263503290595163)
     </pre>
@@ -788,12 +923,15 @@ np.float64(0.046263503290595163)
       Here's the 90% confidence interval for the average weight of chinstrap penguins.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ci90 = np.percentile(sample_means, [5, 95])
 ci90
       </input>
     </program>
+    </listing>
     <pre>
 array([3.6576334 , 3.80737506])
     </pre>
@@ -950,15 +1088,20 @@ array([3.6576334 , 3.80737506])
         <p>
           The following cells download the data, read it into a <c>DataFrame</c>, and select the heights of male respondents.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
           </input>
         </program>
+        </listing>
     <pre>
 Downloaded CDBRFS08.ASC.gz
 
     </pre>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from thinkstats import read_brfss
@@ -966,6 +1109,9 @@ from thinkstats import read_brfss
 brfss = read_brfss()
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 male = brfss.query("sex == 1")
@@ -973,6 +1119,7 @@ heights = male["htm3"]
 heights.describe()
           </input>
         </program>
+        </listing>
     <pre>
 count    154407.000000
 mean        178.066221
@@ -998,20 +1145,26 @@ Name: htm3, dtype: float64
           Let's see if either of them is a consistent, unbiased estimator.
           For the experiments, we'll assume that the actual mean time between goals is 10 minutes.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 actual_mean = 10
           </input>
         </program>
+        </listing>
         <p>
           The following function generates a sample from an exponential distribution with this mean and the given sample size.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def make_exponential(n):
     return np.random.exponential(actual_mean, size=n)
           </input>
         </program>
+        </listing>
         <p>
           Use this function to generate samples with a range of sizes and compute the mean of each one. As <c>n</c> increases, do the sample means converge to the actual mean?
         </p>
@@ -1022,12 +1175,15 @@ def make_exponential(n):
         <p>
           Here's the actual median of an exponential distribution with the given mean.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 actual_median = np.log(2) * actual_mean
 actual_median
           </input>
         </program>
+        </listing>
     <pre>
 np.float64(6.931471805599453)
     </pre>
@@ -1051,6 +1207,8 @@ np.float64(6.931471805599453)
         <p>
           To estimate the standard deviation of a population, we can compute the square root of the biased or unbiased estimator of variance, like this:
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def biased_std(sample):
@@ -1059,6 +1217,9 @@ def biased_std(sample):
     return np.sqrt(var)
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def unbiased_std(sample):
@@ -1067,10 +1228,13 @@ def unbiased_std(sample):
     return np.sqrt(var)
           </input>
         </program>
+        </listing>
         <p>
           Use <c>make_sample</c> to compute many samples of size 10 from a normal distribution with mean 3.7 and standard deviation 0.46.
           Check whether either of these is an unbiased estimator of standard deviation.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 # Here's an example using `make_sample`
@@ -1079,6 +1243,7 @@ mu, sigma = 3.7, 0.46
 make_sample(n=10)
           </input>
         </program>
+        </listing>
     <pre>
 array([4.5279695 , 3.75698359, 4.09347143, 3.56308034, 3.17123233,
        4.40734952, 3.70858308, 4.15706704, 4.06716703, 3.7203591 ])
@@ -1099,6 +1264,8 @@ array([4.5279695 , 3.75698359, 4.09347143, 3.56308034, 3.17123233,
         <p>
           If we assume that the Germans have <c>N</c> tanks numbered from 1 to <c>N</c>, and that all tanks in this range were equally likely to be captured, we can estimate <c>N</c> like this:
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def estimate_tanks(sample):
@@ -1107,49 +1274,65 @@ def estimate_tanks(sample):
     return m + (m - k) / k
           </input>
         </program>
+        </listing>
         <p>
           As an example, suppose <c>N</c> is 122.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 N = 122
 tanks = np.arange(1, N + 1)
           </input>
         </program>
+        </listing>
         <p>
           We can use the following function to generate a random sample of <c>k</c> tanks.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def sample_tanks(k):
     return np.random.choice(tanks, replace=False, size=k)
           </input>
         </program>
+        </listing>
         <p>
           Here's an example.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 np.random.seed(17)
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 sample = sample_tanks(5)
 sample
           </input>
         </program>
+        </listing>
     <pre>
 array([74, 71, 95, 10, 17])
     </pre>
         <p>
           And here is the estimate based on this sample.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 estimate_tanks(sample)
           </input>
         </program>
+        </listing>
     <pre>
 np.float64(113.0)
     </pre>
@@ -1188,6 +1371,8 @@ np.float64(113.0)
           But we can use the methods from this chapter to check it.
           We'll use the following function to generate a sequence of 0s and 1s with probability 0.5 and no correlation.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 def make_hits_and_misses(n):
@@ -1195,9 +1380,12 @@ def make_hits_and_misses(n):
     return np.random.choice([0, 1], size=n)
           </input>
         </program>
+        </listing>
         <p>
           In the notebook for this chapter, I provide a function that finds all subsequences of three hits (1s) and returns the element of the sequence that follows.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 import numpy as np
@@ -1233,6 +1421,7 @@ def get_successors(seq, target_sum=3):
     return successors
           </input>
         </program>
+        </listing>
         <p>
           Generate a large number of sequences with length 100 and for each sequence, find each shot that follows three hits.
           Compute the percentage of these shots that are hits.

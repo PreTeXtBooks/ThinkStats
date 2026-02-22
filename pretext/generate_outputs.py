@@ -193,6 +193,9 @@ def update_ptx_file(ptx_path, code_to_outputs):
     This function is idempotent: it will not add outputs if they are
     already present after a program block.
 
+    When a <program> is wrapped in a <listing>, outputs are inserted after
+    </listing> rather than inside it.
+
     Returns True if any changes were made.
     """
     with open(ptx_path) as f:
@@ -209,10 +212,13 @@ def update_ptx_file(ptx_path, code_to_outputs):
         re.DOTALL,
     )
 
-    # Pattern to detect an existing output block immediately after </program>
+    # Pattern to detect an existing output block immediately after the insertion point
     existing_output_pattern = re.compile(
         r'\s*<(pre|figure)\b', re.DOTALL
     )
+
+    # Pattern to detect a closing </listing> tag immediately after </program>
+    listing_close_pattern = re.compile(r'\s*</listing>', re.DOTALL)
 
     changes_made = 0
     result_parts = []
@@ -220,17 +226,24 @@ def update_ptx_file(ptx_path, code_to_outputs):
 
     for match in program_pattern.finditer(content):
         code_raw = match.group(2)
-        full_program = match.group(0)
 
-        # Check if there's already an output block right after this program
+        # Check if this program is wrapped in a <listing> block.
+        # If so, output should go after </listing>, not inside it.
         after_program = content[match.end():]
-        already_has_output = bool(existing_output_pattern.match(after_program))
+        listing_close_match = listing_close_pattern.match(after_program)
+        if listing_close_match:
+            insertion_end = match.end() + listing_close_match.end()
+            after_insertion = content[insertion_end:]
+            already_has_output = bool(existing_output_pattern.match(after_insertion))
+        else:
+            insertion_end = match.end()
+            already_has_output = bool(existing_output_pattern.match(after_program))
 
         code_normalized = normalize_code(code_raw)
         outputs = code_to_outputs.get(code_normalized)
 
-        result_parts.append(content[last_end:match.end()])
-        last_end = match.end()
+        result_parts.append(content[last_end:insertion_end])
+        last_end = insertion_end
 
         if outputs and not already_has_output:
             changes_made += 1

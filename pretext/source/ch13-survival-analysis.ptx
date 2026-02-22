@@ -35,12 +35,15 @@
     <p>
       We can read the data like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df = pd.read_csv("lamps.csv", index_col=0)
 df.tail()
       </input>
     </program>
+    </listing>
     <pre>
        h  f  K
 i             
@@ -56,6 +59,8 @@ i
       To represent the distribution of lifespans, we'll put these values in a <c>Pmf</c>
       object and normalize it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Pmf
@@ -64,6 +69,7 @@ pmf_bulblife = Pmf(df["f"].values, index=df["h"])
 pmf_bulblife.normalize()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(50)
     </pre>
@@ -72,12 +78,15 @@ np.int64(50)
       that expire at or before each value of <c>h</c>.
       For example, 78% of the bulbs expire at or before 1656 hours.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_bulblife = pmf_bulblife.make_cdf()
 cdf_bulblife[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.7800000000000002)
     </pre>
@@ -86,12 +95,15 @@ np.float64(0.7800000000000002)
       <c>h</c>, which is the complement of the CDF.
       So we can compute it like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 complementary_cdf = 1 - cdf_bulblife
 complementary_cdf[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.21999999999999975)
     </pre>
@@ -102,12 +114,15 @@ np.float64(0.21999999999999975)
       The <c>empiricaldist</c> library provides a <c>Surv</c> object that represents a
       survival function, and a method called <c>make_surv</c> that makes one.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv_bulblife = cdf_bulblife.make_surv()
 surv_bulblife[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.21999999999999997)
     </pre>
@@ -115,6 +130,8 @@ np.float64(0.21999999999999997)
       If we plot the CDF and the survival function, we can see that they are
       complementary<mdash/>that is, their sum is 1 at all values of <c>h</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_bulblife.plot(ls="--", label="CDF")
@@ -123,6 +140,7 @@ surv_bulblife.plot(label="Survival")
 decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_001.png" width="80%"/>
     </figure>
@@ -150,35 +168,44 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
       <c>h</c>, which are said to be <q>at risk</q>.
       As an example, 26% of the bulbs were at risk during interval 1656.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 at_risk = pmf_bulblife + surv_bulblife
 at_risk[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.25999999999999995)
     </pre>
     <p>
       And 4% of all bulbs expired during interval 1656.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_bulblife[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.04)
     </pre>
     <p>
       The <term>hazard</term> is the ratio of <c>pmf_bulblife</c> and <c>at_risk</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 hazard = pmf_bulblife / at_risk
 hazard[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.15384615384615388)
     </pre>
@@ -190,24 +217,30 @@ np.float64(0.15384615384615388)
       which provides a <c>Hazard</c> object that represents a hazard function, and a
       <c>make_hazard</c> method that computes it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 hazard_bulblife = surv_bulblife.make_hazard()
 hazard_bulblife[1656]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.15384615384615397)
     </pre>
     <p>
       Here's what the hazard function looks like for the light bulbs.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 hazard_bulblife.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_002.png" width="80%"/>
     </figure>
@@ -218,6 +251,8 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Hazard")
       A better alternative is to plot the <term>cumulative hazard function</term>, which is
       the cumulative sum of the hazards.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cumulative_hazard = hazard_bulblife.cumsum()
@@ -226,6 +261,7 @@ cumulative_hazard.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_003.png" width="80%"/>
     </figure>
@@ -265,12 +301,15 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
     <p>
       We can read the data like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resp = pd.read_csv("marriage_nsfg_female.csv.gz")
 resp.shape
       </input>
     </program>
+    </listing>
     <pre>
 (70183, 34)
     </pre>
@@ -312,6 +351,8 @@ resp.shape
       corresponding decade of birth.
       It uses the integer division operator <c>//</c> to divide by 10 and round down.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 month0 = pd.to_datetime("1899-12-31")
@@ -322,6 +363,7 @@ def decade_of_birth(cmbirth):
     return date.year // 10 * 10
       </input>
     </program>
+    </listing>
     <p>
       We can use this function and the <c>apply</c> method to compute each respondent's decade
       of birth and assign it to a new column called <c>cohort</c>.
@@ -332,6 +374,8 @@ def decade_of_birth(cmbirth):
     <p>
       The result from <c>value_counts</c> shows the number of people in each cohort.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import value_counts
@@ -340,6 +384,7 @@ resp["cohort"] = resp["cmbirth"].apply(decade_of_birth)
 value_counts(resp["cohort"])
       </input>
     </program>
+    </listing>
     <pre>
 cohort
 1930      325
@@ -360,12 +405,15 @@ Name: count, dtype: int64
       Next we'll compute each respondent's age when married (if applicable) and their age when
       interviewed.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resp["agemarr"] = (resp["cmmarrhx"] - resp["cmbirth"]) / 12
 resp["age"] = (resp["cmintvw"] - resp["cmbirth"]) / 12
       </input>
     </program>
+    </listing>
     <p>
       To get started with this data, we'll use the following function, which takes as arguments
       a <c>DataFrame</c> and a list of cohorts, and returns a dictionary that maps from each
@@ -375,6 +423,8 @@ resp["age"] = (resp["cmintvw"] - resp["cmbirth"]) / 12
       The <c>dropna=False</c> argument includes <c>NaN</c> values in the survival function, so
       the result includes people who have not married.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Surv
@@ -391,18 +441,24 @@ def make_survival_map(resp, cohorts):
     return surv_map
       </input>
     </program>
+    </listing>
     <p>
       Here's how we use this function.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cohorts = [1980, 1960, 1940]
 surv_map = make_survival_map(resp, cohorts)
       </input>
     </program>
+    </listing>
     <p>
       And here are the results for people born in the 1940s, 1960s, and 1980s.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for cohort, surv in surv_map.items():
@@ -412,6 +468,7 @@ ylim = [-0.05, 1.05]
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_004.png" width="80%"/>
     </figure>
@@ -455,6 +512,8 @@ decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       It resamples the rows of the <c>DataFrame</c>, taking the sampling weights into account,
       and returns a new <c>DataFrame</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def resample_rows_weighted(df, column="finalwgt"):
@@ -463,12 +522,15 @@ def resample_rows_weighted(df, column="finalwgt"):
     return df.sample(n, weights=weights, replace=True)
       </input>
     </program>
+    </listing>
     <p>
       The current dataset includes respondents from several iterations of the survey, called
       cycles, so in order to resample, we have to group the respondents by cycle, resample each
       group, and then put the groups back together.
       That's what the following function does.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def resample_cycles(resp):
@@ -477,9 +539,12 @@ def resample_cycles(resp):
     return pd.concat(samples)
       </input>
     </program>
+    </listing>
     <p>
       To get started, we'll resample the data once.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 # Seed the random number generator so we get the same results every time
@@ -488,6 +553,7 @@ np.random.seed(1)
 sample = resample_cycles(resp)
       </input>
     </program>
+    </listing>
     <p>
       Later we'll resample the data several times, so we can see how much variation there is
       due to random sampling.
@@ -496,6 +562,8 @@ sample = resample_cycles(resp)
       The following figure shows the results with resampling, compared to the results from the
       previous section without resampling, shown as dotted lines.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for label, surv in surv_map.items():
@@ -509,6 +577,7 @@ for label, surv in survs_resampled.items():
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_005.png" width="80%"/>
     </figure>
@@ -553,22 +622,28 @@ decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
     <p>
       To demonstrate, I'll select just one cohort from the resampled data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 resp60 = sample.query("cohort == 1960")
       </input>
     </program>
+    </listing>
     <p>
       For respondents who were married when they were surveyed, we'll select their age at first
       marriage.
       There are 9921 of them, which we'll call <q>complete</q> cases.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 complete = resp60.query("evrmarry == 1")["agemarr"]
 complete.count()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(9921)
     </pre>
@@ -576,12 +651,15 @@ np.int64(9921)
       For respondents who had not married, we'll select their age when they were surveyed.
       There are 5468 of them, which we'll call the <q>ongoing</q> cases.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ongoing = resp60.query("evrmarry == 0")["age"]
 ongoing.count()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(5468)
     </pre>
@@ -591,6 +669,8 @@ np.int64(5468)
       It will be convenient to make a <c>FreqTab</c> object that counts the number of complete
       and ongoing cases at each age.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import FreqTab
@@ -599,15 +679,19 @@ ft_complete = FreqTab.from_seq(complete)
 ft_ongoing = FreqTab.from_seq(ongoing)
       </input>
     </program>
+    </listing>
     <p>
       As an example, there are 58 respondents who reported that they were married for the first
       time at age 25.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ft_complete[25]
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(58)
     </pre>
@@ -615,11 +699,14 @@ np.int64(58)
       And another 5 respondents who were surveyed at age 25 and reported that they had never
       married.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ft_ongoing[25]
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(5)
     </pre>
@@ -627,31 +714,40 @@ np.int64(5)
       From these <c>FreqTab</c> objects, we can compute unnormalized <c>Surv</c> objects that
       contain the number of complete and ongoing cases that exceed each age.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv_complete = ft_complete.make_surv()
 surv_ongoing = ft_ongoing.make_surv()
       </input>
     </program>
+    </listing>
     <p>
       For example, there are 2848 people who reported getting married after age 25.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv_complete[25]
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(2848)
     </pre>
     <p>
       And 2273 people surveyed after age 25 who had never married.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv_ongoing[25]
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(2273)
     </pre>
@@ -664,12 +760,15 @@ np.int64(2273)
       positive milestone.
       That said, here's how we compute it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 at_risk = ft_complete[25] + ft_ongoing[25] + surv_complete[25] + surv_ongoing[25]
 at_risk
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(5184)
     </pre>
@@ -677,12 +776,15 @@ np.int64(5184)
       Of those, the number who actually married at age 25 is <c>ft_complete[25]</c>.
       So we can compute the hazard function at age 25 like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 hazard = ft_complete[25] / at_risk
 hazard
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.011188271604938271)
     </pre>
@@ -693,24 +795,32 @@ np.float64(0.011188271604938271)
       <c>Index</c> that contains all of the ages from <c>ft_complete</c> and
       <c>ft_ongoing</c>, in order.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ts = pd.Index.union(ft_complete.index, ft_ongoing.index)
       </input>
     </program>
+    </listing>
     <p>
       Now we can compute the number of people at risk at every age, by looking up the ages in
       <c>ts</c> in each of the <c>FreqTab</c> and <c>Surv</c> objects.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 at_risk = ft_complete(ts) + ft_ongoing(ts) + surv_complete(ts) + surv_ongoing(ts)
       </input>
     </program>
+    </listing>
     <p>
       Finally, we can compute the hazard function at each age, and put the results into a
       <c>Hazard</c> object.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Hazard
@@ -719,9 +829,12 @@ hs = ft_complete(ts) / at_risk
 hazard = Hazard(hs, ts)
       </input>
     </program>
+    </listing>
     <p>
       Here's what the cumulative hazard function looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 hazard.cumsum().plot()
@@ -729,6 +842,7 @@ hazard.cumsum().plot()
 decorate(xlabel="Age", ylabel="Cumulative hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_006.png" width="80%"/>
     </figure>
@@ -760,23 +874,31 @@ decorate(xlabel="Age", ylabel="Cumulative hazard")
       And the probability of doing that is the product of the complementary hazard function,
       which we can compute like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = (1 - hazard).cumprod()
       </input>
     </program>
+    </listing>
     <p>
       The <c>Hazard</c> object has a <c>make_surv</c> method that does this computation.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv = hazard.make_surv()
       </input>
     </program>
+    </listing>
     <p>
       Here's what the result looks like, compared to the previous result (dotted line), which
       corrected for stratified resampling, but did not handle censored data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 survs_resampled[1960].plot(ls=":", color="gray", label="resampled")
@@ -785,6 +907,7 @@ surv.plot(label="Kaplan-Meier")
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_007.png" width="80%"/>
     </figure>
@@ -816,6 +939,8 @@ decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       It takes as arguments sequences of survival times for complete and ongoing cases, and
       returns a <c>Hazard</c> object.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def estimate_hazard(complete, ongoing):
@@ -833,11 +958,14 @@ def estimate_hazard(complete, ongoing):
     return Hazard(hs, ts)
       </input>
     </program>
+    </listing>
     <p>
       And here's a function that takes a group of respondents, extracts survival times, calls
       <c>estimate_hazard</c> to get the hazard function, and then computes the corresponding
       survival function.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def estimate_survival(group):
@@ -849,6 +977,7 @@ def estimate_survival(group):
     return sf
       </input>
     </program>
+    </listing>
     <p>
       Soon we'll use these functions to compute confidence intervals for survival functions.
       But first let's see another way to compute Kaplan-Meier estimates.
@@ -866,15 +995,20 @@ def estimate_survival(group):
       We can use it to confirm that the result in the previous section is correct.
       First we'll compute the survival function using <c>estimate_survival</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 surv = estimate_survival(resp60)
       </input>
     </program>
+    </listing>
     <p>
       Next we'll compute it using <c>lifelines</c>.
       First we'll get the data into the format <c>lifelines</c> requires.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 complete = complete.dropna()
@@ -882,9 +1016,12 @@ durations = np.concatenate([complete, ongoing])
 event_observed = np.concatenate([np.ones(len(complete)), np.zeros(len(ongoing))])
       </input>
     </program>
+    </listing>
     <p>
       Now we can make a <c>KaplanMeierFitter</c> object and fit the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from lifelines import KaplanMeierFitter
@@ -893,6 +1030,7 @@ kmf = KaplanMeierFitter()
 kmf.fit(durations=durations, event_observed=event_observed)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;lifelines.KaplanMeierFitter:"KM_estimate", fitted with 15389 total observations, 5468 right-censored observations&gt;
     </pre>
@@ -902,6 +1040,8 @@ kmf.fit(durations=durations, event_observed=event_observed)
       interval<mdash/>although the confidence interval is not correct in this case because it
       doesn't correct for stratified sampling.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 kmf.plot()
@@ -909,6 +1049,7 @@ kmf.plot()
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_008.png" width="80%"/>
     </figure>
@@ -916,12 +1057,15 @@ decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       Unlike the survival function we computed, the one from <c>lifelines</c> starts from 0.
       But the rest of the function is the same, within floating-point error.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = kmf.survival_function_["KM_estimate"].drop(0)
 np.allclose(ps, surv)
       </input>
     </program>
+    </listing>
     <pre>
 True
     </pre>
@@ -949,6 +1093,8 @@ True
       <c>estimate_survival</c>, which uses Kaplan-Meier estimation, rather than
       <c>Surv.from_seq</c>, which only works if there is no censored data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def estimate_survival_map(resp, cohorts):
@@ -963,10 +1109,13 @@ def estimate_survival_map(resp, cohorts):
     return surv_map
       </input>
     </program>
+    </listing>
     <p>
       The following loop generates 101 random resamplings of the dataset and makes a list of
       101 dictionaries containing the estimated survival functions.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cohorts = [1940, 1950, 1960, 1970, 1980, 1990]
@@ -974,6 +1123,7 @@ cohorts = [1940, 1950, 1960, 1970, 1980, 1990]
 surv_maps = [estimate_survival_map(resample_cycles(resp), cohorts) for i in range(101)]
       </input>
     </program>
+    </listing>
     <p>
       To plot the results, we'll use the following function, which takes that list of
       dictionaries, an integer cohort, and a color string.
@@ -981,6 +1131,8 @@ surv_maps = [estimate_survival_map(resample_cycles(resp), cohorts) for i in rang
       and plots it with a nearly transparent line<mdash/>which is one way to visualize the
       variability between resamplings.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def plot_cohort(surv_maps, cohort, color):
@@ -993,9 +1145,12 @@ def plot_cohort(surv_maps, cohort, color):
     plt.text(x + 1, y, f"{cohort}s", ha="left", va="center")
       </input>
     </program>
+    </listing>
     <p>
       Here are the results for birth cohorts from the 1940s to the 1990s.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 colors = [f"C{i}" for i in range(len(cohorts))]
@@ -1007,6 +1162,7 @@ xlim = [8, 55]
 decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_009.png" width="80%"/>
     </figure>
@@ -1059,6 +1215,8 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       We'll use <c>get_nsfg_groups</c> to read the data and divide it into first babies and
       others.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import get_nsfg_groups
@@ -1066,6 +1224,7 @@ from nsfg import get_nsfg_groups
 live, firsts, others = get_nsfg_groups()
       </input>
     </program>
+    </listing>
     <pre>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
@@ -1074,19 +1233,25 @@ live, firsts, others = get_nsfg_groups()
     <p>
       We'll start with a single resampling of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sample = resample_rows_weighted(live, "finalwgt")
       </input>
     </program>
+    </listing>
     <p>
       Here's the PMF of pregnancy durations.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_durations = Pmf.from_seq(sample["prglngth"])
       </input>
     </program>
+    </listing>
     <p>
       Now suppose it's the beginning of the 36th week of pregnancy.
       Remembering that the most common pregnancy length is 39 weeks, we expect the remaining
@@ -1094,16 +1259,21 @@ pmf_durations = Pmf.from_seq(sample["prglngth"])
       To make that estimate more precise, we can identify the values in the distribution that
       equal or exceed 36 weeks.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 t = 36
 is_remaining = pmf_durations.qs &gt;= t
       </input>
     </program>
+    </listing>
     <p>
       Next we'll make a new <c>Pmf</c> object that contains only those values, shifted left so
       the current time is at 0.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = pmf_durations.ps[is_remaining]
@@ -1112,15 +1282,19 @@ qs = pmf_durations.qs[is_remaining] - t
 pmf_remaining = Pmf(ps, qs)
       </input>
     </program>
+    </listing>
     <p>
       Because we selected a subset of the values in the <c>Pmf</c>, the probabilities no
       longer add up to 1, but we can normalize the <c>Pmf</c> so they do.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_remaining.normalize()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9155006558810669)
     </pre>
@@ -1128,23 +1302,29 @@ np.float64(0.9155006558810669)
       Here's the result, which shows the distribution of remaining time at the beginning of
       the 36th week.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_remaining.bar(label="Week 36")
 decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_010.png" width="80%"/>
     </figure>
     <p>
       The mean of this distribution is the expected remaining time.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_remaining.mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.2145671641791043)
     </pre>
@@ -1152,6 +1332,8 @@ np.float64(3.2145671641791043)
       The following function encapsulates these steps and computes the distribution of
       remaining time for a given <c>Pmf</c> at a given time, <c>t</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def compute_pmf_remaining(pmf, t):
@@ -1164,10 +1346,13 @@ def compute_pmf_remaining(pmf, t):
     return pmf_remaining
       </input>
     </program>
+    </listing>
     <p>
       The following function takes a <c>Pmf</c> of pregnancy lengths and computes the expected
       remaining time at the beginning of each week from the 36th to the 43rd.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def expected_remaining(pmf):
@@ -1181,15 +1366,19 @@ def expected_remaining(pmf):
     return expected
       </input>
     </program>
+    </listing>
     <p>
       Here are the results for a single resampling of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 expected = expected_remaining(pmf_durations)
 expected
       </input>
     </program>
+    </listing>
     <pre>
 36    3.214567
 37    2.337714
@@ -1205,6 +1394,8 @@ dtype: float64
       To see how much variation there is due to random sampling, we can run this analysis with
       several resamplings and plot the results.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for i in range(21):
@@ -1218,6 +1409,7 @@ decorate(
 )
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_011.png" width="80%"/>
     </figure>
@@ -1363,15 +1555,20 @@ decorate(
         <p>
           We can load the data like this.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 mortality = pd.read_csv("mortality_rates_beltran2012.csv", header=[0, 1]).dropna()
           </input>
         </program>
+        </listing>
         <p>
           The following function interpolates the data to make a hazard function with
           approximate mortality rates for each age from 0 to 99.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from scipy.interpolate import interp1d
@@ -1386,9 +1583,12 @@ def make_hazard(ages, rates):
     return Hazard(ys, xs)
           </input>
         </program>
+        </listing>
         <p>
           Now we can make a <c>Hazard</c> object like this.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 ages = mortality["1800", "X"].values
@@ -1396,9 +1596,12 @@ rates = mortality["1800", "Y"].values
 hazard = make_hazard(ages, rates)
           </input>
         </program>
+        </listing>
         <p>
           Here's what the mortality rates look like.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 hazard.plot()
@@ -1406,6 +1609,7 @@ hazard.plot()
 decorate(xlabel="Age (years)", ylabel="Hazard")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap13_015.png" width="80%"/>
     </figure>

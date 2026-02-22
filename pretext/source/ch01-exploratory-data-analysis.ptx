@@ -190,12 +190,15 @@
     <p>
       The data is stored in two files, a "dictionary" that describes the format of the data, and a data file.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 dct_file = "2002FemPreg.dct"
 dat_file = "2002FemPreg.dat.gz"
       </input>
     </program>
+    </listing>
     <p>
       The notebook for this chapter defines a function that reads these files.
       It is called <c>read_stata</c> because this data format is compatible with a statistical software package called Stata.
@@ -203,6 +206,8 @@ dat_file = "2002FemPreg.dat.gz"
     <p>
       The following function takes these file names as arguments, reads the dictionary, and uses the results to read the data file.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from statadict import parse_stata_dict
@@ -219,14 +224,18 @@ def read_stata(dct_file, dat_file):
     return resp
       </input>
     </program>
+    </listing>
     <p>
       Here's how we use it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg = read_stata(dct_file, dat_file)
       </input>
     </program>
+    </listing>
     <p>
       The result is a <c>DataFrame</c>, which is a Pandas data structure that represents tabular data in rows and columns.
       This <c>DataFrame</c> contains a row for each pregnancy reported by a respondent and a column for each <term>variable</term>.
@@ -236,11 +245,14 @@ preg = read_stata(dct_file, dat_file)
       In addition to the data, a <c>DataFrame</c> also contains the variable names and their types, and it provides methods for accessing and modifying the data.
       The <c>DataFrame</c> has an attribute called <c>shape</c> that contains the number of rows and columns.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg.shape
       </input>
     </program>
+    </listing>
     <pre>
 (13593, 243)
     </pre>
@@ -248,11 +260,14 @@ preg.shape
       This dataset has 243 variables with information about 13,593 pregnancies.
       The <c>DataFrame</c> provides a method called <c>head</c> that displays the first few rows.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg.head()
       </input>
     </program>
+    </listing>
     <pre>
    caseid  pregordr  howpreg_n  howpreg_p  moscurrp  nowprgdk  pregend1  \
 0       1         1        NaN        NaN       NaN       NaN       6.0   
@@ -284,11 +299,14 @@ preg.head()
     <p>
       The <c>DataFrame</c> has an attribute called <c>columns</c> that contains the names of the variables.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg.columns
       </input>
     </program>
+    </listing>
     <pre>
 Index(['caseid', 'pregordr', 'howpreg_n', 'howpreg_p', 'moscurrp', 'nowprgdk',
        'pregend1', 'pregend2', 'nbrnaliv', 'multbrth',
@@ -301,12 +319,15 @@ Index(['caseid', 'pregordr', 'howpreg_n', 'howpreg_p', 'moscurrp', 'nowprgdk',
       The column names are contained in an <c>Index</c> object, which is another Pandas data structure.
       To access a column from a <c>DataFrame</c>, you can use the column name as a key.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pregordr = preg["pregordr"]
 type(pregordr)
       </input>
     </program>
+    </listing>
     <pre>
 pandas.core.series.Series
     </pre>
@@ -314,11 +335,14 @@ pandas.core.series.Series
       The result is a Pandas <c>Series</c>, which represents a sequence of values.
       <c>Series</c> also provides <c>head</c>, which displays the first few values and their labels.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pregordr.head()
       </input>
     </program>
+    </listing>
     <pre>
 0    1
 1    2
@@ -435,11 +459,14 @@ Name: pregordr, dtype: int64
       The "Total" column indicates the number of pregnancies with each outcome.
       To check these totals, we'll use the <c>value_counts</c> method, which counts the number of times each value appears, and <c>sort_index</c>, which sorts the results according to the values in the <c>Index</c> (the left column).
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["outcome"].value_counts().sort_index()
       </input>
     </program>
+    </listing>
     <pre>
 outcome
 1    9148
@@ -522,12 +549,15 @@ Name: count, dtype: int64
     <p>
       Again, we can use <c>value_counts</c> to compare the counts in the dataset to the counts in the codebook.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 counts = preg["birthwgt_lb"].value_counts(dropna=False).sort_index()
 counts
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_lb
 0.0        8
@@ -561,11 +591,14 @@ Name: count, dtype: int64
       The counts for 6, 7, and 8 pounds are consistent with the codebook.
       To check the counts for the weight range from 0 to 5 pounds, we can use an attribute called <c>loc</c> <mdash/> which is short for "location" <mdash/> and a slice index to select a subset of the counts.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 counts.loc[0:5]
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_lb
 0.0      8
@@ -579,11 +612,14 @@ Name: count, dtype: int64
     <p>
       And we can use the <c>sum</c> method to add them up.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 counts.loc[0:5].sum()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(1125)
     </pre>
@@ -599,11 +635,14 @@ np.int64(1125)
     <p>
       We can use the replace method like this:
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["birthwgt_lb"] = preg["birthwgt_lb"].replace([51, 97, 98, 99], np.nan)
       </input>
     </program>
+    </listing>
     <p>
       The first argument is a list of values to be replaced.
       The second argument, <c>np.nan</c>, gets the <c>NaN</c> value from NumPy.
@@ -624,23 +663,29 @@ preg["birthwgt_lb"] = preg["birthwgt_lb"].replace([51, 97, 98, 99], np.nan)
       For example, <c>agepreg</c> contains the mother's age at the end of the pregnancy.
       According to the codebook, it is an integer number of centiyears (hundredths of a year), as we can tell if we use the <c>mean</c> method to compute its average.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["agepreg"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(2468.8151197039497)
     </pre>
     <p>
       To convert it to years, we can divide through by 100.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["agepreg"] /= 100.0
 preg["agepreg"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(24.6881511970395)
     </pre>
@@ -654,11 +699,14 @@ np.float64(24.6881511970395)
     <p>
       First we'll clean <c>birthwgt_oz</c> as we did with <c>birthwgt_lb</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["birthwgt_oz"].value_counts(dropna=False).sort_index()
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_oz
 0.0     1037
@@ -683,20 +731,26 @@ birthwgt_oz
 NaN     4506
 Name: count, dtype: int64
     </pre>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["birthwgt_oz"] = preg["birthwgt_oz"].replace([97, 98, 99], np.nan)
       </input>
     </program>
+    </listing>
     <p>
       Now we can use the cleaned values to create a new column that combines pounds and ounces into a single quantity.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 preg["totalwgt_lb"] = preg["birthwgt_lb"] + preg["birthwgt_oz"] / 16.0
 preg["totalwgt_lb"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
@@ -715,6 +769,8 @@ np.float64(7.265628457623368)
     <p>
       A <c>Series</c> object has a <c>count</c> method that returns the number of values that are not <c>nan</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights = preg["totalwgt_lb"]
@@ -722,29 +778,36 @@ n = weights.count()
 n
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(9038)
     </pre>
     <p>
       It also provides a <c>sum</c> method that returns the sum of the values <mdash/> we can use it to compute the mean like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mean = weights.sum() / n
 mean
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
     <p>
       But as we've already seen, there's also a <c>mean</c> method that does the same thing.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights.mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
@@ -755,31 +818,40 @@ np.float64(7.265628457623368)
       Variance is a statistic that quantifies the spread of a set of values.
       It is the mean of the squared deviations, which are the distances of each point from the mean.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 squared_deviations = (weights - mean) ** 2
       </input>
     </program>
+    </listing>
     <p>
       We can compute the mean of the squared deviations like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 var = squared_deviations.sum() / n
 var
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.983070989750022)
     </pre>
     <p>
       As you might expect, <c>Series</c> provides a <c>var</c> method that does <em>almost</em> the same thing.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights.var()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.9832904288326545)
     </pre>
@@ -789,11 +861,14 @@ np.float64(1.9832904288326545)
       I'll explain the difference in <xref ref="sec-estimation-estimating-variance" text="custom">Chapter 8</xref> <mdash/> but in practice it usually doesn't matter.
       If you prefer the version with <c>n</c> in the denominator, you can get it by passing <c>ddof=0</c> as a keyword argument to the <c>var</c> method.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights.var(ddof=0)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.983070989750022)
     </pre>
@@ -803,23 +878,29 @@ np.float64(1.983070989750022)
       A better option is the <term>standard deviation</term>, which is the square root of variance.
       We can compute it like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 std = np.sqrt(var)
 std
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.40821553384062)
     </pre>
     <p>
       Or, we can use the <c>std</c> method.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 weights.std(ddof=0)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.40821553384062)
     </pre>
@@ -837,12 +918,15 @@ np.float64(1.40821553384062)
       As an example, let's select the rows in the pregnancy file with <c>caseid</c> 10229.
       The <c>query</c> method takes a string that can contain column names, comparison operators, and numbers, among other things.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 subset = preg.query("caseid == 10229")
 subset.shape
       </input>
     </program>
+    </listing>
     <pre>
 (7, 244)
     </pre>
@@ -850,11 +934,14 @@ subset.shape
       The result is a <c>DataFrame</c> that contains only the rows where the query is <c>True</c>.
       This respondent reported seven pregnancies <mdash/> here are their outcomes, which are recorded in chronological order.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 subset["outcome"].values
       </input>
     </program>
+    </listing>
     <pre>
 array([4, 4, 4, 4, 4, 4, 1])
     </pre>

@@ -31,6 +31,8 @@
       We'll use the following function to compute the absolute difference between the observed number and the expected number if the coin is fair.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n = 250
@@ -42,11 +44,14 @@ def abs_deviation(heads):
     return np.abs(heads - expected)
       </input>
     </program>
+    </listing>
 
     <p>
       In the observed data, this deviation is 15.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 heads = 140
@@ -56,6 +61,7 @@ observed_stat = abs_deviation(heads)
 observed_stat
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(15.0)
     </pre>
@@ -64,6 +70,8 @@ np.float64(15.0)
       If the coin is actually fair, we can simulate the coin-spinning experiment by generating a sequence of random strings -- either <c>'H'</c> or <c>'T'</c> with equal probability -- and counting the number of times <c>'H'</c> appears.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def simulate_flips():
@@ -72,22 +80,29 @@ def simulate_flips():
     return heads
       </input>
     </program>
+    </listing>
 
     <p>
       Each time we call this function, we get the outcome of a simulated experiment.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.random.seed(1)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulate_flips()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(119)
     </pre>
@@ -96,17 +111,22 @@ np.int64(119)
       The following loop simulates the experiment many times, computes the deviation for each one, and uses a list comprehension to collect the results in a list.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_stats = [abs_deviation(simulate_flips()) for i in range(10001)]
       </input>
     </program>
+    </listing>
 
     <p>
       The result is a sample from the distribution of deviations under the assumption that the coin is fair.
       Here's what the distribution of these values looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Pmf
@@ -117,6 +137,7 @@ pmf_effects.bar()
 decorate(xlabel="Absolute deviation", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_001.png" width="80%"/>
     </figure>
@@ -127,11 +148,14 @@ decorate(xlabel="Absolute deviation", ylabel="PMF")
       In this example, the simulated results equal or exceed 15 about 7.1% of the time.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 (np.array(simulated_stats) >= 15).mean() * 100
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.079292070792921)
     </pre>
@@ -183,6 +207,8 @@ np.float64(7.079292070792921)
       The following cells download the data and install <c>statadict</c>, which we need to read the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
@@ -190,6 +216,7 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct"
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
       </input>
     </program>
+    </listing>
     <pre>
 Downloaded 2002FemPreg.dct
 
@@ -199,6 +226,8 @@ Downloaded 2002FemPreg.dat.gz
 
     </pre>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 try:
@@ -207,11 +236,14 @@ except ImportError:
     %pip install statadict
       </input>
     </program>
+    </listing>
 
     <p>
       The function <c>get_nsfg_groups</c> reads the data, selects live births, and groups live births into first babies and others.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import get_nsfg_groups
@@ -219,6 +251,7 @@ from nsfg import get_nsfg_groups
 live, firsts, others = get_nsfg_groups()
       </input>
     </program>
+    </listing>
     <pre>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
@@ -229,16 +262,21 @@ live, firsts, others = get_nsfg_groups()
       Now we can select pregnancy lengths, in weeks, for both groups.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 data = firsts["prglngth"].values, others["prglngth"].values
       </input>
     </program>
+    </listing>
 
     <p>
       The following function takes the data as a tuple of two sequences, and computes the absolute difference in means.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def abs_diff_means(data):
@@ -247,17 +285,21 @@ def abs_diff_means(data):
     return np.abs(diff)
       </input>
     </program>
+    </listing>
 
     <p>
       Between first babies and others, the observed difference in pregnancy length is 0.078 weeks.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 observed_diff = abs_diff_means(data)
 observed_diff
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.07803726677754952)
     </pre>
@@ -269,6 +311,8 @@ np.float64(0.07803726677754952)
       To simulate the experiment, we can use the NumPy function <c>shuffle</c> to put the pooled values in random order, and then use slice indexes to select two groups with the same sizes as the original.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def simulate_groups(data):
@@ -280,16 +324,20 @@ def simulate_groups(data):
     return pool[:n], pool[-m:]
       </input>
     </program>
+    </listing>
 
     <p>
       Each time we call this function, it returns a tuple of sequences, which we can pass to <c>abs_diff_means</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 abs_diff_means(simulate_groups(data))
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.031193045602279312)
     </pre>
@@ -298,16 +346,21 @@ np.float64(0.031193045602279312)
       The following loop simulates the experiment many times and computes the difference in means for each simulated dataset.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_diffs = [abs_diff_means(simulate_groups(data)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       To visualize the results, we'll use the following function, which takes a sample of simulated results and makes a <c>Pmf</c> object that approximates its distribution.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import gaussian_kde
@@ -321,11 +374,14 @@ def make_pmf(sample, low, high):
     return Pmf(ps, qs)
       </input>
     </program>
+    </listing>
 
     <p>
       We'll also use this function, which fills in the tail of the distribution.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import underride
@@ -344,6 +400,7 @@ def fill_tail(pmf, observed, side, **options):
     plt.fill_between(series.index, 0, series, **options)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the distribution of the simulated results looks like.
@@ -351,6 +408,8 @@ def fill_tail(pmf, observed, side, **options):
       The area of this region is the p-value.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf = make_pmf(simulated_diffs, 0, 0.2)
@@ -359,6 +418,7 @@ fill_tail(pmf, observed_diff, "right")
 decorate(xlabel="Absolute difference in means (weeks)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_002.png" width="80%"/>
     </figure>
@@ -367,6 +427,8 @@ decorate(xlabel="Absolute difference in means (weeks)", ylabel="Density")
       The following function computes the p-value, which is the fraction of simulated values that are as big or bigger than the observed value.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def compute_p_value(simulated, observed):
@@ -374,16 +436,20 @@ def compute_p_value(simulated, observed):
     return (np.asarray(simulated) >= observed).mean()
       </input>
     </program>
+    </listing>
 
     <p>
       In this example, the p-value is about 18%, which means it is plausible that a difference as big as 0.078 weeks could happen by chance.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_p_value(simulated_diffs, observed_diff)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.17082917082917082)
     </pre>
@@ -413,6 +479,8 @@ np.float64(0.17082917082917082)
       The following function computes this test statistic.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def abs_diff_stds(data):
@@ -421,17 +489,21 @@ def abs_diff_stds(data):
     return np.abs(diff)
       </input>
     </program>
+    </listing>
 
     <p>
       In the NSFG dataset, the difference in standard deviations is about 0.18.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 observed_diff = abs_diff_stds(data)
 observed_diff
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.17600895913991677)
     </pre>
@@ -441,17 +513,22 @@ np.float64(0.17600895913991677)
       The following loop simulates the null hypothesis many times and computes the difference in standard deviation for each simulated dataset.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_diffs = [abs_diff_stds(simulate_groups(data)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the distribution of the results looks like.
       Again, the shaded region shows where the test statistic under the null hypothesis exceeds the observed difference.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf = make_pmf(simulated_diffs, 0, 0.5)
@@ -460,6 +537,7 @@ fill_tail(pmf, observed_diff, "right")
 decorate(xlabel="Absolute difference in std (weeks)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_003.png" width="80%"/>
     </figure>
@@ -468,11 +546,14 @@ decorate(xlabel="Absolute difference in std (weeks)", ylabel="Density")
       We can estimate the area of this region by computing the fraction of results that are as big or bigger than the observed difference.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_p_value(simulated_diffs, observed_diff)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.17082917082917082)
     </pre>
@@ -497,12 +578,15 @@ np.float64(0.17082917082917082)
       From live births, we'll select cases where the age of the mother and birth weight are known.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid = live.dropna(subset=["agepreg", "totalwgt_lb"])
 valid.shape
       </input>
     </program>
+    </listing>
     <pre>
 (9038, 244)
     </pre>
@@ -511,17 +595,22 @@ valid.shape
       Then we'll select the relevant columns.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ages = valid["agepreg"]
 birthweights = valid["totalwgt_lb"]
       </input>
     </program>
+    </listing>
 
     <p>
       The following function takes a tuple of <c>xs</c> and <c>ys</c> and computes the magnitude of the correlation, positive or negative.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def abs_correlation(data):
@@ -530,11 +619,14 @@ def abs_correlation(data):
     return np.abs(corr)
       </input>
     </program>
+    </listing>
 
     <p>
       In the NSFG dataset, the correlation is about 0.07.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 data = ages, birthweights
@@ -542,6 +634,7 @@ observed_corr = abs_correlation(data)
 observed_corr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.0688339703541091)
     </pre>
@@ -555,6 +648,8 @@ np.float64(0.0688339703541091)
       It would also work if we shuffled the <c>ys</c> instead, or shuffled both.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def permute(data):
@@ -564,16 +659,20 @@ def permute(data):
     return new_xs, ys
       </input>
     </program>
+    </listing>
 
     <p>
       The correlation of the shuffled values is usually close to 0.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 abs_correlation(permute(data))
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.0019269515502894465)
     </pre>
@@ -582,17 +681,22 @@ np.float64(0.0019269515502894465)
       The following loop generates many shuffled datasets and computes the correlation of each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_corrs = [abs_correlation(permute(data)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the distribution of the results looks like.
       The vertical dotted line shows the observed correlation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf = make_pmf(simulated_corrs, 0, 0.07)
@@ -601,6 +705,7 @@ plt.axvline(observed_corr, color="gray", ls=":")
 decorate(xlabel="Absolute value of correlation", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_004.png" width="80%"/>
     </figure>
@@ -610,11 +715,14 @@ decorate(xlabel="Absolute value of correlation", ylabel="Density")
       If we try to compute a p-value, the result is 0, indicating that the correlation in the shuffled data did not exceed the observed value in any of the simulations.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_p_value(simulated_corrs, observed_corr)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.0)
     </pre>
@@ -657,6 +765,8 @@ np.float64(0.0)
       Here are the results in a <c>Hist</c> object.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Hist
@@ -668,6 +778,7 @@ observed.index.name = "outcome"
 observed
       </input>
     </program>
+    </listing>
     <pre>
 outcome
 1     8
@@ -688,6 +799,8 @@ dtype: int64
       To test this hypothesis, we'll start by computing the expected frequency for each outcome.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 num_rolls = observed.sum()
@@ -695,28 +808,35 @@ outcomes = observed.qs
 expected = Hist(num_rolls / 6, outcomes)
       </input>
     </program>
+    </listing>
 
     <p>
       The following function takes the observed and expected frequencies and computes the sum of the absolute differences.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def total_abs_deviation(observed):
     return np.sum(np.abs(observed - expected))
       </input>
     </program>
+    </listing>
 
     <p>
       In the observed dataset, this test statistic is 20.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 observed_dev = total_abs_deviation(observed)
 observed_dev
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(20.0)
     </pre>
@@ -725,6 +845,8 @@ np.float64(20.0)
       The following function takes the observed data, simulates rolling a fair die the same number of times, and returns a <c>Hist</c> object that contains the simulated frequencies.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def simulate_dice(observed):
@@ -734,22 +856,28 @@ def simulate_dice(observed):
     return hist
       </input>
     </program>
+    </listing>
 
     <p>
       The following loop simulates the experiment many times and computes the total absolute deviation for each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_devs = [total_abs_deviation(simulate_dice(observed)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the distribution of the test statistic looks like under the null hypothesis.
       Notice that the total is always even, because every time an outcome appears more often than expected, another outcome has to appear less often.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_devs = Pmf.from_seq(simulated_devs)
@@ -758,6 +886,7 @@ pmf_devs.bar()
 decorate(xlabel="Total absolute deviation", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_005.png" width="80%"/>
     </figure>
@@ -766,11 +895,14 @@ decorate(xlabel="Total absolute deviation", ylabel="PMF")
       We can see that a total deviation of 20 is not unusual -- the p-value is about 13%, which means that we can't be sure the die is crooked.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_p_value(simulated_devs, observed_dev)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.13086913086913088)
     </pre>
@@ -780,6 +912,8 @@ np.float64(0.13086913086913088)
       For a problem like this, it would be more conventional to use the chi-squared statistic, which we can compute like this.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def chi_squared_stat(observed):
@@ -787,18 +921,22 @@ def chi_squared_stat(observed):
     return np.sum(diffs / expected)
       </input>
     </program>
+    </listing>
 
     <p>
       Squaring the deviations (rather than taking absolute values) gives more weight to large deviations.
       Dividing through by <c>expected</c> standardizes the deviations -- although in this case it has no effect on the results because the expected frequencies are all equal.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 observed_chi2 = chi_squared_stat(observed)
 observed_chi2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(11.6)
     </pre>
@@ -809,17 +947,22 @@ np.float64(11.6)
       The following loop generates many simulated datasets and computes the chi-squared statistic for each one.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 simulated_chi2 = [chi_squared_stat(simulate_dice(observed)) for i in range(1001)]
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the distribution of this test statistic looks like under the null hypothesis.
       The shaded region shows the results that exceed the observed value.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf = make_pmf(simulated_chi2, 0, 20)
@@ -828,6 +971,7 @@ fill_tail(pmf, observed_chi2, "right")
 decorate(xlabel="Chi-Squared statistic", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap09_006.png" width="80%"/>
     </figure>
@@ -836,11 +980,14 @@ decorate(xlabel="Chi-Squared statistic", ylabel="Density")
       Again, the area of the shaded region is the p-value.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 compute_p_value(simulated_chi2, observed_chi2)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.04495504495504495)
     </pre>
@@ -907,6 +1054,8 @@ np.float64(0.04495504495504495)
         <p>
           The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 download(
@@ -914,6 +1063,7 @@ download(
 )
           </input>
         </program>
+        </listing>
     <pre>
 Downloaded penguins_raw.csv
 
@@ -921,6 +1071,8 @@ Downloaded penguins_raw.csv
         <p>
           Here's how we read the data and select the Chinstrap penguins.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
@@ -928,12 +1080,15 @@ chinstrap = penguins.query('Species.str.startswith("Chinstrap")')
 chinstrap.shape
           </input>
         </program>
+        </listing>
     <pre>
 (68, 17)
     </pre>
         <p>
           And here's how we can extract the weights for male and female penguins in kilograms.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 male = chinstrap.query("Sex == 'MALE'")
@@ -941,9 +1096,12 @@ weights_male = male["Body Mass (g)"] / 1000
 weights_male.mean()
           </input>
         </program>
+        </listing>
     <pre>
 np.float64(3.9389705882352937)
     </pre>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 female = chinstrap.query("Sex == 'FEMALE'")
@@ -951,6 +1109,7 @@ weights_female = female["Body Mass (g)"] / 1000
 weights_female.mean()
           </input>
         </program>
+        </listing>
     <pre>
 np.float64(3.5272058823529413)
     </pre>
@@ -968,20 +1127,26 @@ np.float64(3.5272058823529413)
         <p>
           Using the penguin data from the previous exercise, we can extract the culmen depths and lengths for the female penguins (the culmen is the top ridge of the bill).
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 data = female["Culmen Depth (mm)"], female["Culmen Length (mm)"]
           </input>
         </program>
+        </listing>
         <p>
           The correlation between these variables is about 0.26.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 observed_corr = abs_correlation(data)
 observed_corr
           </input>
         </program>
+        </listing>
     <pre>
 np.float64(0.2563170802728449)
     </pre>

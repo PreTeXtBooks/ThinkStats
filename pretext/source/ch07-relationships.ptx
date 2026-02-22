@@ -37,16 +37,21 @@
       Instructions for downloading the data are in the notebook for this chapter.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/nlsy97-extract.csv.gz")
       </input>
     </program>
+    </listing>
 
     <p>
       We can use <c>read_csv</c> to read the data and <c>replace</c> to replace the special codes for missing data with <c>np.nan</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 missing_codes = [-1, -2, -3, -4, -5]
@@ -54,15 +59,19 @@ nlsy = pd.read_csv("nlsy97-extract.csv.gz").replace(missing_codes, np.nan)
 nlsy.shape
       </input>
     </program>
+    </listing>
     <pre>
 (8984, 34)
     </pre>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nlsy.head()
       </input>
     </program>
+    </listing>
     <pre>
    R0000100  R0490200  R0536300  R0536401  R0536402  R1235800  R1318200  \
 0         1       NaN         2         9      1981         1       NaN   
@@ -93,17 +102,22 @@ nlsy.head()
       The column names don't mean much by themselves, so let's replace the ones we'll use with more interpretable names.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nlsy["sat_verbal"] = nlsy["R9793800"]
 nlsy["sat_math"] = nlsy["R9793900"]
       </input>
     </program>
+    </listing>
 
     <p>
       Both columns contain a few values less than 200, which is not possible because 200 is the lowest score, so we'll replace them with <c>np.nan</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 columns = ["sat_verbal", "sat_math"]
@@ -113,17 +127,21 @@ for column in columns:
     nlsy.loc[invalid, column] = np.nan
       </input>
     </program>
+    </listing>
 
     <p>
       Next we'll use <c>dropna</c> to select only rows where both scores are valid.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nlsy_valid = nlsy.dropna(subset=columns).copy()
 nlsy_valid.shape
       </input>
     </program>
+    </listing>
     <pre>
 (1398, 36)
     </pre>
@@ -133,22 +151,28 @@ nlsy_valid.shape
       In the NLSY sample, the means and standard deviations are close to these values.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sat_verbal = nlsy_valid["sat_verbal"]
 sat_verbal.mean(), sat_verbal.std()
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(501.80972818311875), np.float64(108.36562024213643))
     </pre>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sat_math = nlsy_valid["sat_math"]
 sat_math.mean(), sat_math.std()
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(503.0829756795422), np.float64(109.8329973731453))
     </pre>
@@ -157,6 +181,8 @@ sat_math.mean(), sat_math.std()
       Now, to see whether there is a relationship between these variables, let's look at a <term>scatter plot</term>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(sat_verbal, sat_math)
@@ -164,6 +190,7 @@ plt.scatter(sat_verbal, sat_math)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_001.png" width="80%"/>
     </figure>
@@ -181,6 +208,8 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       We can improve the plot by reducing the size of the markers so they overlap less.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(sat_verbal, sat_math, s=5)
@@ -188,6 +217,7 @@ plt.scatter(sat_verbal, sat_math, s=5)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_002.png" width="80%"/>
     </figure>
@@ -202,6 +232,8 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       The result is a NumPy array.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def jitter(seq, std=1):
@@ -209,18 +241,24 @@ def jitter(seq, std=1):
     return np.random.normal(0, std, n) + seq
       </input>
     </program>
+    </listing>
 
     <p>
       If we jitter the scores with a standard deviation of 3, the rows and columns are no longer visible in the scatter plot.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sat_verbal_jittered = jitter(sat_verbal, 3)
 sat_math_jittered = jitter(sat_math, 3)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5)
@@ -228,6 +266,7 @@ plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_003.png" width="80%"/>
     </figure>
@@ -241,6 +280,8 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       So let's try one more thing: we can use the <c>alpha</c> keyword to make the markers partly transparent.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5, alpha=0.2)
@@ -248,6 +289,7 @@ plt.scatter(sat_verbal_jittered, sat_math_jittered, s=5, alpha=0.2)
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_004.png" width="80%"/>
     </figure>
@@ -274,12 +316,15 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       We can use the <c>qcut</c> method to compute the deciles.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 deciles = pd.qcut(nlsy_valid["sat_verbal"], 10, labels=False) + 1
 deciles.value_counts().sort_index()
       </input>
     </program>
+    </listing>
     <pre>
 sat_verbal
 1     142
@@ -302,12 +347,15 @@ Name: count, dtype: int64
       Now we can use the <c>groupby</c> method to divide the <c>DataFrame</c> into groups by <c>decile</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df_groupby = nlsy_valid.groupby(deciles)
 df_groupby
       </input>
     </program>
+    </listing>
     <pre>
 &lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fa0adfd49d0&gt;
     </pre>
@@ -317,12 +365,15 @@ df_groupby
       We can select the <c>sat_math</c> column from it.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 series_groupby = df_groupby["sat_math"]
 series_groupby
       </input>
     </program>
+    </listing>
     <pre>
 &lt;pandas.core.groupby.generic.SeriesGroupBy object at 0x7fa0b01af7d0&gt;
     </pre>
@@ -332,6 +383,8 @@ series_groupby
       We can use the <c>quantile</c> function to compute the 10th, 50th, and 90th percentiles in each group.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 low = series_groupby.quantile(0.1)
@@ -339,12 +392,15 @@ median = series_groupby.quantile(0.5)
 high = series_groupby.quantile(0.9)
       </input>
     </program>
+    </listing>
 
     <p>
       A decile plot shows these percentiles for each decile group.
       In the following figure, the line shows the median and the shaded region shows the area between the 10th and 90th percentiles.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xs = median.index
@@ -354,6 +410,7 @@ plt.plot(xs, median, label="median")
 decorate(xlabel="SAT Verbal Decile", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_005.png" width="80%"/>
     </figure>
@@ -362,6 +419,8 @@ decorate(xlabel="SAT Verbal Decile", ylabel="SAT Math")
       As an alternative, we can compute the median verbal score in each group and plot those values on the x-axis, rather than the decile numbers.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 xs = df_groupby["sat_verbal"].median()
@@ -372,6 +431,7 @@ plt.plot(xs, median, color="C0", label="median")
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_006.png" width="80%"/>
     </figure>
@@ -393,12 +453,15 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
       Let's give the column that contains the results a more interpretable name.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nlsy["piat_math"] = nlsy["R1318200"]
 nlsy["piat_math"].describe()
       </input>
     </program>
+    </listing>
     <pre>
 count    6044.000000
 mean       93.903706
@@ -415,6 +478,8 @@ Name: piat_math, dtype: float64
       Here's what the distribution of scores looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Cdf
@@ -424,6 +489,7 @@ cdf_piat_math.step()
 decorate(ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_007.png" width="80%"/>
     </figure>
@@ -434,6 +500,8 @@ decorate(ylabel="CDF")
       It uses the <c>scatter</c> function in <c>thinkstats</c>, which adjusts the marker size and transparency, and optionally jitters the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import scatter
@@ -443,6 +511,7 @@ scatter(nlsy, "piat_math", "sat_math")
 decorate(xlabel="PIAT Math", ylabel="SAT Math")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_008.png" width="80%"/>
     </figure>
@@ -453,6 +522,8 @@ decorate(xlabel="PIAT Math", ylabel="SAT Math")
       The following figure shows the relationship between the PIAT and SAT verbal scores.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 scatter(nlsy, "piat_math", "sat_verbal")
@@ -460,6 +531,7 @@ scatter(nlsy, "piat_math", "sat_verbal")
 decorate(xlabel="PIAT Math", ylabel="SAT Verbal")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_009.png" width="80%"/>
     </figure>
@@ -479,6 +551,8 @@ decorate(xlabel="PIAT Math", ylabel="SAT Verbal")
       To standardize a variable, we subtract off the mean and divide through by the standard deviation, as in this function.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def standardize(xs):
@@ -491,11 +565,14 @@ def standardize(xs):
     return (xs - np.mean(xs)) / np.std(xs)
       </input>
     </program>
+    </listing>
 
     <p>
       To show how it's used, we'll select the rows where <c>piat_math</c> and <c>sat_math</c> are valid.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid = nlsy.dropna(subset=["piat_math", "sat_math"])
@@ -503,17 +580,21 @@ piat_math = valid["piat_math"]
 sat_math = valid["sat_math"]
       </input>
     </program>
+    </listing>
 
     <p>
       And standardize the PIAT math scores.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 piat_math_standard = standardize(piat_math)
 np.mean(piat_math_standard), np.std(piat_math_standard)
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2.4321756236287047e-16), np.float64(1.0))
     </pre>
@@ -526,12 +607,15 @@ np.mean(piat_math_standard), np.std(piat_math_standard)
       Let's also standardize the SAT math scores.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sat_math_standard = standardize(sat_math)
 np.mean(sat_math_standard), np.std(sat_math_standard)
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-1.737268302591932e-16), np.float64(0.9999999999999998))
     </pre>
@@ -545,6 +629,8 @@ np.mean(sat_math_standard), np.std(sat_math_standard)
       <c>axhline</c> draws a horizontal line that spans the width of the axes.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.subplot(2, 1, 1)
@@ -558,6 +644,7 @@ plt.plot(sat_math_standard.values[:100], label="SAT math", color="C1")
 decorate(ylabel="z-score", xticks=[])
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_010.png" width="80%"/>
     </figure>
@@ -573,11 +660,14 @@ decorate(ylabel="z-score", xticks=[])
       As a result, the average product measures the similarity between the sequences.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.mean(piat_math_standard * sat_math_standard)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.639735816517885)
     </pre>
@@ -590,11 +680,14 @@ np.float64(0.639735816517885)
       The result is the same if we multiply the elements in the other order.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.mean(sat_math_standard * piat_math_standard)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.639735816517885)
     </pre>
@@ -606,11 +699,14 @@ np.float64(0.639735816517885)
       Correlation is a commonly-used statistic, so NumPy provides a function that computes it.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.corrcoef(piat_math, sat_math)
       </input>
     </program>
+    </listing>
     <pre>
 array([[1.        , 0.63973582],
        [0.63973582, 1.        ]])
@@ -629,6 +725,8 @@ array([[1.        , 0.63973582],
       <c>thinkstats</c> provides a <c>corrcoef</c> function that takes a <c>DataFrame</c> and two column names, selects the rows where both columns are valid, and computes their correlation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import corrcoef
@@ -636,6 +734,7 @@ from thinkstats import corrcoef
 corrcoef(nlsy, "piat_math", "sat_math")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.6397358165178849)
     </pre>
@@ -644,11 +743,14 @@ np.float64(0.6397358165178849)
       We can use this function to compute the correlation of <c>piat_math</c> and <c>sat_verbal</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 corrcoef(nlsy, "piat_math", "sat_verbal")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.509413914696731)
     </pre>
@@ -670,6 +772,8 @@ np.float64(0.509413914696731)
       To help you develop this sense, the following figure shows scatter plots for randomly-generated data with the different correlations.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.random.seed(17)
@@ -677,7 +781,10 @@ xs = np.random.normal(size=300)
 ys = np.random.normal(size=300)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import make_correlated_scatter
@@ -690,6 +797,7 @@ for i, rho in enumerate([0, 0.3, 0.7, 0.99]):
 decorate()
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_011.png" width="80%"/>
     </figure>
@@ -702,6 +810,8 @@ decorate()
       Here are scatter plots for random data with a range of negative correlations.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.figure(figsize=(10, 2.5))
@@ -712,6 +822,7 @@ for i, rho in enumerate([-0.1, -0.3, -0.7, -0.99]):
 decorate()
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_012.png" width="80%"/>
     </figure>
@@ -726,6 +837,8 @@ decorate()
       But in each case the correlation coefficient is close to 0.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import make_nonlinear_scatter
@@ -738,6 +851,7 @@ for i, kind in enumerate(["abs", "quadratic", "sinusoid"]):
 decorate()
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_013.png" width="80%"/>
     </figure>
@@ -761,12 +875,15 @@ decorate()
       Let's give the column with the income data a more interpretable name.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 nlsy["income"] = nlsy["U4949700"]
 nlsy["income"].describe()
       </input>
     </program>
+    </listing>
     <pre>
 count      6051.000000
 mean     104274.239960
@@ -784,6 +901,8 @@ Name: income, dtype: float64
       Here's what the distribution of income looks like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_income = Cdf.from_seq(nlsy["income"])
@@ -792,6 +911,7 @@ cdf_income.step()
 decorate(xlabel="Income (USD)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_014.png" width="80%"/>
     </figure>
@@ -801,6 +921,8 @@ decorate(xlabel="Income (USD)", ylabel="CDF")
       Now here's a scatter plot of the respondents' SAT math scores and their income later in life.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 scatter(nlsy, "piat_math", "income")
@@ -808,6 +930,7 @@ scatter(nlsy, "piat_math", "income")
 decorate(xlabel="PIAT math", ylabel="Gross Family Income (USD)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_015.png" width="80%"/>
     </figure>
@@ -817,11 +940,14 @@ decorate(xlabel="PIAT math", ylabel="Gross Family Income (USD)")
       Here is the correlation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 corrcoef(nlsy, "piat_math", "income")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.30338587288641233)
     </pre>
@@ -840,6 +966,8 @@ np.float64(0.30338587288641233)
       We can use the Pandas method <c>rank</c> to compute the rank of each score and each income.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid = nlsy.dropna(subset=["piat_math", "income"])
@@ -848,16 +976,20 @@ piat_math_rank = valid["piat_math"].rank(method="first")
 income_rank = valid["income"].rank(method="first")
       </input>
     </program>
+    </listing>
 
     <p>
       With the <c>method="first"</c> argument, <c>rank</c> assigns ranks from 1 to the length of the sequence, which is 4101.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 income_rank.min(), income_rank.max()
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(1.0), np.float64(4101.0))
     </pre>
@@ -866,6 +998,8 @@ income_rank.min(), income_rank.max()
       Here's a scatter plot of income ranks versus math score ranks.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(piat_math_rank, income_rank, s=5, alpha=0.2)
@@ -873,6 +1007,7 @@ plt.scatter(piat_math_rank, income_rank, s=5, alpha=0.2)
 decorate(xlabel="PIAT math rank", ylabel="Income rank")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap07_016.png" width="80%"/>
     </figure>
@@ -881,11 +1016,14 @@ decorate(xlabel="PIAT math rank", ylabel="Income rank")
       And here's the correlation of the ranks.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.corrcoef(piat_math_rank, income_rank)[0, 1]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.38148396696764847)
     </pre>
@@ -898,6 +1036,8 @@ np.float64(0.38148396696764847)
       <c>thinkstats</c> provides a <c>rankcorr</c> function that encapsulates the code in this section.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import rankcorr
@@ -905,6 +1045,7 @@ from thinkstats import rankcorr
 rankcorr(nlsy, "piat_math", "income")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.38474681505344815)
     </pre>
@@ -913,6 +1054,8 @@ np.float64(0.38474681505344815)
       And SciPy provides a similar function called <c>spearmanr</c>, because rank correlation is also called Spearman's correlation.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import spearmanr
@@ -920,6 +1063,7 @@ from scipy.stats import spearmanr
 spearmanr(valid["piat_math"], valid["income"]).statistic
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.38474681505344815)
     </pre>
@@ -1055,6 +1199,8 @@ np.float64(0.38474681505344815)
           The <c>thinkstats</c> module provides a function called <c>decile_plot</c> that encapsulates the code from earlier in this chapter.
           We can call it like this to visualize the relationship between SAT verbal and math scores.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from thinkstats import decile_plot
@@ -1063,6 +1209,7 @@ decile_plot(nlsy, "sat_verbal", "sat_math")
 decorate(xlabel="SAT Verbal", ylabel="SAT Math")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap07_017.png" width="80%"/>
     </figure>
@@ -1095,6 +1242,8 @@ decorate(xlabel="SAT Verbal", ylabel="SAT Math")
           Let's see how a student's high school grade point average (GPA) is correlated with their SAT scores.
           Here's the variable in the NLSY dataset that encodes GPA.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 missing_codes = [-6, -7, -8, -9]
@@ -1102,6 +1251,7 @@ nlsy["gpa"] = nlsy["R9871900"].replace(missing_codes, np.nan) / 100
 nlsy["gpa"].describe()
           </input>
         </program>
+        </listing>
     <pre>
 count    6004.000000
 mean        2.818408
@@ -1116,6 +1266,8 @@ Name: gpa, dtype: float64
         <p>
           And here's what the distribution of GPAs looks like.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 cdf_income = Cdf.from_seq(nlsy["gpa"])
@@ -1123,6 +1275,7 @@ cdf_income.step()
 decorate(xlabel="GPA", ylabel="CDF")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap07_021.png" width="80%"/>
     </figure>
@@ -1142,12 +1295,15 @@ decorate(xlabel="GPA", ylabel="CDF")
           The NLSY dataset includes a column that reports the highest degree earned by each respondent.
           The values are encoded as integers.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 nlsy["degree"] = nlsy["Z9083900"]
 nlsy["degree"].value_counts().sort_index()
           </input>
         </program>
+        </listing>
     <pre>
 degree
 0.0     877
@@ -1163,6 +1319,8 @@ Name: count, dtype: int64
         <p>
           But we can use these lists to decode them.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 positions = [0, 1, 2, 3, 4, 5, 6, 7]
@@ -1178,9 +1336,12 @@ labels = [
 ]
           </input>
         </program>
+        </listing>
         <p>
           And make a <c>Pmf</c> that represents the distribution of educational attainment.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from empiricaldist import Pmf
@@ -1191,6 +1352,7 @@ plt.xticks(positions, labels, rotation=30, ha="right")
 decorate(ylabel="PMF")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap07_024.png" width="80%"/>
     </figure>
@@ -1225,11 +1387,16 @@ decorate(ylabel="PMF")
         <p>
           Here's how we can load the data.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from thinkstats import read_brfss
@@ -1238,6 +1405,7 @@ brfss = read_brfss()
 brfss["htm3"].describe()
           </input>
         </program>
+        </listing>
     <pre>
 count    409129.000000
 mean        168.825190

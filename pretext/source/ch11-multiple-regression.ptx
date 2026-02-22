@@ -35,6 +35,8 @@
       The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download(
@@ -42,11 +44,14 @@ download(
 )
       </input>
     </program>
+    </listing>
 
     <p>
       When we load the data, we'll use the following dictionary to give the columns names that don't contain spaces, which will make them easier to use with StatsModels.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 columns = {
@@ -57,11 +62,14 @@ columns = {
 }
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can load the data, drop the rows with missing mass, and rename the columns.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 penguins = (
@@ -72,6 +80,7 @@ penguins = (
 penguins.shape
       </input>
     </program>
+    </listing>
     <pre>
 (342, 17)
     </pre>
@@ -81,12 +90,15 @@ penguins.shape
       We'll work with just the Adélie penguins.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 adelie = penguins.query('Species.str.startswith("Adelie")').copy()
 len(adelie)
       </input>
     </program>
+    </listing>
     <pre>
 151
     </pre>
@@ -95,17 +107,22 @@ len(adelie)
       In the previous chapter, we computed a least squares fit between the penguins' flipper lengths and weights.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 flipper_length = adelie["flipper_length"]
 body_mass = adelie["mass"]
       </input>
     </program>
+    </listing>
 
     <p>
       As a reminder, here's how we did that with <c>linregress</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import linregress
@@ -114,6 +131,7 @@ result_linregress = linregress(flipper_length, body_mass)
 result_linregress.intercept, result_linregress.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
     </pre>
@@ -123,16 +141,21 @@ result_linregress.intercept, result_linregress.slope
       The following formula string specifies that the response variable, <c>mass</c>, is a linear function of one explanatory variable, <c>flipper_length</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "mass ~ flipper_length"
       </input>
     </program>
+    </listing>
 
     <p>
       We can pass this formula to the <c>StatsModels</c> function <c>ols</c>, along with the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import statsmodels.formula.api as smf
@@ -141,6 +164,7 @@ model = smf.ols(formula, data=adelie)
 type(model)
       </input>
     </program>
+    </listing>
     <pre>
 statsmodels.regression.linear_model.OLS
     </pre>
@@ -157,12 +181,17 @@ statsmodels.regression.linear_model.OLS
       The <c>fit</c> method fits the model to the data and returns a <c>RegressionResults</c> object that contains the result.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_ols = model.fit()
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 # Technically it's a RegressionResultsWrapper
@@ -170,6 +199,7 @@ result_ols = model.fit()
 type(result_ols)
       </input>
     </program>
+    </listing>
     <pre>
 statsmodels.regression.linear_model.RegressionResultsWrapper
     </pre>
@@ -178,6 +208,8 @@ statsmodels.regression.linear_model.RegressionResultsWrapper
       The <c>RegressionResults</c> object contains a lot of information, so <c>thinkstats</c> provides a function that just displays the information we need for now.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import display_summary
@@ -185,6 +217,7 @@ from thinkstats import display_summary
 display_summary(result_ols)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -197,11 +230,14 @@ display_summary(result_ols)
       We can confirm that they are the same as the coefficients we got from <c>linregress</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_linregress.intercept, result_linregress.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
     </pre>
@@ -210,11 +246,14 @@ result_linregress.intercept, result_linregress.slope
       The second column contains the standard errors of the coefficients -- again, they are the same as the values we got from <c>linregress</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_linregress.intercept_stderr, result_linregress.stderr,
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(964.7984274994059), np.float64(5.076138407990821))
     </pre>
@@ -224,11 +263,14 @@ result_linregress.intercept_stderr, result_linregress.stderr,
       The p-value for <c>flipper_length</c> is rounded down to 0, but we can display it like this.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_ols.pvalues["flipper_length"]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.3432645947789321e-09)
     </pre>
@@ -237,11 +279,14 @@ np.float64(1.3432645947789321e-09)
       And confirm that <c>linregress</c> computed the same result.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_linregress.pvalue
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.3432645947790051e-09)
     </pre>
@@ -261,11 +306,14 @@ np.float64(1.3432645947790051e-09)
       So we can compare <c>rsquared</c> computed by <c>ols</c> with the square of the <c>rvalue</c> computed by <c>linregress</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_ols.rsquared, result_linregress.rvalue**2
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.21921282646854878), np.float64(0.21921282646854875))
     </pre>
@@ -277,6 +325,8 @@ result_ols.rsquared, result_linregress.rvalue**2
       Before we go on to multiple regression, let's compute one more simple regression, with <c>culmen_length</c> as the explanatory variable (the culmen is the top ridge of the bill).
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "mass ~ culmen_length"
@@ -284,6 +334,7 @@ result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -310,22 +361,28 @@ display_summary(result)
       Here's the Patsy formula for a multiple regression model where mass is a linear function of both flipper length and culmen length.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "mass ~ flipper_length + culmen_length"
       </input>
     </program>
+    </listing>
 
     <p>
       And here is the result of fitting this model to the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -351,6 +408,8 @@ display_summary(result)
       The reason is that the explanatory variables are correlated with each other.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import corrcoef
@@ -358,6 +417,7 @@ from thinkstats import corrcoef
 corrcoef(adelie, "flipper_length", "culmen_length")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32578471516515944)
     </pre>
@@ -371,6 +431,8 @@ np.float64(0.32578471516515944)
       We see the same pattern if we add culmen depth as a third explanatory variable.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "mass ~ flipper_length + culmen_length + culmen_depth"
@@ -378,6 +440,7 @@ result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -394,6 +457,8 @@ display_summary(result)
       But again, the incremental improvement is smaller than we might have hoped, because culmen depth is correlated with the other two measurements.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 [
@@ -402,6 +467,7 @@ display_summary(result)
 ]
       </input>
     </program>
+    </listing>
     <pre>
 [np.float64(0.30762017939668534), np.float64(0.39149169183587634)]
     </pre>
@@ -432,6 +498,8 @@ display_summary(result)
       The following cells download the data files and install <c>statadict</c>, which we need to read the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
@@ -439,7 +507,10 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct"
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 try:
@@ -448,11 +519,14 @@ except ImportError:
     %pip install statadict
       </input>
     </program>
+    </listing>
 
     <p>
       We can use <c>get_nsfg_groups</c> to read the data, select live births, and group live births into first babies and others.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import get_nsfg_groups
@@ -460,21 +534,27 @@ from nsfg import get_nsfg_groups
 live, firsts, others = get_nsfg_groups()
       </input>
     </program>
+    </listing>
 
     <p>
       We'll use <c>dropna</c> to select the rows with valid birth weights, birth order, and mother's ages.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid = live.dropna(subset=["agepreg", "birthord", "totalwgt_lb"]).copy()
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can use <c>StatsModels</c> to confirm that birth weight is correlated with age, and to estimate the slope -- assuming that it is a linear relationship.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg"
@@ -482,6 +562,7 @@ result_age = smf.ols(formula, data=valid).fit()
 display_summary(result_age)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -505,12 +586,15 @@ display_summary(result_age)
       First let's select the relevant columns.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 totalwgt = valid["totalwgt_lb"]
 agepreg = valid["agepreg"]
       </input>
     </program>
+    </listing>
 
     <p>
       To compute the fitted line, we could extract the intercept and slope from <c>result_age</c>, but we don't have to.
@@ -518,38 +602,49 @@ agepreg = valid["agepreg"]
       First we'll compute a range of values for <c>agepreg</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 agepreg_range = np.linspace(agepreg.min(), agepreg.max())
       </input>
     </program>
+    </listing>
 
     <p>
       To use <c>predict</c>, we have to put values for the explanatory variables in a <c>DataFrame</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df = pd.DataFrame({"agepreg": agepreg_range})
       </input>
     </program>
+    </listing>
 
     <p>
       The columns in the <c>DataFrame</c> have to have the same names as the explanatory variables.
       Then we can pass it to <c>predict</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fit_ys = result_age.predict(df)
       </input>
     </program>
+    </listing>
 
     <p>
       The result is a <c>Series</c> containing the predicted values.
       Here's what they look like, along with a scatter plot of the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(agepreg, totalwgt, marker=".", alpha=0.1, s=5)
@@ -558,6 +653,7 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="linear model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_001.png" width="80%"/>
     </figure>
@@ -571,12 +667,17 @@ decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       To make that work, we'll create a Boolean <c>Series</c> that is <c>True</c> for first babies and <c>False</c> for others, and add it as a new column called <c>is_first</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid["is_first"] = valid["birthord"] == 1
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import value_counts
@@ -585,6 +686,7 @@ from thinkstats import value_counts
 value_counts(valid["is_first"])
       </input>
     </program>
+    </listing>
     <pre>
 is_first
 False    4675
@@ -597,22 +699,28 @@ Name: count, dtype: int64
       In the Patsy formula language, <c>C</c> and the parentheses around the variable name indicate that it is <term>categorical</term> -- that is, it represents categories like "first baby" rather than measurements like birth weight.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "totalwgt_lb ~ C(is_first)"
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can fit the model and display the results, as usual.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_first = smf.ols(formula, data=valid).fit()
 display_summary(result_first)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -632,21 +740,27 @@ display_summary(result_first)
       We can check both of these results by computing them directly.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 others["totalwgt_lb"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.325855614973262)
     </pre>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_weight = firsts["totalwgt_lb"].mean() - others["totalwgt_lb"].mean()
 diff_weight
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-0.12476118453549034)
     </pre>
@@ -661,12 +775,15 @@ np.float64(-0.12476118453549034)
       On average, mothers of first babies are about 3.6 years younger than other mothers.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diff_age = firsts["agepreg"].mean() - others["agepreg"].mean()
 diff_age
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-3.5864347661500275)
     </pre>
@@ -675,12 +792,15 @@ np.float64(-3.5864347661500275)
       And the slope of birth weight as a function of age is 0.0175 pounds per year.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 slope = result_age.params["agepreg"]
 slope
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.017453851471802638)
     </pre>
@@ -689,11 +809,14 @@ np.float64(0.017453851471802638)
       If we multiply the slope by the difference in ages, we get the expected difference in birth weight for first babies and others, due to mother's age.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 slope * diff_age
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-0.0625970997216918)
     </pre>
@@ -706,6 +829,8 @@ np.float64(-0.0625970997216918)
       Using multiple regression, we can estimate coefficients for maternal age and first babies at the same time.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg + C(is_first)"
@@ -713,6 +838,7 @@ result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -742,32 +868,41 @@ display_summary(result)
       To check whether the contribution of <c>agepreg</c> might be nonlinear, we can add a new column to the dataset, which contains the values of <c>agepreg</c> squared.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 valid["agepreg2"] = valid["agepreg"] ** 2
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can define a model that includes a linear relationship <em>and</em> a quadratic relationship.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg + agepreg2"
       </input>
     </program>
+    </listing>
 
     <p>
       We can fit the model in the usual way.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 result_age2 = smf.ols(formula, data=valid).fit()
 display_summary(result_age2)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -787,27 +922,35 @@ display_summary(result_age2)
       First we'll create a temporary <c>DataFrame</c> that contains columns named <c>agepreg</c> and <c>agepreg2</c>, based on the range of ages in <c>agepreg_range</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 df = pd.DataFrame({"agepreg": agepreg_range})
 df["agepreg2"] = df["agepreg"] ** 2
       </input>
     </program>
+    </listing>
 
     <p>
       Now we can use the <c>predict</c> method, passing the <c>DataFrame</c> as an argument and getting back a <c>Series</c> of predictions.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 fit_ys = result_age2.predict(df)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the fitted parabola looks like, along with a scatter plot of the data.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.scatter(agepreg, totalwgt, marker=".", alpha=0.1, s=5)
@@ -816,6 +959,7 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="quadratic model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_002.png" width="80%"/>
     </figure>
@@ -828,6 +972,8 @@ decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       So let's see what happens when we add <c>is_first</c> to the quadratic model.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg + agepreg2 + C(is_first)"
@@ -835,6 +981,7 @@ result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -878,17 +1025,23 @@ display_summary(result)
       Before we can use the <c>logit</c> function, we have to transform the response variable so the values are <c>0</c> and <c>1</c>.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 adelie["y"] = (adelie["Sex"] == "MALE").astype(int)
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 adelie["y"].value_counts()
       </input>
     </program>
+    </listing>
     <pre>
 y
 0    78
@@ -901,22 +1054,28 @@ Name: count, dtype: int64
       Here's how we make and fit the model -- the argument <c>disp=False</c> suppresses messages about the fitting process.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 model = smf.logit("y ~ mass", data=adelie)
 result = model.fit(disp=False)
       </input>
     </program>
+    </listing>
 
     <p>
       And here are the results.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -934,6 +1093,8 @@ display_summary(result)
       We'll make a <c>DataFrame</c> with a range of values for <c>mass</c>, and use <c>predict</c> to compute a <c>Series</c> of predictions.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 mass = adelie["mass"]
@@ -942,12 +1103,15 @@ df = pd.DataFrame({"mass": mass_range})
 fit_ys = result.predict(df)
       </input>
     </program>
+    </listing>
 
     <p>
       Each predicted value is the probability a penguin is male as a function of its weight.
       Here's what the predicted values look like.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.plot(mass_range, fit_ys)
@@ -955,6 +1119,7 @@ plt.plot(mass_range, fit_ys)
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_003.png" width="80%"/>
     </figure>
@@ -966,6 +1131,8 @@ decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       Now let's see what happens if we add the other measurements as explanatory variables.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
@@ -974,6 +1141,7 @@ result = model.fit(disp=False)
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -994,6 +1162,8 @@ display_summary(result)
       It sets the other measurements to their mean values, computes predicted probabilities as a function of mass, and plots the results.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def plot_predictions(mass_range, culmen_length, **options):
@@ -1006,18 +1176,24 @@ def plot_predictions(mass_range, culmen_length, **options):
     plt.plot(mass_range, fit_ys, **options)
       </input>
     </program>
+    </listing>
 
     <p>
       Here's what the results look like for three values of <c>culmen_length</c>: one standard deviation above average, average, and one standard deviation below average.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 culmen_length = adelie["culmen_length"]
 m, s = culmen_length.mean(), culmen_length.std()
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plot_predictions(mass_range, m + s, ls="--", label="Above average culmen length")
@@ -1027,6 +1203,7 @@ plot_predictions(mass_range, m - s, ls=":", label="Below average culmen length")
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_004.png" width="80%"/>
     </figure>
@@ -1050,6 +1227,8 @@ decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       We'll use the following function to select them.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def get_species(penguins, species):
@@ -1058,13 +1237,17 @@ def get_species(penguins, species):
     return df
       </input>
     </program>
+    </listing>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 gentoo = get_species(penguins, "Gentoo")
 len(gentoo)
       </input>
     </program>
+    </listing>
     <pre>
 123
     </pre>
@@ -1073,6 +1256,8 @@ len(gentoo)
       Here are the results of the logistic regression model.
     </p>
 
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
@@ -1081,6 +1266,7 @@ result = model.fit(disp=False)
 display_summary(result)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
@@ -1179,11 +1365,14 @@ display_summary(result)
         <p>
           In order to use <c>babysex</c> as a response variable in a logistic regression, we'll recode it with the value <c>1</c> for boys and <c>0</c> for girls.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 valid["y"] = (valid["babysex"] == 1).astype(int)
           </input>
         </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1206,12 +1395,15 @@ valid["y"] = (valid["babysex"] == 1).astype(int)
           Use <c>get_species</c> to select the Chinstrap penguins, then use logistic regression to fit a logistic regression model with sex as the response variable and all four measurements as explanatory variables.
           How does the pseudo <m>R^2</m> value compare to the other models?
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 chinstrap = get_species(penguins, "Chinstrap")
 len(chinstrap)
           </input>
         </program>
+        </listing>
     <pre>
 68
     </pre>

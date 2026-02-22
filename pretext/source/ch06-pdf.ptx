@@ -21,6 +21,8 @@
     <p>
       We can use <c>read_fem_resp</c> to read the respondent data file, then select household sizes for people 25 and older.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import read_fem_resp
@@ -31,9 +33,12 @@ older = resp.query("age >= 25")
 num_family = older["numfmhh"]
       </input>
     </program>
+    </listing>
     <p>
       And make a <c>Pmf</c> that represents the distribution of responses.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Pmf
@@ -41,9 +46,12 @@ from empiricaldist import Pmf
 pmf_family = Pmf.from_seq(num_family, name="data")
       </input>
     </program>
+    </listing>
     <p>
       Here's another <c>Pmf</c> that represents a Poisson distribution with the same mean.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import poisson_pmf
@@ -55,9 +63,12 @@ ps = poisson_pmf(ks, lam)
 pmf_poisson = Pmf(ps, ks, name="Poisson model")
       </input>
     </program>
+    </listing>
     <p>
       And here's how the distribution of the data compares to the Poisson model.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import two_bar_plots
@@ -66,6 +77,7 @@ two_bar_plots(pmf_family, pmf_poisson)
 decorate(xlabel="Number of family members")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_001.png" width="80%"/>
     </figure>
@@ -76,15 +88,20 @@ decorate(xlabel="Number of family members")
       To get a sense of how substantial those deviations are, it can be helpful to compare CDFs.
       We can use <c>make_cdf</c> to compute the CDFs of the data and the model.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_family = pmf_family.make_cdf()
 cdf_poisson = pmf_poisson.make_cdf()
       </input>
     </program>
+    </listing>
     <p>
       Here's what they look like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import two_cdf_plots
@@ -93,6 +110,7 @@ two_cdf_plots(cdf_poisson, cdf_family)
 decorate(xlabel="Number of family members")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_002.png" width="80%"/>
     </figure>
@@ -104,6 +122,8 @@ decorate(xlabel="Number of family members")
       CDFs also work well with continuous data.
       As an example, let's look at the distribution of birth weights again, which is in the NSFG pregnancy file.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from nsfg import read_fem_preg
@@ -112,9 +132,12 @@ preg = read_fem_preg()
 birth_weights = preg["totalwgt_lb"].dropna()
       </input>
     </program>
+    </listing>
     <p>
       Here is the code we used in the previous chapter to fit a normal model to the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import trimboth
@@ -124,9 +147,12 @@ trimmed = trimboth(birth_weights, 0.01)
 cdf_model = make_normal_model(trimmed)
       </input>
     </program>
+    </listing>
     <p>
       And here's the distribution of the data compared to the normal model.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from empiricaldist import Cdf
@@ -135,6 +161,7 @@ cdf_birth_weight = Cdf.from_seq(birth_weights, name="sample")
 two_cdf_plots(cdf_model, cdf_birth_weight, xlabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_003.png" width="80%"/>
     </figure>
@@ -153,6 +180,8 @@ two_cdf_plots(cdf_model, cdf_birth_weight, xlabel="Birth weight (pounds)")
     <p>
       We'll start with the <term>probability density function (PDF)</term> of the normal distribution, which computes the density for the quantities, <c>xs</c>, given <c>mu</c> and <c>sigma</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def normal_pdf(xs, mu, sigma):
@@ -161,17 +190,23 @@ def normal_pdf(xs, mu, sigma):
     return np.exp(-(z**2) / 2) / sigma / np.sqrt(2 * np.pi)
       </input>
     </program>
+    </listing>
     <p>
       For <c>mu</c> and <c>sigma</c> we'll use the mean and standard deviation of the trimmed birth weights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 m, s = np.mean(trimmed), np.std(trimmed)
       </input>
     </program>
+    </listing>
     <p>
       Now we'll evaluate <c>normal_pdf</c> for a range of weights and plot it.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 low = m - 4 * s
@@ -180,12 +215,16 @@ qs = np.linspace(low, high, 201)
 ps = normal_pdf(qs, m, s)
       </input>
     </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.plot(qs, ps, label="normal model", ls=":", color="gray")
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_004.png" width="80%"/>
     </figure>
@@ -196,11 +235,14 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       When we evaluate <c>normal_pdf</c>, the result is a <term>probability density</term>.
       For example, here's the density function evaluated at the mean, which is where the density is highest.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 normal_pdf(m, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
@@ -216,6 +258,8 @@ np.float64(0.32093416297880123)
       We could do that with the <c>normal_pdf</c> function, but it is more convenient to use the <c>NormalPdf</c> class, which is defined in the <c>thinkstats</c> module.
       Here's how we create a <c>NormalPdf</c> object with the same mean and standard deviation as the birth weights in the NSFG dataset.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import NormalPdf
@@ -224,17 +268,21 @@ pdf_model = NormalPdf(m, s, name="normal model")
 pdf_model
       </input>
     </program>
+    </listing>
     <pre>
 NormalPdf(7.280883100022579, 1.2430657948614345, name='normal model')
     </pre>
     <p>
       If we call this object like a function, it evaluates the normal PDF.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pdf_model(m)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
@@ -242,6 +290,8 @@ np.float64(0.32093416297880123)
       Now, to compute the area under the PDF, we can use the following function, which takes a <c>NormalPdf</c> object and the bounds of an interval, <c>low</c> and <c>high</c>.
       It evaluates the normal PDF at equally-spaced quantities between <c>low</c> and <c>high</c>, and uses the SciPy function <c>simpson</c> to estimate the area under the curve (<c>simpson</c> is so named because it uses an algorithm called Simpson's method).
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.integrate import simpson
@@ -253,14 +303,18 @@ def area_under(pdf, low, high):
     return simpson(y=ps, x=qs)
       </input>
     </program>
+    </listing>
     <p>
       If we compute the area under the curve from the lowest to the highest point in the graph, the result is close to 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 area_under(pdf_model, 2, 12)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9999158086616793)
     </pre>
@@ -270,11 +324,14 @@ np.float64(0.9999158086616793)
     <p>
       If we start from 0 <mdash/> or any value far below the mean <mdash/> we can compute the fraction of birth weights less than or equal to 8.5 pounds.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 area_under(pdf_model, 0, 8.5)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8366380335513807)
     </pre>
@@ -282,6 +339,8 @@ np.float64(0.8366380335513807)
       You might recall that the "fraction less than or equal to a given value" is the definition of the CDF.
       So we could compute the same result using the CDF of the normal distribution.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import norm
@@ -289,28 +348,35 @@ from scipy.stats import norm
 norm.cdf(8.5, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8366380358092718)
     </pre>
     <p>
       Similarly, we can use the area under the density curve to compute the fraction of birth weights between 6 and 8 pounds.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 area_under(pdf_model, 6, 8)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.5671317752927691)
     </pre>
     <p>
       Or we can get the same result using the CDF to compute the fraction less than 8 and then subtracting off the fraction less than 6.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 norm.cdf(8, m, s) - norm.cdf(6, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.5671317752921801)
     </pre>
@@ -329,6 +395,8 @@ np.float64(0.5671317752921801)
       In the previous chapter, we used an exponential distribution to model the time until the first goal in a hockey game.
       We used the following function to compute the exponential CDF, where <c>lam</c> is the rate in goals per unit of time.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def exponential_cdf(x, lam):
@@ -342,9 +410,12 @@ def exponential_cdf(x, lam):
     return 1 - np.exp(-lam * x)
       </input>
     </program>
+    </listing>
     <p>
       We can compute the PDF of the exponential distribution like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 def exponential_pdf(x, lam):
@@ -358,10 +429,13 @@ def exponential_pdf(x, lam):
     return lam * np.exp(-lam * x)
       </input>
     </program>
+    </listing>
     <p>
       <c>thinkstats</c> provides an <c>ExponentialPdf</c> object that uses this function to compute the exponential PDF.
       We can use one to represent an exponential distribution with rate 6 goals per game.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import ExponentialPdf
@@ -371,12 +445,15 @@ pdf_expo = ExponentialPdf(lam, name="exponential model")
 pdf_expo
       </input>
     </program>
+    </listing>
     <pre>
 ExponentialPdf(6, name='exponential model')
     </pre>
     <p>
       <c>ExponentialPdf</c> provides a <c>plot</c> function we can use to plot the PDF <mdash/> notice that the unit of time is games here, rather than seconds as in the previous chapter.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 qs = np.linspace(0, 1.5, 201)
@@ -384,6 +461,7 @@ pdf_expo.plot(qs, ls=":", color="gray")
 decorate(xlabel="Time (games)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_005.png" width="80%"/>
     </figure>
@@ -394,11 +472,14 @@ decorate(xlabel="Time (games)", ylabel="Density")
     <p>
       If we compute the area under this curve from 0 to 1.5 games, we can confirm that the result is close to 1.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 area_under(pdf_expo, 0, 1.5)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.999876590779019)
     </pre>
@@ -406,6 +487,8 @@ np.float64(0.999876590779019)
       If we extend the interval much farther, the result is slightly greater than 1, but that's because we're approximating the area numerically.
       Mathematically, it is exactly 1, as we can confirm using the exponential CDF.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import exponential_cdf
@@ -413,6 +496,7 @@ from thinkstats import exponential_cdf
 exponential_cdf(7, lam)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.0)
     </pre>
@@ -420,22 +504,28 @@ np.float64(1.0)
       We can use the area under the density curve to compute the probability of a goal during any interval.
       For example, here is the probability of a goal during the first minute of a 60-minute game.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 area_under(pdf_expo, 0, 1 / 60)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.09516258196404043)
     </pre>
     <p>
       We can compute the same result using the exponential CDF.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 exponential_cdf(1 / 60, lam)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.09516258196404048)
     </pre>
@@ -454,15 +544,20 @@ np.float64(0.09516258196404048)
       For example, suppose we want to compare the distribution of birth weights to a normal model.
       Here's a <c>Pmf</c> that represents the distribution of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_birth_weight = Pmf.from_seq(birth_weights, name="data")
       </input>
     </program>
+    </listing>
     <p>
       And we already have <c>pdf_model</c>, which represents the PDF of the normal distribution with the same mean and standard deviation.
       Here's what happens if we plot them on the same axis.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pdf_model.plot(ls=":", color="gray")
@@ -471,6 +566,7 @@ pmf_birth_weight.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF? Density?")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_006.png" width="80%"/>
     </figure>
@@ -483,14 +579,19 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PMF? Density?")
       As a first attempt to solve the problem, we can make a <c>Pmf</c> that approximates the normal distribution by evaluating the PDF at a discrete set of points.
       <c>NormalPdf</c> provides a <c>make_pmf</c> method that does that.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_model = pdf_model.make_pmf()
       </input>
     </program>
+    </listing>
     <p>
       The result is a normalized <c>Pmf</c> that contains probability masses, so we can at least plot it on the same axes as the PMF of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_model.plot(ls=":", color="gray")
@@ -499,6 +600,7 @@ pmf_birth_weight.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_007.png" width="80%"/>
     </figure>
@@ -506,11 +608,14 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PMF")
       But this is still not a good way to compare distributions.
       One problem is that the two <c>Pmf</c> objects contain different numbers of quantities, and the quantities in <c>pmf_birth_weight</c> are not equally spaced, so the probability masses are not really comparable.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 len(pmf_model), len(pmf_birth_weight)
       </input>
     </program>
+    </listing>
     <pre>
 (201, 184)
     </pre>
@@ -527,15 +632,20 @@ len(pmf_model), len(pmf_birth_weight)
       Instead of using the model to make a PMF, we can use the data to make a PDF.
       To show how that works, I'll start with a small sample of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 n = 10
 sample = birth_weights.sample(n)
       </input>
     </program>
+    </listing>
     <p>
       The <c>Pmf</c> of this sample looks like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 for weight in sample:
@@ -546,6 +656,7 @@ xlim = [1.5, 12.5]
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_008.png" width="80%"/>
     </figure>
@@ -554,6 +665,8 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PMF", xlim=xlim)
       But birth weight is actually <term>continuous</term>, so the quantities between the measurements are also possible.
       We can represent that possibility by replacing each discrete probability mass with a continuous probability density, like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 qs = np.linspace(2, 12, 201)
@@ -565,12 +678,15 @@ for weight in sample:
 decorate(xlabel="Birth weight (pounds)", ylabel="PDF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_009.png" width="80%"/>
     </figure>
     <p>
       For each weight in the sample, we create a <c>NormalPdf</c> with the observed weight as the mean <mdash/> now let's add them up.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 low_ps = np.zeros_like(qs)
@@ -584,6 +700,7 @@ for weight in sample:
 decorate(xlabel="Birth weight (pounds)", ylabel="PDF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_010.png" width="80%"/>
     </figure>
@@ -597,6 +714,8 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PDF", xlim=xlim)
       SciPy provides a function called <c>gaussian_kde</c> that implements this algorithm.
       Here's how we can use it to estimate the distribution of birth weights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from scipy.stats import gaussian_kde
@@ -604,17 +723,23 @@ from scipy.stats import gaussian_kde
 kde = gaussian_kde(birth_weights)
       </input>
     </program>
+    </listing>
     <p>
       The result is an object that represents the estimated PDF, which we can evaluate by calling it like a function.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 ps = kde(qs)
       </input>
     </program>
+    </listing>
     <p>
       Here's what the result looks like.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 plt.plot(qs, ps)
@@ -622,6 +747,7 @@ plt.plot(qs, ps)
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_011.png" width="80%"/>
     </figure>
@@ -629,6 +755,8 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       <c>thinkstats</c> provides a <c>Pdf</c> object that takes the result from <c>gaussian_kde</c>, and a domain that indicates where the density should be evaluated.
       Here's how we make one.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import Pdf
@@ -637,9 +765,12 @@ domain = np.min(birth_weights), np.max(birth_weights)
 kde_birth_weights = Pdf(kde, domain, name="data")
       </input>
     </program>
+    </listing>
     <p>
       <c>Pdf</c> provides a <c>plot</c> method we can use to compare the estimated PDF of the sample to the PDF of a normal distribution.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pdf_model.plot(ls=":", color="gray")
@@ -648,6 +779,7 @@ kde_birth_weights.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_012.png" width="80%"/>
     </figure>
@@ -693,6 +825,8 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     <p>
       We can read the data like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import read_baby_boom
@@ -701,6 +835,7 @@ boom = read_baby_boom()
 boom.head()
       </input>
     </program>
+    </listing>
     <pre>
    time  sex  weight_g  minutes
 0     5    1      3837        5
@@ -713,11 +848,14 @@ boom.head()
       The <c>minutes</c> column records "the number of minutes since midnight for each birth".
       So we can use the <c>diff</c> method to compute the interval between each successive birth.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 diffs = boom["minutes"].diff().dropna()
       </input>
     </program>
+    </listing>
     <p>
       If births happen with equal probability during any minute of the day, we expect these intervals to follow an exponential distribution.
       In reality, that assumption is not precisely true, but the exponential distribution might still be a good model for the data.
@@ -725,6 +863,8 @@ diffs = boom["minutes"].diff().dropna()
     <p>
       To find out, we'll start by making a <c>Pmf</c> that represents the distribution of intervals.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_diffs = Pmf.from_seq(diffs, name="data")
@@ -733,12 +873,15 @@ pmf_diffs.bar(width=1)
 decorate(xlabel="Interval (minutes)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_013.png" width="80%"/>
     </figure>
     <p>
       Then we can use <c>make_cdf</c> to compute the cumulative probabilities and store them in a <c>Cdf</c> object.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_diffs = pmf_diffs.make_cdf()
@@ -747,6 +890,7 @@ cdf_diffs.step()
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_014.png" width="80%"/>
     </figure>
@@ -754,20 +898,26 @@ decorate(xlabel="Interval (minutes)", ylabel="CDF")
       The <c>Pmf</c> and <c>Cdf</c> are equivalent in the sense that if we are given either one, we can compute the other.
       To demonstrate, we'll use the <c>make_pmf</c> method, which computes the differences between successive probabilities in a <c>Cdf</c> and returns a <c>Pmf</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pmf_diffs2 = cdf_diffs.make_pmf()
       </input>
     </program>
+    </listing>
     <p>
       The result should be identical to the original <c>Pmf</c>, but there might be small floating-point errors.
       We can use <c>allclose</c> to check that the result is close to the original <c>Pmf</c>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 np.allclose(pmf_diffs, pmf_diffs2)
       </input>
     </program>
+    </listing>
     <pre>
 True
     </pre>
@@ -777,14 +927,19 @@ True
     <p>
       From a <c>Pmf</c>, we can estimate a density function by calling <c>gaussian_kde</c> with the probabilities from the <c>Pmf</c> as weights.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 kde = gaussian_kde(pmf_diffs.qs, weights=pmf_diffs.ps)
       </input>
     </program>
+    </listing>
     <p>
       To plot the results, we can use <c>kde</c> to make a <c>Pdf</c> object, and call the <c>plot</c> method.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 domain = np.min(pmf_diffs.qs), np.max(pmf_diffs.qs)
@@ -794,12 +949,15 @@ kde_diffs.plot(ls=":", color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_015.png" width="80%"/>
     </figure>
     <p>
       To see whether the estimated density follows an exponential model, we can make an <c>ExponentialCdf</c> with the same mean as the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 from thinkstats import ExponentialCdf
@@ -809,9 +967,12 @@ lam = 1 / m
 cdf_model = ExponentialCdf(lam, name="exponential CDF")
       </input>
     </program>
+    </listing>
     <p>
       Here's what it looks like compared to the CDF of the data.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 cdf_model.plot(ls=":", color="gray")
@@ -820,6 +981,7 @@ cdf_diffs.step()
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_016.png" width="80%"/>
     </figure>
@@ -829,6 +991,8 @@ decorate(xlabel="Interval (minutes)", ylabel="CDF")
     <p>
       Given an <c>ExponentialCdf</c>, we can use <c>make_cdf</c> to <term>discretize</term> the CDF <mdash/> that is, to make a discrete approximation by evaluating the CDF at a sequence of equally spaced quantities.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 qs = np.linspace(0, 160)
@@ -838,12 +1002,15 @@ discrete_cdf_model.step(color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_017.png" width="80%"/>
     </figure>
     <p>
       Finally, to get from a discrete CDF to a continuous CDF, we can interpolate between the steps, which is what we see if we use the <c>plot</c> method instead of the <c>step</c> method.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 discrete_cdf_model.plot(color="gray")
@@ -851,6 +1018,7 @@ discrete_cdf_model.plot(color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_018.png" width="80%"/>
     </figure>
@@ -860,6 +1028,8 @@ decorate(xlabel="Interval (minutes)", ylabel="CDF")
     <p>
       To demonstrate, we can use SymPy to define the CDF of an exponential distribution and compute its derivative.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 import sympy as sp
@@ -871,26 +1041,33 @@ cdf = 1 - sp.exp(-λ * x)
 cdf
       </input>
     </program>
+    </listing>
     <pre>
 1 - exp(-x*λ)
     </pre>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 pdf = sp.diff(cdf, x)
 pdf
       </input>
     </program>
+    </listing>
     <pre>
 λ*exp(-x*λ)
     </pre>
     <p>
       And if we integrate the result, we get the CDF back <mdash/> although we lose the constant of integration in the process.
     </p>
+    <listing>
+      <caption>Python Code</caption>
     <program language="python">
       <input>
 sp.integrate(pdf, x)
       </input>
     </program>
+    </listing>
     <pre>
 -exp(-x*λ)
     </pre>
@@ -962,6 +1139,8 @@ sp.integrate(pdf, x)
         <p>
           The heights of male participants in the BRFSS are well modeled by a normal distribution with mean 178 cm and standard deviation 7 cm.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from thinkstats import read_brfss
@@ -971,6 +1150,9 @@ male = brfss.query("sex == 1")
 heights = male["htm3"].dropna()
           </input>
         </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from scipy.stats import trimboth
@@ -980,12 +1162,15 @@ m, s = np.mean(trimmed), np.std(trimmed)
 m, s
           </input>
         </program>
+        </listing>
     <pre>
 (np.float64(178.10278947124948), np.float64(7.017054887136004))
     </pre>
         <p>
           Here's a <c>NormalCdf</c> object that represents a normal distribution with the same mean and standard deviation as the trimmed data.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 from thinkstats import NormalCdf
@@ -993,9 +1178,12 @@ from thinkstats import NormalCdf
 cdf_normal_model = NormalCdf(m, s, name='normal model')
           </input>
         </program>
+        </listing>
         <p>
           And here's how it compares to the CDF of the data.
         </p>
+        <listing>
+          <caption>Python Code</caption>
         <program language="python">
           <input>
 cdf_height = Cdf.from_seq(heights, name="data")
@@ -1006,6 +1194,7 @@ xlim = [140, 210]
 decorate(xlabel="Height (cm)", ylabel="CDF", xlim=xlim)
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap06_020.png" width="80%"/>
     </figure>
