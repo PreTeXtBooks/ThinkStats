@@ -1151,6 +1151,16 @@ sample = cdf_speeds.sample(1001)
           Otherwise use the distribution for others.
           If you are in the 90th percentile or higher, call your mother back and apologize.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+from nsfg import get_nsfg_groups
+
+live, firsts, others = get_nsfg_groups()
+          </input>
+        </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1194,6 +1204,16 @@ len(male), len(female)
           Use the CDF to compute the percentage of ages less than or equal to 20, and the percentage less than or equal to 30.
           Use those results to compute the percentage between 20 and 30.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+from nsfg import read_fem_preg
+
+preg = read_fem_preg()
+          </input>
+        </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1201,7 +1221,18 @@ len(male), len(female)
       <title>Exercise 4.4</title>
       <statement>
         <p>
-          Using the running speeds from the James Joyce Ramble described in this chapter, make a <c>Cdf</c> that represents the distribution of these speeds, and use it to compute the median, IQR, and quartile skewness.
+          Here are the running speeds of the people who finished the James Joyce Ramble, described earlier in this chapter.
+        </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+speeds = results["MPH"].values
+          </input>
+        </program>
+        </listing>
+        <p>
+          Make a <c>Cdf</c> that represents the distribution of these speeds, and use it to compute the median, IQR, and quartile skewness.
           Does the distribution skew to the left or right?
         </p>
       </statement>
