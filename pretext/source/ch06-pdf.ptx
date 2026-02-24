@@ -217,7 +217,13 @@ decorate(xlabel="Number of family members")
       <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 from nsfg import read_fem_preg
 
 preg = read_fem_preg()
