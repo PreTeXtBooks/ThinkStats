@@ -130,6 +130,8 @@ np.mean(results_sim), n * p
       <caption>Python Code</caption>
     <program language="python">
       <input>
+from empiricaldist import Pmf
+
 pmf_sim = Pmf.from_seq(results_sim, name="simulation results")
 
 pmf_sim.bar()
@@ -249,7 +251,13 @@ np.float64(0.9533333333333334)
       <input>
 ps = binomial_pmf(ks, n, p)
 pmf_binom = Pmf(ps, ks, name="binomial model")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 pmf_results = Pmf.from_seq(results, name="actual results")
 
 two_bar_plots(pmf_results, pmf_binom)
@@ -432,7 +440,13 @@ np.float64(6.0182926829268295)
       <input>
 ps = poisson_pmf(ks, lam)
 pmf_poisson = Pmf(ps, ks, name="Poisson model")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 pmf_goals = Pmf.from_seq(goals, name="goals scored")
 
 two_bar_plots(pmf_goals, pmf_poisson)
@@ -620,9 +634,22 @@ np.float64(0.0015121567467720825)
       <input>
 ps = exponential_cdf(ts, lam)
 cdf_expo = Cdf(ps, ts, name="exponential model")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 cdf_firsts = Cdf.from_seq(firsts, name="data", dropna=False)
-
+cdf_firsts.tail()
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 cdf_expo.plot(ls=":", color="gray")
 cdf_firsts.plot()
 
@@ -726,8 +753,21 @@ def two_cdf_plots(cdf_model, cdf_data, xlabel="", **options):
     <program language="python">
       <input>
 cdf_model = make_normal_model(sim_weights)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 cdf_sim_weights = Cdf.from_seq(sim_weights, name="simulation")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 two_cdf_plots(cdf_model, cdf_sim_weights, xlabel="Weight (pounds)")
       </input>
     </program>
@@ -792,6 +832,13 @@ m, s
     <program language="python">
       <input>
 cdf_model = make_normal_model(trimmed)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 cdf_birth_weight = Cdf.from_seq(birth_weights, name='data')
 
 two_cdf_plots(cdf_model, cdf_birth_weight, xlabel="Birth weight (pounds)")
@@ -950,7 +997,13 @@ log_adult_weights = np.log10(adult_weights)
 cdf_model = make_normal_model(log_adult_weights)
 
 cdf_log_adult_weights = Cdf.from_seq(log_adult_weights, name="log adult weight")
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 two_cdf_plots(cdf_model, cdf_log_adult_weights, xlabel="Adult weight (log10 kg)")
       </input>
     </program>
@@ -1042,6 +1095,13 @@ two_cdf_plots(cdf_model, cdf_log_adult_weights, xlabel="Adult weight (log10 kg)"
 from nsfg import read_fem_resp
 
 resp = read_fem_resp()
+          </input>
+        </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
 older = resp.query("age >= 25")
 num_family = older["numfmhh"]
           </input>

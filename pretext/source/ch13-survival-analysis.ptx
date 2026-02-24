@@ -549,7 +549,13 @@ def resample_cycles(resp):
       <input>
 # Seed the random number generator so we get the same results every time
 np.random.seed(1)
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 sample = resample_cycles(resp)
       </input>
     </program>
@@ -1576,7 +1582,12 @@ from empiricaldist import Hazard
 
 
 def make_hazard(ages, rates):
-    """Make a Hazard function by interpolating a Series."""
+    """Make a Hazard function by interpolating a Series.
+
+    series: Series
+
+    returns: Hazard
+    """
     interp = interp1d(ages, rates, fill_value="extrapolate")
     xs = np.arange(0, 100)
     ys = np.exp(interp(xs))

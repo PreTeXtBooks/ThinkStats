@@ -6,9 +6,34 @@ on:
   workflow_dispatch:
 
 jobs:
+  check:
+    name: Check PreTeXt/Notebook Identity
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+
+      - name: Install pytest
+        run: |
+          pip install --upgrade pip
+          pip install pytest
+
+      - name: Check PreTeXt and notebook code blocks are identical
+        run: |
+          pytest tests/test_identical.py -v
+
   build:
     name: Build PreTeXt HTML
     runs-on: ubuntu-latest
+    permissions:
+      contents: read
 
     steps:
       - uses: actions/checkout@v4
