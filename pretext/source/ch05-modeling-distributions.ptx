@@ -919,6 +919,24 @@ def make_normal_model(data):
       </input>
     </program>
     </listing>
+<p> Here's how we use it</p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+cdf_model = make_normal_model(sim_weights)
+      </input>
+    </program>
+    </listing>
+<p> Now we can make a <c>Cdf</c> that represents the distribution of the simulation results.</p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+cdf_sim_weights = Cdf.from_seq(sim_weights, name="simulation")
+      </input>
+    </program>
+    </listing>
     <p>
       We'll use the following function to compare the distributions.
       <c>cdf_model</c> and <c>cdf_data</c> are <c>Cdf</c> objects.
@@ -938,22 +956,6 @@ def two_cdf_plots(cdf_model, cdf_data, xlabel="", **options):
     <p>
       And here are the results comparing the normal model to the simulation.
     </p>
-    <listing>
-      <caption>Python Code</caption>
-    <program language="python">
-      <input>
-cdf_model = make_normal_model(sim_weights)
-      </input>
-    </program>
-    </listing>
-    <listing>
-      <caption>Python Code</caption>
-    <program language="python">
-      <input>
-cdf_sim_weights = Cdf.from_seq(sim_weights, name="simulation")
-      </input>
-    </program>
-    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1033,6 +1035,7 @@ m, s
       </output>
     </console>
     </listing>
+<p>With the trimmed data, the mean is a little lower and the standard deviation is substantially lower. We’ll use the trimmed data to make a normal model.</p>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1041,6 +1044,7 @@ cdf_model = make_normal_model(trimmed)
       </input>
     </program>
     </listing>
+<p>and compare it to the <c>CDF</c> of the data.</p>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1087,6 +1091,7 @@ def simulate_proportionate_growth(n):
       So we can compute the weight after 100 days by choosing random factors and multiplying them together.
       We'll call this function 1001 times to simulate 1001 pumpkins and save their weights.
       The average weight is about 131 pounds; the standard deviation is about 21 pounds.
+So the pumpkins in this model are smaller but more variable than in the previous model.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -1172,6 +1177,8 @@ brfss = read_brfss()
       </input>
     </program>
     </listing>
+<p>Adult weights in kilograms are recorded in the <c>wtkg2</c> column.
+</p>
     <listing>
       <caption>Python Code</caption>
     <console>
@@ -1186,7 +1193,7 @@ m, s
     </console>
     </listing>
     <p>
-      Before we compute logarithms, let's see if the weights follow a normal distribution.
+      The mean is about 79 kg. Before we compute logarithms, let's see if the weights follow a normal distribution.
     </p>
     <listing>
       <caption>Python Code</caption>
