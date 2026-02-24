@@ -1217,7 +1217,7 @@ normal_plot_samples(df_sample, ylabel="Sum of correlated values")
       To see why the Central Limit Theorem is useful, let's get back to the example in
       <xref ref="ch-hypothesis-testing"/>: testing the apparent difference in mean pregnancy
       length for first babies and others.
-      We'll use the NSFG data again.
+      We'll use the NSFG data again<mdash/>instructions for downloading it are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap14.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap14.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The following cell downloads the data.

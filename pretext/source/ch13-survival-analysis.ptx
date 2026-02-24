@@ -1709,7 +1709,7 @@ sample = resample_cycles(resp)
         <p>
           I used an online graph digitizer to get the data from the figure in their paper and
           store it in a CSV file.
-          The following cell downloads the data.
+          Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap13.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap13.ipynb">notebook for this chapter</url>.
         </p>
         <p>
           Data source: Beltrán-Sánchez, H., Crimmins, E. M., <amp/> Finch, C. E. (2012).

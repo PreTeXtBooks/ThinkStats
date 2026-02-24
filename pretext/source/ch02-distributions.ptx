@@ -874,7 +874,7 @@ np.float64(0.028879044654449834)
 
     <p>
       For the exercises in this chapter, we'll load the NSFG female respondent file, which contains one row for each female respondent.
-      The following cell downloads the data.
+      Instructions for downloading the data and the codebook are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap02.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap02.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The codebook for the female respondent file is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.

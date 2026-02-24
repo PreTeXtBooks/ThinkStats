@@ -1082,6 +1082,7 @@ np.float64(0.04495504495504495)
       <statement>
         <p>
           Let's try hypothesis testing with the penguin data from Chapter 8.
+          Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap09.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap09.ipynb">notebook for this chapter</url>.
         </p>
         <p>
           The following cell downloads the data from a repository created by Allison Horst.

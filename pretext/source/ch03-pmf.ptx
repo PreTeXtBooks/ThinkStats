@@ -844,7 +844,7 @@ decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
 
     <p>
       For the exercises in this chapter, we'll use the NSFG respondent file, which contains one row for each respondent.
-      The following cell downloads the data.
+      Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap03.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap03.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The codebook for this dataset is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.

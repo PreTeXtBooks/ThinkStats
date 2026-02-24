@@ -695,6 +695,9 @@ display_summary(result)
       We can use multiple regression to test this conjecture, by estimating the difference in birth weight between first babies and others while controlling for the mothers' ages.
     </p>
     <p>
+      Instructions for downloading the NSFG data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap11.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap11.ipynb">notebook for this chapter</url>.
+    </p>
+    <p>
       The following cells download the data files and install <c>statadict</c>, which we need to read the data.
     </p>
 

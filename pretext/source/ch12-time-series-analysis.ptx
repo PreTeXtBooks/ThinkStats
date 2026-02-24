@@ -68,6 +68,7 @@ plt.rcParams["figure.dpi"] = 300
 
     <p>
       As an example of time-series data, we'll use a dataset from the U.S. Energy Information Administration -- it includes total electricity generation per month from renewable sources from 2001 to 2024.
+      Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap12.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap12.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The following cell downloads the data, which I downloaded September 17, 2024 from https://www.eia.gov/electricity/data/browser/.
@@ -1920,6 +1921,7 @@ np.float64(3.3817549248044547)
         <p>
           As an example of seasonal decomposition, let's model monthly average surface temperatures in the United States.
           We'll use a dataset from Our World in Data that includes "temperature [in Celsius] of the air measured 2 meters above the ground, encompassing land, sea, and in-land water surfaces," for most countries in the world from 1950 to 2024.
+          Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap12.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap12.ipynb">notebook for this chapter</url>.
         </p>
         <listing>
           <caption>Python Code</caption>
