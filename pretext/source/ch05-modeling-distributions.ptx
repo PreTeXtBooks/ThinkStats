@@ -1278,6 +1278,15 @@ two_cdf_plots(cdf_model, cdf_log_adult_weights, xlabel="Adult weight (log10 kg)"
           <caption>Python Code</caption>
         <program language="python">
           <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+          </input>
+        </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
 from nsfg import read_fem_resp
 
 resp = read_fem_resp()
@@ -1311,6 +1320,17 @@ num_family = older["numfmhh"]
         <p>
           The following loop reads the hockey data again, computes the time between successive goals, if there is more than one in a game, and collects the inter-goal times in a list.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+filename = "nhl_2023_2024.hdf"
+
+with pd.HDFStore(filename, "r") as store:
+    keys = store.keys()
+          </input>
+        </program>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">

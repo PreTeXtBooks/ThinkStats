@@ -1588,6 +1588,16 @@ decorate(
           Plot the cumulative hazard function<mdash/>when is the danger of divorce highest?
           Plot the survival function<mdash/>what fraction of marriages end in divorce?
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+# I suggest you use a single resampling of the data
+
+sample = resample_cycles(resp)
+          </input>
+        </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1614,6 +1624,16 @@ decorate(
         <p>
           We can load the data like this.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+download(
+    "https://github.com/AllenDowney/ThinkStats/raw/v3/data/mortality_rates_beltran2012.csv"
+)
+          </input>
+        </program>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">
