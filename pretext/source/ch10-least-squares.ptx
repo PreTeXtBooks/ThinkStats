@@ -77,7 +77,7 @@ from thinkstats import decorate
     </p>
     <p>
       We'll start by exploring the relationship between the weights and measurements, using data collected between 2007 and 2010 by researchers at Palmer Station in Antarctica.
-      The data they collected is freely available -- instructions for downloading it are in the notebook for this chapter.
+      The data they collected is freely available.
     </p>
     <p>
       The following cell downloads the data from a repository created by Allison Horst.

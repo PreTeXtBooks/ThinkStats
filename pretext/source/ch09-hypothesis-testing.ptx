@@ -1082,7 +1082,6 @@ np.float64(0.04495504495504495)
       <statement>
         <p>
           Let's try hypothesis testing with the penguin data from Chapter 8.
-          Instructions for downloading the data are in the notebook for this chapter.
         </p>
         <p>
           The following cell downloads the data from a repository created by Allison Horst.
