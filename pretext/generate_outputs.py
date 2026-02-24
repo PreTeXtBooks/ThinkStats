@@ -75,6 +75,21 @@ def xml_escape(text):
     return text
 
 
+def strip_ansi(text):
+    """Remove ANSI escape sequences and control chars from text to keep PTX XML valid."""
+    # Strip CSI (ESC [) sequences: \x20-\x3f = parameter bytes (digits, ;, ?, etc.)
+    # \x40-\x7e = final byte (m, G, K, H, J, l, h, A-D, s, u, r, etc.)
+    text = re.sub(r"\x1b\[[\x20-\x3f]*[\x40-\x7e]", "", text)
+    # Strip other ESC sequences (ESC + single char)
+    text = re.sub(r"\x1b.", "", text)
+    # Strip bare ESC, BS (\x08), and other control chars not valid in XML PCDATA
+    # (XML allows \x09=TAB, \x0a=LF, \x0d=CR; everything else below \x20 is forbidden)
+    text = re.sub(r"[\x00-\x08\x0b\x0c\x0e-\x1f]", "", text)
+    # Collapse carriage-return-overwritten lines (keep only last segment per line)
+    text = re.sub(r"[^\n]*\r(?!\n)", "", text)
+    return text
+
+
 def extract_outputs_from_notebook(notebook_path):
     """
     Read a Jupyter notebook and return a dict mapping normalized code to
@@ -132,6 +147,7 @@ def extract_outputs_from_notebook(notebook_path):
             elif output_type == "stream":
                 text = "".join(output.get("text", []))
                 if text.strip():
+                    text = strip_ansi(text)
                     text = _truncate(text)
                     text = xml_escape(text)
                     ptx_blocks.append(
