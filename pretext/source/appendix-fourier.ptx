@@ -109,46 +109,132 @@ data['sin'] = np.sin(2 * np.pi * f * ts)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 import statsmodels.formula.api as smf
 
 res = smf.ols('ys ~ 0 + cos + sin', data=data).fit()
 res.summary()
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.summary.Summary'&gt;
-"""
-                                 OLS Regression Results                                
-=======================================================================================
-Dep. Variable:                     ys   R-squared (uncentered):                   0.815
-Model:                            OLS   Adj. R-squared (uncentered):              0.808
-Method:                 Least Squares   F-statistic:                              106.0
-Date:                Sat, 18 Oct 2025   Prob (F-statistic):                    2.46e-18
-Time:                        11:46:12   Log-Likelihood:                         -34.513
-No. Observations:                  50   AIC:                                      73.03
-Df Residuals:                      48   BIC:                                      76.85
-Df Model:                           2                                                  
-Covariance Type:            nonrobust                                                  
-==============================================================================
-                 coef    std err          t      P&gt;|t|      [0.025      0.975]
-------------------------------------------------------------------------------
-cos            1.2602      0.098     12.794      0.000       1.062       1.458
-sin           -0.6846      0.098     -6.950      0.000      -0.883      -0.487
-==============================================================================
-Omnibus:                        0.306   Durbin-Watson:                   2.389
-Prob(Omnibus):                  0.858   Jarque-Bera (JB):                0.244
-Skew:                           0.160   Prob(JB):                        0.885
-Kurtosis:                       2.877   Cond. No.                         1.00
-==============================================================================
-
-Notes:
-[1] R² is computed without centering (uncentered) since the model does not contain a constant.
-[2] Standard
-... (output truncated)
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell>Dep. Variable:</cell>
+          <cell>ys</cell>
+          <cell>R-squared (uncentered):</cell>
+          <cell>0.815</cell>
+        </row>
+        <row>
+          <cell>Model:</cell>
+          <cell>OLS</cell>
+          <cell>Adj. R-squared (uncentered):</cell>
+          <cell>0.808</cell>
+        </row>
+        <row>
+          <cell>Method:</cell>
+          <cell>Least Squares</cell>
+          <cell>F-statistic:</cell>
+          <cell>106.0</cell>
+        </row>
+        <row>
+          <cell>Date:</cell>
+          <cell>Sat, 18 Oct 2025</cell>
+          <cell>Prob (F-statistic):</cell>
+          <cell>2.46e-18</cell>
+        </row>
+        <row>
+          <cell>Time:</cell>
+          <cell>11:46:12</cell>
+          <cell>Log-Likelihood:</cell>
+          <cell>-34.513</cell>
+        </row>
+        <row>
+          <cell>No. Observations:</cell>
+          <cell>50</cell>
+          <cell>AIC:</cell>
+          <cell>73.03</cell>
+        </row>
+        <row>
+          <cell>Df Residuals:</cell>
+          <cell>48</cell>
+          <cell>BIC:</cell>
+          <cell>76.85</cell>
+        </row>
+        <row>
+          <cell>Df Model:</cell>
+          <cell>2</cell>
+          <cell></cell>
+          <cell></cell>
+        </row>
+        <row>
+          <cell>Covariance Type:</cell>
+          <cell>nonrobust</cell>
+          <cell></cell>
+          <cell></cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>cos</cell>
+          <cell>1.2602</cell>
+          <cell>0.098</cell>
+          <cell>12.794</cell>
+          <cell>0.000</cell>
+          <cell>1.062</cell>
+          <cell>1.458</cell>
+        </row>
+        <row>
+          <cell>sin</cell>
+          <cell>-0.6846</cell>
+          <cell>0.098</cell>
+          <cell>-6.950</cell>
+          <cell>0.000</cell>
+          <cell>-0.883</cell>
+          <cell>-0.487</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell>Omnibus:</cell>
+          <cell>0.306</cell>
+          <cell>Durbin-Watson:</cell>
+          <cell>2.389</cell>
+        </row>
+        <row>
+          <cell>Prob(Omnibus):</cell>
+          <cell>0.858</cell>
+          <cell>Jarque-Bera (JB):</cell>
+          <cell>0.244</cell>
+        </row>
+        <row>
+          <cell>Skew:</cell>
+          <cell>0.160</cell>
+          <cell>Prob(JB):</cell>
+          <cell>0.885</cell>
+        </row>
+        <row>
+          <cell>Kurtosis:</cell>
+          <cell>2.877</cell>
+          <cell>Cond. No.</cell>
+          <cell>1.00</cell>
+        </row>
+      </tabular>
+    </table>
     <p>
       Here's what the fitted model looks like compared to the data.
     </p>

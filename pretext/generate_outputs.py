@@ -77,42 +77,55 @@ def xml_escape(text):
 
 
 def html_table_to_ptx(html_str, indent="    "):
-    """Convert an HTML simpletable to a PTX <table><tabular> element.
+    """Convert HTML simpletable(s) to PTX <table><tabular> element(s).
 
     Args:
-        html_str: HTML string containing a <table class="simpletable"> element.
+        html_str: HTML string containing one or more <table class="simpletable">
+            elements (e.g. the output of statsmodels res.summary()).
         indent: Leading whitespace for indentation.
 
     Returns:
-        PTX XML string, or None if parsing fails.
+        PTX XML string (one <table> per HTML simpletable joined by newlines),
+        or None if no rows were parsed.
     """
 
     class _TableParser(HTMLParser):
         def __init__(self):
             super().__init__()
-            self.rows = []
-            self._current_row = []
+            self.tables = []          # list of row-lists, one per simpletable
+            self._current_table = None
+            self._current_row = None
             self._current_cell = None
             self._current_is_header = False
 
         def handle_starttag(self, tag, attrs):
-            if tag == "tr":
-                self._current_row = []
+            if tag == "table":
+                attrs_dict = dict(attrs)
+                if "simpletable" in attrs_dict.get("class", ""):
+                    self._current_table = []
+            elif tag == "tr":
+                if self._current_table is not None:
+                    self._current_row = []
             elif tag in ("td", "th"):
-                self._current_cell = ""
-                self._current_is_header = tag == "th"
+                if self._current_row is not None:
+                    self._current_cell = ""
+                    self._current_is_header = tag == "th"
 
         def handle_endtag(self, tag):
-            if tag == "tr":
-                if self._current_row is not None:
-                    self.rows.append(self._current_row)
-                self._current_row = []
+            if tag == "table":
+                if self._current_table is not None:
+                    self.tables.append(self._current_table)
+                    self._current_table = None
+            elif tag == "tr":
+                if self._current_table is not None and self._current_row is not None:
+                    self._current_table.append(self._current_row)
+                    self._current_row = None
             elif tag in ("td", "th"):
-                if self._current_cell is not None:
+                if self._current_row is not None and self._current_cell is not None:
                     self._current_row.append(
                         (self._current_is_header, self._current_cell.strip())
                     )
-                self._current_cell = None
+                    self._current_cell = None
 
         def handle_data(self, data):
             if self._current_cell is not None:
@@ -121,32 +134,36 @@ def html_table_to_ptx(html_str, indent="    "):
     parser = _TableParser()
     parser.feed(html_str)
 
-    rows = [r for r in parser.rows if r]
-    if not rows:
-        return None
-
     inner_indent = indent + "  "
     row_indent = indent + "    "
     cell_indent = indent + "      "
 
-    lines = [f"{indent}<table>", f"{inner_indent}<tabular halign=\"center\">"]
-    for row_idx, row in enumerate(rows):
-        # The first row is treated as a header row when any cell after the
-        # first is a <th> element (statsmodels simpletable marks column headers
-        # with <th>; the first cell is either empty or a row label).
-        # row[1:] is safe because empty rows are already filtered out above.
-        is_header = row_idx == 0 and any(is_th for is_th, _ in row[1:])
-        if is_header:
-            lines.append(f'{row_indent}<row header="yes" bottom="minor">')
-        else:
-            lines.append(f"{row_indent}<row>")
-        for _, cell_text in row:
-            lines.append(f"{cell_indent}<cell>{xml_escape(cell_text)}</cell>")
-        lines.append(f"{row_indent}</row>")
+    ptx_tables = []
+    for table_rows in parser.tables:
+        rows = [r for r in table_rows if r]
+        if not rows:
+            continue
+        lines = [f"{indent}<table>", f"{inner_indent}<tabular halign=\"center\">"]
+        for row_idx, row in enumerate(rows):
+            # The first row is treated as a header row when any cell after the
+            # first is a <th> element (statsmodels simpletable marks column headers
+            # with <th>; the first cell is either empty or a row label).
+            # row[1:] is safe because empty rows are already filtered out above.
+            is_header = row_idx == 0 and any(is_th for is_th, _ in row[1:])
+            if is_header:
+                lines.append(f'{row_indent}<row header="yes" bottom="minor">')
+            else:
+                lines.append(f"{row_indent}<row>")
+            for _, cell_text in row:
+                lines.append(f"{cell_indent}<cell>{xml_escape(cell_text)}</cell>")
+            lines.append(f"{row_indent}</row>")
+        lines.append(f"{inner_indent}</tabular>")
+        lines.append(f"{indent}</table>")
+        ptx_tables.append("\n".join(lines))
 
-    lines.append(f"{inner_indent}</tabular>")
-    lines.append(f"{indent}</table>")
-    return "\n".join(lines)
+    if not ptx_tables:
+        return None
+    return "\n".join(ptx_tables)
 
 
 def extract_outputs_from_notebook(notebook_path):
@@ -335,20 +352,24 @@ def _build_console_block(prog_indent, input_open, code, input_close, close_tag, 
     )
 
 
-# Pattern matching a <console> block whose <output> contains only a boring
-# Python class representation (e.g. "<class 'statsmodels.iolib.table.SimpleTable'>").
+# Pattern matching a <console> block whose <output> starts with (or contains
+# only) a boring Python class representation
+# (e.g. "<class 'statsmodels.iolib.table.SimpleTable'>").
 # These were generated by previous runs when text/html output was not handled.
+# The output may have additional text after the class name (e.g. res.summary()
+# appends the full formatted summary), which is also discarded here because
+# update_ptx_file will replace it with proper PTX table output from text/html.
 _BORING_CONSOLE_PAT = re.compile(
     r"([ \t]*)<console>"
     r"(\s*<input>)((?:(?!</input>).)*?)(</input>)"
-    r"\s*<output>\s*&lt;class\s+'[^']*'&gt;\s*</output>"
+    r"\s*<output>\s*&lt;class\s+'[^']*'&gt;.*?</output>"
     r"(\s*</console>)",
     re.DOTALL,
 )
 
 
 def clean_boring_console_outputs(content):
-    """Revert <console> blocks whose <output> contains only a boring Python
+    """Revert <console> blocks whose <output> starts with a boring Python
     class representation back to <program> blocks, so that update_ptx_file
     can replace them with proper table output.
 
