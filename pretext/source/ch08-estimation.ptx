@@ -107,16 +107,16 @@ np.random.seed(1)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sample = np.random.normal(mu, sigma, size=10)
 sample
       </input>
-    </program>
-    <pre>
+      <output>
 array([4.44719887, 3.41859205, 3.45704099, 3.20643443, 4.09808751,
        2.6412922 , 4.50261341, 3.34984483, 3.84675798, 3.58528963])
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -125,14 +125,14 @@ array([4.44719887, 3.41859205, 3.45704099, 3.20643443, 4.09808751,
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.mean(sample), np.median(sample)
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(3.6553151902291945), np.float64(3.521165310619601))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -209,10 +209,10 @@ plt.plot(ns, medians, alpha=0.5, label="median")
 decorate(xlabel="Sample size", xscale="log", ylabel="Estimate")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       For both estimators, the estimates converge to the actual value as the sample size increases.
@@ -229,15 +229,15 @@ decorate(xlabel="Sample size", xscale="log", ylabel="Estimate")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 means = [np.mean(make_sample(n=10)) for i in range(10001)]
 np.mean(means)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.7003450849286907)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -249,15 +249,15 @@ np.float64(3.7003450849286907)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 medians = [np.median(make_sample(n=10)) for i in range(10001)]
 np.mean(medians)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.701214089907223)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -295,14 +295,14 @@ def mse(estimates, actual):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mse(means, mu)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.020871984891289382)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -312,14 +312,14 @@ np.float64(0.020871984891289382)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mse(medians, mu)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.029022273128644173)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -355,14 +355,14 @@ def mae(estimates, actual):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mae(means, mu)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.1154043374950527)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -371,14 +371,14 @@ np.float64(0.1154043374950527)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mae(medians, mu)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.13654429774596036)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -444,10 +444,10 @@ pdf.plot(label='estimated density')
 decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       In addition to the mode near 3.7 kg, the measurement errors introduce a second mode near 8 kilograms.
@@ -458,15 +458,15 @@ decorate(xlabel="Penguin weight (kg)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 means = [np.mean(make_sample_with_errors(n=10)) for i in range(10001)]
 np.mean(means)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.786352945690677)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -478,15 +478,15 @@ np.float64(3.786352945690677)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 medians = [np.median(make_sample_with_errors(n=10)) for i in range(10001)]
 np.mean(medians)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.7121869836715353)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -496,14 +496,14 @@ np.float64(3.7121869836715353)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mse(means, mu), mse(medians, mu)
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.06853430354724438), np.float64(0.031164467796883765))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -546,15 +546,15 @@ def biased_var(xs):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 biased_vars = [biased_var(make_sample(n=10)) for i in range(10001)]
 np.mean(biased_vars)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.19049277659404473)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -563,15 +563,15 @@ np.float64(0.19049277659404473)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 actual_var = sigma**2
 actual_var
       </input>
-    </program>
-    <pre>
+      <output>
 0.2116
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -597,15 +597,15 @@ def unbiased_var(xs):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 unbiased_vars = [unbiased_var(make_sample(n=10)) for i in range(10001)]
 np.mean(unbiased_vars)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.21159109492300626)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -618,28 +618,28 @@ np.float64(0.21159109492300626)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = 10
 1 - (n - 1) / n
       </input>
-    </program>
-    <pre>
+      <output>
 0.09999999999999998
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = 100
 1 - (n - 1) / n
       </input>
-    </program>
-    <pre>
+      <output>
 0.010000000000000009
-    </pre>
+      </output>
+    </console>
     </listing>
 
   </section>
@@ -683,15 +683,15 @@ download(
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
 penguins.shape
       </input>
-    </program>
-    <pre>
+      <output>
 (342, 17)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -700,18 +700,18 @@ penguins.shape
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 penguins["Species"].value_counts()
       </input>
-    </program>
-    <pre>
+      <output>
 Species
 Adelie Penguin (Pygoscelis adeliae)          151
 Gentoo penguin (Pygoscelis papua)            123
 Chinstrap penguin (Pygoscelis antarctica)     68
 Name: count, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -761,10 +761,10 @@ plot_kde(weights, "weights")
 decorate(xlabel="Penguin weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The sample mean is about 3.7 kg.
@@ -772,15 +772,15 @@ decorate(xlabel="Penguin weight (kg)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sample_mean = np.mean(weights)
 sample_mean
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.733088235294118)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -840,10 +840,10 @@ plot_kde(sample_means, "sample means")
 decorate(xlabel="Sample mean of weight (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap08_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       This result approximates the sampling distribution of the sample mean.
@@ -864,15 +864,15 @@ decorate(xlabel="Sample mean of weight (kg)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 standard_error = np.std(sample_means)
 standard_error
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.04626531069684985)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -893,14 +893,14 @@ np.float64(0.04626531069684985)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.std(weights)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.3814986213564681)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -909,14 +909,14 @@ np.float64(0.3814986213564681)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.std(sample_means)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.04626531069684985)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -942,14 +942,14 @@ def approximate_standard_error(sample):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 approximate_standard_error(weights)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.046263503290595163)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -969,15 +969,15 @@ np.float64(0.046263503290595163)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ci90 = np.percentile(sample_means, [5, 95])
 ci90
       </input>
-    </program>
-    <pre>
+      <output>
 array([3.6576334 , 3.80737506])
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1134,15 +1134,14 @@ array([3.6576334 , 3.80737506])
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
           </input>
-        </program>
-    <pre>
+          <output>
 Downloaded CDBRFS08.ASC.gz
-
-    </pre>
+          </output>
+        </console>
         </listing>
         <listing>
           <caption>Python Code</caption>
@@ -1156,14 +1155,13 @@ brfss = read_brfss()
         </listing>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 male = brfss.query("sex == 1")
 heights = male["htm3"]
 heights.describe()
           </input>
-        </program>
-    <pre>
+          <output>
 count    154407.000000
 mean        178.066221
 std           7.723563
@@ -1173,7 +1171,8 @@ min          61.000000
 75%         183.000000
 max         236.000000
 Name: htm3, dtype: float64
-    </pre>
+          </output>
+        </console>
         </listing>
       </statement>
     </exercise>
@@ -1221,15 +1220,15 @@ def make_exponential(n):
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 actual_median = np.log(2) * actual_mean
 actual_median
           </input>
-        </program>
-    <pre>
+          <output>
 np.float64(6.931471805599453)
-    </pre>
+          </output>
+        </console>
         </listing>
         <p>
           Next, generate many samples with size 10 and check whether the sample mean is an unbiased estimator of the population mean.
@@ -1279,18 +1278,18 @@ def unbiased_std(sample):
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 # Here's an example using `make_sample`
 
 mu, sigma = 3.7, 0.46
 make_sample(n=10)
           </input>
-        </program>
-    <pre>
+          <output>
 array([4.5279695 , 3.75698359, 4.09347143, 3.56308034, 3.17123233,
        4.40734952, 3.70858308, 4.15706704, 4.06716703, 3.7203591 ])
-    </pre>
+          </output>
+        </console>
         </listing>
       </statement>
     </exercise>
@@ -1356,29 +1355,29 @@ np.random.seed(17)
         </listing>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 sample = sample_tanks(5)
 sample
           </input>
-        </program>
-    <pre>
+          <output>
 array([74, 71, 95, 10, 17])
-    </pre>
+          </output>
+        </console>
         </listing>
         <p>
           And here is the estimate based on this sample.
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 estimate_tanks(sample)
           </input>
-        </program>
-    <pre>
+          <output>
 np.float64(113.0)
-    </pre>
+          </output>
+        </console>
         </listing>
         <p>
           Check whether this estimator is biased.

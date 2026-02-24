@@ -106,15 +106,15 @@ download(
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
 penguins.shape
       </input>
-    </program>
-    <pre>
+      <output>
 (342, 17)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -124,15 +124,15 @@ penguins.shape
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 adelie = penguins.query('Species.str.startswith("Adelie")')
 len(adelie)
       </input>
-    </program>
-    <pre>
+      <output>
 151
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -165,10 +165,10 @@ plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       It looks like they are related -- we can quantify the strength of the relationship by computing the coefficient of correlation.
@@ -176,14 +176,14 @@ decorate(xlabel=xvar, ylabel=yvar)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.corrcoef(flipper_length, body_mass)[0, 1]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.4682016942179394)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -202,17 +202,17 @@ np.float64(0.4682016942179394)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import linregress
 
 result = linregress(flipper_length, body_mass)
 result
       </input>
-    </program>
-    <pre>
+      <output>
 LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535.8368022002514), rvalue=np.float64(0.46820169421793933), pvalue=np.float64(1.3432645947790051e-09), stderr=np.float64(5.076138407990821), intercept_stderr=np.float64(964.7984274994059))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -226,16 +226,16 @@ LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 x = flipper_length.mean()
 y = result.intercept + result.slope * x
 x, y
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(189.95364238410596), np.float64(3700.662251655629))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -286,10 +286,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       As expected, the fitted line goes through the center of the data and follows the trend.
@@ -328,16 +328,16 @@ residuals = compute_residuals(result, flipper_length, body_mass)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 x = flipper_length[0]
 y = predict(result, x)
 x, y
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(181.0), np.float64(3406.699042757914))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -347,14 +347,14 @@ x, y
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 body_mass[0], residuals[0]
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(3750.0), np.float64(343.30095724208604))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -366,15 +366,15 @@ body_mass[0], residuals[0]
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mse = np.mean(residuals**2)
 mse
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(163098.85902884745)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -412,14 +412,14 @@ deviations = body_mass - np.mean(body_mass)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.mean(deviations**2)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(208890.28989956583)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -428,14 +428,14 @@ np.float64(208890.28989956583)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.var(body_mass)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(208890.28989956583)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -462,15 +462,15 @@ def coefficient_of_determination(ys, residuals):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 R2 = coefficient_of_determination(body_mass, residuals)
 R2
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.21921282646854912)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -483,15 +483,15 @@ np.float64(0.21921282646854912)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 r = np.sqrt(R2)
 r
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.4682016942179397)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -500,15 +500,15 @@ np.float64(0.4682016942179397)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 corr = np.corrcoef(flipper_length, body_mass)[0, 1]
 corr
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.4682016942179394)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -520,14 +520,14 @@ np.float64(0.4682016942179394)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result.rvalue
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.46820169421793933)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -567,18 +567,18 @@ slope = result.slope + np.random.normal(0, 1)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from types import SimpleNamespace
 
 fake_result = SimpleNamespace(intercept=intercept, slope=slope)
 fake_result
       </input>
-    </program>
-    <pre>
+      <output>
 namespace(intercept=np.float64(-2533.193389187175),
           slope=np.float64(32.15393529728294))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -601,14 +601,14 @@ fake_mse = np.mean(fake_residuals**2)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mse, fake_mse, fake_mse > mse
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(163098.85902884745), np.float64(179019.20812685465), np.True_)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -648,15 +648,15 @@ def least_squares(xs, ys):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 intercept, slope = least_squares(flipper_length, body_mass)
 intercept, slope
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(-2535.8368022002524), np.float64(32.831689751150094))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -665,14 +665,14 @@ intercept, slope
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.allclose([intercept, slope], [result.intercept, result.slope])
       </input>
-    </program>
-    <pre>
+      <output>
 True
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -762,10 +762,10 @@ plot_kde(resampled_slopes)
 decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       We can use <c>percentile</c> to compute a 90% confidence interval.
@@ -773,16 +773,15 @@ decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ci90 = np.percentile(resampled_slopes, [5, 95])
 print(result.slope, ci90)
       </input>
-    </program>
-    <pre>
+      <output>
 32.83168975115009 [25.39604591 40.21054526]
-
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -794,15 +793,15 @@ print(result.slope, ci90)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 stderr = np.std(resampled_slopes)
 stderr
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(4.570238986584832)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -811,14 +810,14 @@ np.float64(4.570238986584832)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result.stderr
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(5.076138407990821)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -880,10 +879,10 @@ for i in range(101):
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Near the middle, the fitted lines are close together -- at the extremes, they are farther apart.
@@ -934,10 +933,10 @@ plt.plot(fit_xs, median, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_005.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       This is my favorite way to represent the variability of a fitted line due to random sampling.
@@ -1000,15 +999,15 @@ heights, weights = valid["htm3"], valid["wtkg2"]
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_brfss = linregress(heights, weights)
 result_brfss.intercept, result_brfss.slope
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(-82.65926054409877), np.float64(0.957074585033226))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1070,10 +1069,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_006.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The fitted line doesn't pass through the densest part of the scatter plot.
@@ -1105,10 +1104,10 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_007.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The distribution of the residuals is skewed to the right.
@@ -1121,16 +1120,16 @@ decorate(xlabel="Residual (kg)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 log_weights = np.log10(weights)
 result_brfss2 = linregress(heights, log_weights)
 result_brfss2.intercept, result_brfss2.slope
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.9930804163932876), np.float64(0.005281454169417777))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1162,10 +1161,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (log10 kg)", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_008.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The fitted line passes through the densest part of the plot, and the actual values extend about the same distance above and below the line -- so the distribution of the residuals is roughly symmetric.
@@ -1190,10 +1189,10 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_009.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The appearance of the scatter plot and the distribution of the residuals suggest that the relationship of height and log-transformed weight is well described by the fitted line.
@@ -1202,14 +1201,14 @@ decorate(xlabel="Residual (kg)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_brfss.rvalue, result_brfss2.rvalue
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.5087364789734582), np.float64(0.5317282605983435))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1218,14 +1217,14 @@ result_brfss.rvalue, result_brfss2.rvalue
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_brfss.rvalue**2, result_brfss2.rvalue**2
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.2588128050383119), np.float64(0.28273494311893993))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1246,10 +1245,10 @@ plt.plot(fit_xs, 10**fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_010.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       A fitted line that's straight with respect to the transformed data is curved with respect to the original data.

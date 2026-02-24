@@ -58,14 +58,14 @@ def expected_value(p, wager, payout):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 expected_value(p=0.25, wager=100, payout=195)
       </input>
-    </program>
-    <pre>
+      <output>
 -26.25
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Now let's compute the expected value of the second wager<mdash/>assuming the Seahawks
@@ -73,14 +73,14 @@ expected_value(p=0.25, wager=100, payout=195)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 expected_value(p=0.75, wager=240, payout=100)
       </input>
-    </program>
-    <pre>
+      <output>
 15.0
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The expected value of this wager is positive, so you might want to make
@@ -129,10 +129,10 @@ decorate(xlabel='Actual probability Patriots win',
         ylabel='Expected value of wager')
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/moneyline_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       To find the crossover point, we can set the expected value to 0 and solve for <c>p</c>.
       This function computes the result:
@@ -151,15 +151,15 @@ def crossover(wager, payout):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p1 = crossover(100, 195)
 p1
       </input>
-    </program>
-    <pre>
+      <output>
 0.3389830508474576
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       If you think the Patriots have a probability higher than the crossover, the first bet
@@ -168,15 +168,15 @@ p1
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p2 = crossover(240, 100)
 p2
       </input>
-    </program>
-    <pre>
+      <output>
 0.7058823529411765
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       If you think the Seahawks have a probability higher than this crossover, the second bet
@@ -189,14 +189,14 @@ p2
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p1 + p2
       </input>
-    </program>
-    <pre>
+      <output>
 1.0448654037886342
-    </pre>
+      </output>
+    </console>
     </listing>
   </section>
 
@@ -241,15 +241,15 @@ decorate(xlabel='Actual probability Patriots win',
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p = (p1 + (1-p2)) / 2
 p
       </input>
-    </program>
-    <pre>
+      <output>
 0.31655034895314055
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       In that case, here's the expected take, assuming that the implied probability is
@@ -269,14 +269,14 @@ take
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 take / (100_000 + 240_000)
       </input>
-    </program>
-    <pre>
+      <output>
 0.04189636971438623
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Which we could have approximated by computing the <term>overround</term>, which is the
@@ -284,14 +284,14 @@ take / (100_000 + 240_000)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (p1 + p2) - 1
       </input>
-    </program>
-    <pre>
+      <output>
 0.04486540378863424
-    </pre>
+      </output>
+    </console>
     </listing>
   </section>
 

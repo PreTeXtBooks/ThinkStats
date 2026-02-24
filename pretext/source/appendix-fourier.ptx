@@ -39,16 +39,16 @@ phi = 0.5
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ts = np.linspace(0, 3, endpoint=False)
 ys = A * np.cos(2 * np.pi * f * ts + phi)
 np.mean(ys)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(-2.220446049250313e-16)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And add in zero-mean Gaussian noise.
@@ -75,10 +75,10 @@ plt.xlabel('t')
 plt.ylabel('y');
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/fourier_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Now let's see if we can use the signal to estimate the parameters.
       The key idea is this trigonometric identity:
@@ -109,15 +109,14 @@ data['sin'] = np.sin(2 * np.pi * f * ts)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 import statsmodels.formula.api as smf
 
 res = smf.ols('ys ~ 0 + cos + sin', data=data).fit()
 res.summary()
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.summary.Summary'&gt;
 """
                                  OLS Regression Results                                
@@ -147,7 +146,8 @@ Notes:
 [1] R² is computed without centering (uncentered) since the model does not contain a constant.
 [2] Standard
 ... (output truncated)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Here's what the fitted model looks like compared to the data.
@@ -165,10 +165,10 @@ plt.ylabel('y')
 plt.legend();
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/fourier_002.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       It looks like the fitted curve has recovered the phase of the periodic component.
       The estimated amplitude and phase are not represented explicitly in the parameters of
@@ -215,15 +215,15 @@ ws = np.exp(2 * np.pi * 1j * f * ts)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 c = 2 / len(ts) * np.vdot(ws, ys)
 c
       </input>
-    </program>
-    <pre>
+      <output>
 np.complex128(1.2602143401738164+0.68455041144776j)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The result is a complex number that represents the estimated amplitude and phase of the
@@ -231,17 +231,17 @@ np.complex128(1.2602143401738164+0.68455041144776j)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 A_hat = np.abs(c)
 phi_hat = np.angle(c)
 
 A_hat, phi_hat
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(1.4341371792799409), np.float64(0.49760870975866645))
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And the estimated values are the same as what we got from linear regression.

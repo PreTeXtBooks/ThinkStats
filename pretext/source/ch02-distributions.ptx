@@ -90,19 +90,19 @@ t = [1.0, 2.0, 2.0, 3.0, 5.0]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab = FreqTab.from_seq(t)
 ftab
       </input>
-    </program>
-    <pre>
+      <output>
 1.0    1
 2.0    2
 3.0    1
 5.0    1
 Name: , dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       A <c>FreqTab</c> object is a kind of Pandas <c>Series</c> that contains values and their frequencies.
@@ -119,98 +119,97 @@ ftab.bar()
 decorate(xlabel="Value", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Because a <c>FreqTab</c> is a Pandas <c>Series</c>, we can use the bracket operator to look up a value and get its frequency.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab[2.0]
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(2)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       But unlike a Pandas <c>Series</c>, we can also call a <c>FreqTab</c> object like a function to look up a value.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab(2.0)
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(2)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       If we look up a value that does not appear in the <c>FreqTab</c>, the function syntax returns <c>0</c>.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab(4.0)
       </input>
-    </program>
-    <pre>
+      <output>
 0
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       A <c>FreqTab</c> object has an attribute called <c>qs</c> that returns an array of values <mdash/> <c>qs</c> stands for quantities, although technically not all values are quantities.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab.qs
       </input>
-    </program>
-    <pre>
+      <output>
 array([1., 2., 3., 5.])
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       <c>FreqTab</c> also has an attribute called <c>fs</c> that returns an array of frequencies.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab.fs
       </input>
-    </program>
-    <pre>
+      <output>
 array([1, 2, 1, 1])
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       <c>FreqTab</c> provides an <c>items</c> method we can use to loop through quantity-frequency pairs:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 for x, freq in ftab.items():
     print(x, freq)
       </input>
-    </program>
-    <pre>
+      <output>
 1.0 1
 2.0 2
 3.0 1
 5.0 1
-
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       We'll see more <c>FreqTab</c> methods as we go along.
@@ -301,10 +300,10 @@ ftab_lb.bar()
 decorate(xlabel="Pounds", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_002.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Looking at a distribution like this, the first thing we notice is the shape, which resembles the famous bell curve, more formally called a normal distribution or a Gaussian distribution.
       The other notable feature of the distribution is the <term>mode</term>, which is the most common value.
@@ -312,28 +311,28 @@ decorate(xlabel="Pounds", ylabel="Frequency")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab_lb.idxmax()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(7.0)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       <c>FreqTab</c> provides a method called <c>mode</c> that does the same thing.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ftab_lb.mode()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(7.0)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       In this distribution, the mode is at 7 pounds.
@@ -350,10 +349,10 @@ ftab_oz.bar()
 decorate(xlabel="Ounces", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_003.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Because nature doesn't know about pounds and ounces, we might expect all values of <c>birthwgt_oz</c> to be equally likely <mdash/> that is, this distribution should be <term>uniform</term>.
       But it looks like <c>0</c> is more common than the other quantities, and <c>1</c> and <c>15</c> are less common, which suggests that respondents round off birth weights that are close to a whole number of pounds.
@@ -381,10 +380,10 @@ ftab_age.bar(width=0.1)
 decorate(xlabel="Age", ylabel="Frequency")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_004.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The distribution is very roughly bell-shaped, but it is <term>skewed</term> to the right <mdash/> that is, the tail extends farther right than left.
     </p>
@@ -401,10 +400,10 @@ ftab_length.bar()
 decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_005.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       By far the most common quantity is 39 weeks.
       The left tail is longer than the right <mdash/> early babies are common, but pregnancies seldom go past 43 weeks, and doctors often intervene if they do.
@@ -435,12 +434,11 @@ def smallest(ftab, n=10):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 smallest(ftab_length)
       </input>
-    </program>
-    <pre>
+      <output>
 prglngth
 0     1
 4     1
@@ -453,7 +451,8 @@ prglngth
 21    2
 22    7
 Name: prglngth, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Since we selected the rows for live births, pregnancy lengths less than 10 weeks are certainly errors.
@@ -478,12 +477,11 @@ def largest(ftab, n=10):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 largest(ftab_length)
       </input>
-    </program>
-    <pre>
+      <output>
 prglngth
 40    1116
 41     587
@@ -496,7 +494,8 @@ prglngth
 48       7
 50       2
 Name: prglngth, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Again, some of these values are probably errors.
@@ -565,55 +564,55 @@ two_bar_plots(ftab_first, ftab_other)
 decorate(xlabel="Weeks", ylabel="Frequency", xlim=[20, 50])
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap02_006.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       There is no obvious difference in the shape of the distributions or in the outliers.
       It looks like more of the non-first babies are born during week 39, but there are more non-first babies in the dataset, so we should not compare the counts directly.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 firsts["prglngth"].count(), others["prglngth"].count()
       </input>
-    </program>
-    <pre>
+      <output>
 (np.int64(4413), np.int64(4735))
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Comparing the means of the distributions, it looks like first babies are a little bit later on average.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 first_mean = firsts["prglngth"].mean()
 other_mean = others["prglngth"].mean()
 first_mean, other_mean
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(38.60095173351461), np.float64(38.52291446673706))
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       But the difference is only 0.078 weeks, which is about 13 hours.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff = first_mean - other_mean
 diff, diff * 7 * 24
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.07803726677754952), np.float64(13.11026081862832))
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       There are several possible causes of this apparent difference:
@@ -651,14 +650,14 @@ diff, diff * 7 * 24
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff / live["prglngth"].mean() * 100
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.20237586646738304)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Another option is to report a <term>standardized</term> effect size, which is a statistic intended to quantify the size of an effect in a way that is comparable between different quantities and different groups.
@@ -669,14 +668,14 @@ np.float64(0.20237586646738304)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff / live["prglngth"].std()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.028877623375210403)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       But notice that we used both groups to compute the standard deviation.
@@ -723,28 +722,28 @@ pooled_var = (n1 * v1 + n2 * v2) / (n1 + n2)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.sqrt(pooled_var)
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(2.7022108144953862)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The pooled standard deviation is between the standard deviations of the groups.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 firsts["prglngth"].std(), others["prglngth"].std()
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(2.7919014146687204), np.float64(2.6158523504392375))
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       A standardized effect size that uses pooled standard deviation is called <term>Cohen's effect size</term>.
@@ -770,14 +769,14 @@ def cohen_effect_size(group1, group2):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cohen_effect_size(firsts["prglngth"], others["prglngth"])
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.028879044654449834)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       In this example, the difference is 0.029 standard deviations, which is small.
@@ -894,17 +893,17 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from nsfg import read_fem_resp
 
 resp = read_fem_resp()
 resp.shape
       </input>
-    </program>
-    <pre>
+      <output>
 (7643, 3092)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       This <c>DataFrame</c> contains 3092 columns, but we'll use just a few of them.

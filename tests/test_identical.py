@@ -34,7 +34,11 @@ CHAPTER_MAPPING = {
 
 
 def extract_ptx_code_blocks(ptx_path):
-    """Return a list of code strings from all <program language="python"> blocks."""
+    """Return a list of code strings from all Python code blocks.
+
+    Extracts code from both <program language="python"> blocks and
+    <console> blocks (which store code in <input> child elements).
+    """
     tree = ElementTree.parse(ptx_path)
     root = tree.getroot()
     blocks = []
@@ -45,6 +49,12 @@ def extract_ptx_code_blocks(ptx_path):
         if input_elem is None or input_elem.text is None:
             continue
         # ElementTree already handles XML entity unescaping
+        code = input_elem.text.strip()
+        blocks.append(code)
+    for console in root.iter("console"):
+        input_elem = console.find("input")
+        if input_elem is None or input_elem.text is None:
+            continue
         code = input_elem.text.strip()
         blocks.append(code)
     return blocks
@@ -64,8 +74,9 @@ def extract_notebook_code_cells(nb_path):
 
 @pytest.mark.parametrize("ptx_filename,nb_path", CHAPTER_MAPPING.items())
 def test_ptx_code_blocks_match_notebook(ptx_filename, nb_path):
-    """Every <program language="python"> block in the PTX file must exist
-    verbatim as a code cell in the corresponding Jupyter notebook."""
+    """Every Python code block in the PTX file (in <program> or <console>
+    elements) must exist verbatim as a code cell in the corresponding
+    Jupyter notebook."""
     ptx_path = SOURCE_DIR / ptx_filename
     assert ptx_path.exists(), f"PTX file not found: {ptx_path}"
     assert nb_path.exists(), f"Notebook not found: {nb_path}"

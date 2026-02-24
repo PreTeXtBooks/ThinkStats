@@ -48,28 +48,27 @@ metadata = response.json()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 metadata.keys()
       </input>
-    </program>
-    <pre>
+      <output>
 dict_keys(['chart', 'columns', 'dateDownloaded'])
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Here's the chart-level documentation.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from pprint import pprint
 
 pprint(metadata["chart"])
       </input>
-    </program>
-    <pre>
+      <output>
 {'citation': 'Contains modified Copernicus Climate Change Service information '
              '(2019)',
  'originalChartUrl': 'https://ourworldindata.org/grapher/average-monthly-surface-temperature?v=1&amp;csvType=full&amp;useColumnShortNames=true',
@@ -77,20 +76,19 @@ pprint(metadata["chart"])
  'subtitle': 'The temperature of the air measured 2 meters above the ground, '
              'encompassing land, sea, and in-land water surfaces.',
  'title': 'Average monthly surface temperature'}
-
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And here's the documentation of the column we'll use.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pprint(metadata["columns"]["temperature_2m"])
       </input>
-    </program>
-    <pre>
+      <output>
 {'citationLong': 'Contains modified Copernicus Climate Change Service '
                  'information (2019) – with major processing by Our World in '
                  'Data. “Annual average” [dataset]. Contains modified '
@@ -122,7 +120,8 @@ pprint(metadata["columns"]["temperature_2m"])
                           "- It's important to note, however, that due to the "
                       
 ... (output truncated)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The following cells download the data for the United States<mdash/>to see data from
@@ -193,10 +192,10 @@ temp_series.plot(label=country_code)
 plt.ylabel("Surface temperature (℃)");
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/temperature_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Not surprisingly, there is a strong seasonal pattern.
       We can use <c>seasonal_decompose</c> from StatsModels to identify a long-term trend,
@@ -249,10 +248,10 @@ def plot_decomposition(original, decomposition):
 plot_decomposition(temp_series, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/temperature_002.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       As always, I'm grateful to Our World in Data for making datasets like this available,
       and now easier to use programmatically.

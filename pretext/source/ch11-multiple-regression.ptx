@@ -114,7 +114,7 @@ columns = {
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 penguins = (
     pd.read_csv("penguins_raw.csv")
@@ -123,10 +123,10 @@ penguins = (
 )
 penguins.shape
       </input>
-    </program>
-    <pre>
+      <output>
 (342, 17)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -136,15 +136,15 @@ penguins.shape
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 adelie = penguins.query('Species.str.startswith("Adelie")').copy()
 len(adelie)
       </input>
-    </program>
-    <pre>
+      <output>
 151
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -167,17 +167,17 @@ body_mass = adelie["mass"]
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import linregress
 
 result_linregress = linregress(flipper_length, body_mass)
 result_linregress.intercept, result_linregress.slope
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -200,17 +200,17 @@ formula = "mass ~ flipper_length"
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 import statsmodels.formula.api as smf
 
 model = smf.ols(formula, data=adelie)
 type(model)
       </input>
-    </program>
-    <pre>
+      <output>
 statsmodels.regression.linear_model.OLS
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -236,16 +236,16 @@ result_ols = model.fit()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 # Technically it's a RegressionResultsWrapper
 
 type(result_ols)
       </input>
-    </program>
-    <pre>
+      <output>
 statsmodels.regression.linear_model.RegressionResultsWrapper
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -254,19 +254,16 @@ statsmodels.regression.linear_model.RegressionResultsWrapper
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import display_summary
 
 display_summary(result_ols)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -276,14 +273,14 @@ display_summary(result_ols)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_linregress.intercept, result_linregress.slope
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -292,14 +289,14 @@ result_linregress.intercept, result_linregress.slope
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_linregress.intercept_stderr, result_linregress.stderr,
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(964.7984274994059), np.float64(5.076138407990821))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -309,14 +306,14 @@ result_linregress.intercept_stderr, result_linregress.stderr,
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_ols.pvalues["flipper_length"]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(1.3432645947789321e-09)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -325,14 +322,14 @@ np.float64(1.3432645947789321e-09)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_linregress.pvalue
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(1.3432645947790051e-09)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -352,14 +349,14 @@ np.float64(1.3432645947790051e-09)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_ols.rsquared, result_linregress.rvalue**2
       </input>
-    </program>
-    <pre>
+      <output>
 (np.float64(0.21921282646854878), np.float64(0.21921282646854875))
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -371,19 +368,16 @@ result_ols.rsquared, result_linregress.rvalue**2
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "mass ~ culmen_length"
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -420,18 +414,15 @@ formula = "mass ~ flipper_length + culmen_length"
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -454,16 +445,16 @@ display_summary(result)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import corrcoef
 
 corrcoef(adelie, "flipper_length", "culmen_length")
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.32578471516515944)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -477,19 +468,16 @@ np.float64(0.32578471516515944)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "mass ~ flipper_length + culmen_length + culmen_depth"
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -503,17 +491,17 @@ display_summary(result)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 [
     corrcoef(adelie, "culmen_depth", "flipper_length"),
     corrcoef(adelie, "culmen_depth", "culmen_length"),
 ]
       </input>
-    </program>
-    <pre>
+      <output>
 [np.float64(0.30762017939668534), np.float64(0.39149169183587634)]
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -599,19 +587,16 @@ valid = live.dropna(subset=["agepreg", "birthord", "totalwgt_lb"]).copy()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "totalwgt_lb ~ agepreg"
 result_age = smf.ols(formula, data=valid).fit()
 display_summary(result_age)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -697,10 +682,10 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="linear model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Because the slope of the fitted line is small, we can barely see the difference in the expected birth weight between the youngest and oldest mothers.
@@ -722,20 +707,20 @@ valid["is_first"] = valid["birthord"] == 1
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import value_counts
 
 # check the results
 value_counts(valid["is_first"])
       </input>
-    </program>
-    <pre>
+      <output>
 is_first
 False    4675
 True     4363
 Name: count, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -758,18 +743,15 @@ formula = "totalwgt_lb ~ C(is_first)"
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_first = smf.ols(formula, data=valid).fit()
 display_summary(result_first)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -786,27 +768,27 @@ display_summary(result_first)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 others["totalwgt_lb"].mean()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(7.325855614973262)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff_weight = firsts["totalwgt_lb"].mean() - others["totalwgt_lb"].mean()
 diff_weight
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(-0.12476118453549034)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -821,15 +803,15 @@ np.float64(-0.12476118453549034)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff_age = firsts["agepreg"].mean() - others["agepreg"].mean()
 diff_age
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(-3.5864347661500275)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -838,15 +820,15 @@ np.float64(-3.5864347661500275)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 slope = result_age.params["agepreg"]
 slope
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.017453851471802638)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -855,14 +837,14 @@ np.float64(0.017453851471802638)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 slope * diff_age
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(-0.0625970997216918)
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -875,19 +857,16 @@ np.float64(-0.0625970997216918)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "totalwgt_lb ~ agepreg + C(is_first)"
 result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -940,18 +919,15 @@ formula = "totalwgt_lb ~ agepreg + agepreg2"
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 result_age2 = smf.ols(formula, data=valid).fit()
 display_summary(result_age2)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1003,10 +979,10 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="quadratic model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The curvature is subtle, but it suggests that birth weights are lower for the youngest and oldest mothers, and higher in the middle.
@@ -1018,19 +994,16 @@ decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "totalwgt_lb ~ agepreg + agepreg2 + C(is_first)"
 result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1080,17 +1053,17 @@ adelie["y"] = (adelie["Sex"] == "MALE").astype(int)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 adelie["y"].value_counts()
       </input>
-    </program>
-    <pre>
+      <output>
 y
 0    78
 1    73
 Name: count, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1114,17 +1087,14 @@ result = model.fit(disp=False)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1163,10 +1133,10 @@ plt.plot(mass_range, fit_ys)
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The lightest penguins are almost certain to be female, and the heaviest are likely to be male -- in the middle, a penguin weighing 3750 grams is about equally likely to be male or female.
@@ -1177,20 +1147,17 @@ decorate(xlabel="Mass (g)", ylabel="Prob(male)")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
 model = smf.logit(formula, data=adelie)
 result = model.fit(disp=False)
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1247,10 +1214,10 @@ plot_predictions(mass_range, m - s, ls=":", label="Below average culmen length")
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       As we saw in the simpler model, heavier penguins are more likely to be male.
@@ -1285,15 +1252,15 @@ def get_species(penguins, species):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 gentoo = get_species(penguins, "Gentoo")
 len(gentoo)
       </input>
-    </program>
-    <pre>
+      <output>
 123
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1302,20 +1269,17 @@ len(gentoo)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
 model = smf.logit(formula, data=gentoo)
 result = model.fit(disp=False)
 display_summary(result)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
 
     <p>
@@ -1441,15 +1405,15 @@ valid["y"] = (valid["babysex"] == 1).astype(int)
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 chinstrap = get_species(penguins, "Chinstrap")
 len(chinstrap)
           </input>
-        </program>
-    <pre>
+          <output>
 68
-    </pre>
+          </output>
+        </console>
         </listing>
       </statement>
     </exercise>

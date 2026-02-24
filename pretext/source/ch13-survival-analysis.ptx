@@ -91,13 +91,12 @@ download(
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 df = pd.read_csv("lamps.csv", index_col=0)
 df.tail()
       </input>
-    </program>
-    <pre>
+      <output>
        h  f  K
 i             
 28  1812  1  4
@@ -105,7 +104,8 @@ i
 30  1860  1  2
 31  1980  1  1
 32  2568  1  0
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The <c>h</c> column contains lifespans in hours.
@@ -115,17 +115,17 @@ i
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Pmf
 
 pmf_bulblife = Pmf(df["f"].values, index=df["h"])
 pmf_bulblife.normalize()
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(50)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       We can use <c>make_cdf</c> to compute the CDF, which indicates the fraction of bulbs
@@ -134,15 +134,15 @@ np.int64(50)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf_bulblife = pmf_bulblife.make_cdf()
 cdf_bulblife[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.7800000000000002)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The survival function is the fraction of bulbs that expire <em>after</em> each value of
@@ -151,15 +151,15 @@ np.float64(0.7800000000000002)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 complementary_cdf = 1 - cdf_bulblife
 complementary_cdf[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.21999999999999975)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       22% of the bulbs expired after 1656 hours.
@@ -170,15 +170,15 @@ np.float64(0.21999999999999975)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 surv_bulblife = cdf_bulblife.make_surv()
 surv_bulblife[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.21999999999999997)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       If we plot the CDF and the survival function, we can see that they are
@@ -194,10 +194,10 @@ surv_bulblife.plot(label="Survival")
 decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       In that sense, the CDF and survival function are equivalent<mdash/>if we are given
       either one, we can compute the other<mdash/>but in the context of survival analysis it
@@ -224,44 +224,44 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 at_risk = pmf_bulblife + surv_bulblife
 at_risk[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.25999999999999995)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And 4% of all bulbs expired during interval 1656.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf_bulblife[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.04)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The <term>hazard</term> is the ratio of <c>pmf_bulblife</c> and <c>at_risk</c>.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 hazard = pmf_bulblife / at_risk
 hazard[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.15384615384615388)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Of all bulbs that survived up to interval 1656, about 15% expired during interval 1656.
@@ -273,15 +273,15 @@ np.float64(0.15384615384615388)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 hazard_bulblife = surv_bulblife.make_hazard()
 hazard_bulblife[1656]
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.15384615384615397)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Here's what the hazard function looks like for the light bulbs.
@@ -294,10 +294,10 @@ hazard_bulblife.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_002.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       We can see that the hazard is higher in some places than others, but this way of
       visualizing the hazard function can be misleading, especially in parts of the range
@@ -315,10 +315,10 @@ cumulative_hazard.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_003.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Where the probability of expiring is high, the cumulative hazard function is steep.
       Where the probability of expiring is low, the cumulative hazard function is flat.
@@ -357,15 +357,15 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 resp = pd.read_csv("marriage_nsfg_female.csv.gz")
 resp.shape
       </input>
-    </program>
-    <pre>
+      <output>
 (70183, 34)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The excerpt includes one row for each of more than 70,000 respondents, and has the
@@ -430,15 +430,14 @@ def decade_of_birth(cmbirth):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import value_counts
 
 resp["cohort"] = resp["cmbirth"].apply(decade_of_birth)
 value_counts(resp["cohort"])
       </input>
-    </program>
-    <pre>
+      <output>
 cohort
 1930      325
 1940     3608
@@ -449,7 +448,8 @@ cohort
 1990     8552
 2000     1405
 Name: count, dtype: int64
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The dataset includes more than 10,000 respondents born in each decade from the 1950s to
@@ -522,10 +522,10 @@ ylim = [-0.05, 1.05]
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_004.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       If we take these results at face value, they show that people in earlier generations got
       married younger, and more of them got married eventually.
@@ -637,10 +637,10 @@ for label, surv in survs_resampled.items():
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_005.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The difference, with and without resampling, is substantial, which shows that we need to
       correct for stratified sampling to get accurate results.
@@ -697,15 +697,15 @@ resp60 = sample.query("cohort == 1960")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 complete = resp60.query("evrmarry == 1")["agemarr"]
 complete.count()
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(9921)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       For respondents who had not married, we'll select their age when they were surveyed.
@@ -713,15 +713,15 @@ np.int64(9921)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ongoing = resp60.query("evrmarry == 0")["age"]
 ongoing.count()
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(5468)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Now, to estimate the hazard function, we'll compute the total number of cases that were
@@ -746,14 +746,14 @@ ft_ongoing = FreqTab.from_seq(ongoing)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ft_complete[25]
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(58)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And another 5 respondents who were surveyed at age 25 and reported that they had never
@@ -761,14 +761,14 @@ np.int64(58)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ft_ongoing[25]
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(5)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       From these <c>FreqTab</c> objects, we can compute unnormalized <c>Surv</c> objects that
@@ -788,28 +788,28 @@ surv_ongoing = ft_ongoing.make_surv()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 surv_complete[25]
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(2848)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       And 2273 people surveyed after age 25 who had never married.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 surv_ongoing[25]
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(2273)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The sum of the four numbers we just computed is the number of respondents who were at
@@ -822,15 +822,15 @@ np.int64(2273)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 at_risk = ft_complete[25] + ft_ongoing[25] + surv_complete[25] + surv_ongoing[25]
 at_risk
       </input>
-    </program>
-    <pre>
+      <output>
 np.int64(5184)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Of those, the number who actually married at age 25 is <c>ft_complete[25]</c>.
@@ -838,15 +838,15 @@ np.int64(5184)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 hazard = ft_complete[25] / at_risk
 hazard
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.011188271604938271)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       That's how we can compute the hazard function at a single age.
@@ -902,10 +902,10 @@ hazard.cumsum().plot()
 decorate(xlabel="Age", ylabel="Cumulative hazard")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_006.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       It is steepest between ages 20 and 30, which means that an unmarried person is at the
       greatest <q>risk</q> of getting married at these ages.
@@ -967,10 +967,10 @@ surv.plot(label="Kaplan-Meier")
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_007.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       We can see how important it is to handle censored data correctly.
     </p>
@@ -1082,17 +1082,17 @@ event_observed = np.concatenate([np.ones(len(complete)), np.zeros(len(ongoing))]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from lifelines import KaplanMeierFitter
 
 kmf = KaplanMeierFitter()
 kmf.fit(durations=durations, event_observed=event_observed)
       </input>
-    </program>
-    <pre>
+      <output>
 &lt;lifelines.KaplanMeierFitter:"KM_estimate", fitted with 15389 total observations, 5468 right-censored observations&gt;
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       After fitting the data, we can call the <c>plot</c> function to display the results,
@@ -1109,25 +1109,25 @@ kmf.plot()
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_008.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Unlike the survival function we computed, the one from <c>lifelines</c> starts from 0.
       But the rest of the function is the same, within floating-point error.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ps = kmf.survival_function_["KM_estimate"].drop(0)
 np.allclose(ps, surv)
       </input>
-    </program>
-    <pre>
+      <output>
 True
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       In the next section, we'll use weighted resampling to compute confidence intervals that
@@ -1222,10 +1222,10 @@ xlim = [8, 55]
 decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_009.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       This visualization is good enough for exploration, but the lines look blurry and some
       of the labels overlap.
@@ -1277,18 +1277,17 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from nsfg import get_nsfg_groups
 
 live, firsts, others = get_nsfg_groups()
       </input>
-    </program>
-    <pre>
+      <output>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
-
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       We'll start with a single resampling of the data.
@@ -1349,14 +1348,14 @@ pmf_remaining = Pmf(ps, qs)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf_remaining.normalize()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(0.9155006558810669)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       Here's the result, which shows the distribution of remaining time at the beginning of
@@ -1370,23 +1369,23 @@ pmf_remaining.bar(label="Week 36")
 decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_010.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The mean of this distribution is the expected remaining time.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf_remaining.mean()
       </input>
-    </program>
-    <pre>
+      <output>
 np.float64(3.2145671641791043)
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       The following function encapsulates these steps and computes the distribution of
@@ -1432,13 +1431,12 @@ def expected_remaining(pmf):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 expected = expected_remaining(pmf_durations)
 expected
       </input>
-    </program>
-    <pre>
+      <output>
 36    3.214567
 37    2.337714
 38    1.479095
@@ -1448,7 +1446,8 @@ expected
 42    0.582301
 43    0.589372
 dtype: float64
-    </pre>
+      </output>
+    </console>
     </listing>
     <p>
       To see how much variation there is due to random sampling, we can run this analysis with
@@ -1469,10 +1468,10 @@ decorate(
 )
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap13_011.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Between weeks 36 and 39, the expected remaining time decreases until, at the beginning
       of the 39th week, it is about 0.6 weeks.
@@ -1674,10 +1673,10 @@ hazard.plot()
 decorate(xlabel="Age (years)", ylabel="Hazard")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap13_015.png" width="80%"/>
     </figure>
-        </listing>
         <p>
           Use <c>make_surv</c> to make a survival function based on these rates, and
           <c>make_cdf</c> to compute the corresponding CDF.
