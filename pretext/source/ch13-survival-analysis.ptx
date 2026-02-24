@@ -515,6 +515,23 @@ surv_map = make_survival_map(resp, cohorts)
       <caption>Python Code</caption>
     <program language="python">
       <input>
+import matplotlib.pyplot as plt
+import cycler
+
+# Extract the default color cycle
+default_colors = plt.rcParams["axes.prop_cycle"].by_key()["color"]
+
+# Define the desired line styles
+linestyles = ["--", "-", "-.", "--", "-", "-.", "--", "-", "-.", "--"]
+
+# Ensure we cycle through styles and colors properly
+custom_cycler = cycler.cycler(color=default_colors) + cycler.cycler(
+    linestyle=linestyles
+)
+
+# Apply the new cycler
+plt.rc("axes", prop_cycle=custom_cycler)
+
 for cohort, surv in surv_map.items():
     surv.plot(label=f"{cohort}s")
 
