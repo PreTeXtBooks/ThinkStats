@@ -254,17 +254,53 @@ statsmodels.regression.linear_model.RegressionResultsWrapper
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from thinkstats import display_summary
 
 display_summary(result_ols)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-2535.8368</cell>
+          <cell>964.798</cell>
+          <cell>-2.628</cell>
+          <cell>0.009</cell>
+          <cell>-4442.291</cell>
+          <cell>-629.382</cell>
+        </row>
+        <row>
+          <cell>flipper_length</cell>
+          <cell>32.8317</cell>
+          <cell>5.076</cell>
+          <cell>6.468</cell>
+          <cell>0.000</cell>
+          <cell>22.801</cell>
+          <cell>42.862</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.2192</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The first column contains the intercept and slope, which are the <term>coefficients</term> of the model.
@@ -368,17 +404,53 @@ result_ols.rsquared, result_linregress.rvalue**2
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "mass ~ culmen_length"
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>34.8830</cell>
+          <cell>458.439</cell>
+          <cell>0.076</cell>
+          <cell>0.939</cell>
+          <cell>-870.998</cell>
+          <cell>940.764</cell>
+        </row>
+        <row>
+          <cell>culmen_length</cell>
+          <cell>94.4998</cell>
+          <cell>11.790</cell>
+          <cell>8.015</cell>
+          <cell>0.000</cell>
+          <cell>71.202</cell>
+          <cell>117.798</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.3013</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       Again, the p-value of the slope is very small, which means that if there were actually no relationship between mass and culmen length, it is unlikely we would see a slope this big by chance.
@@ -414,16 +486,61 @@ formula = "mass ~ flipper_length + culmen_length"
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-3573.0817</cell>
+          <cell>866.739</cell>
+          <cell>-4.122</cell>
+          <cell>0.000</cell>
+          <cell>-5285.864</cell>
+          <cell>-1860.299</cell>
+        </row>
+        <row>
+          <cell>flipper_length</cell>
+          <cell>22.7024</cell>
+          <cell>4.742</cell>
+          <cell>4.787</cell>
+          <cell>0.000</cell>
+          <cell>13.331</cell>
+          <cell>32.074</cell>
+        </row>
+        <row>
+          <cell>culmen_length</cell>
+          <cell>76.3402</cell>
+          <cell>11.644</cell>
+          <cell>6.556</cell>
+          <cell>0.000</cell>
+          <cell>53.331</cell>
+          <cell>99.350</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.3949</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       This model has three coefficients: an intercept and two slopes.
@@ -468,17 +585,71 @@ np.float64(0.32578471516515944)
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "mass ~ flipper_length + culmen_length + culmen_depth"
 result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-4341.3019</cell>
+          <cell>795.117</cell>
+          <cell>-5.460</cell>
+          <cell>0.000</cell>
+          <cell>-5912.639</cell>
+          <cell>-2769.964</cell>
+        </row>
+        <row>
+          <cell>flipper_length</cell>
+          <cell>17.4215</cell>
+          <cell>4.385</cell>
+          <cell>3.973</cell>
+          <cell>0.000</cell>
+          <cell>8.756</cell>
+          <cell>26.087</cell>
+        </row>
+        <row>
+          <cell>culmen_length</cell>
+          <cell>55.3676</cell>
+          <cell>11.133</cell>
+          <cell>4.973</cell>
+          <cell>0.000</cell>
+          <cell>33.366</cell>
+          <cell>77.369</cell>
+        </row>
+        <row>
+          <cell>culmen_depth</cell>
+          <cell>140.8946</cell>
+          <cell>24.216</cell>
+          <cell>5.818</cell>
+          <cell>0.000</cell>
+          <cell>93.037</cell>
+          <cell>188.752</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.5082</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       This model has four coefficients.
@@ -587,17 +758,53 @@ valid = live.dropna(subset=["agepreg", "birthord", "totalwgt_lb"]).copy()
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg"
 result_age = smf.ols(formula, data=valid).fit()
 display_summary(result_age)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>6.8304</cell>
+          <cell>0.068</cell>
+          <cell>100.470</cell>
+          <cell>0.000</cell>
+          <cell>6.697</cell>
+          <cell>6.964</cell>
+        </row>
+        <row>
+          <cell>agepreg</cell>
+          <cell>0.0175</cell>
+          <cell>0.003</cell>
+          <cell>6.559</cell>
+          <cell>0.000</cell>
+          <cell>0.012</cell>
+          <cell>0.023</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.004738</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The slope is small, only 0.0175 pounds per year.
@@ -743,16 +950,52 @@ formula = "totalwgt_lb ~ C(is_first)"
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 result_first = smf.ols(formula, data=valid).fit()
 display_summary(result_first)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>7.3259</cell>
+          <cell>0.021</cell>
+          <cell>356.007</cell>
+          <cell>0.000</cell>
+          <cell>7.286</cell>
+          <cell>7.366</cell>
+        </row>
+        <row>
+          <cell>C(is_first)[T.True]</cell>
+          <cell>-0.1248</cell>
+          <cell>0.030</cell>
+          <cell>-4.212</cell>
+          <cell>0.000</cell>
+          <cell>-0.183</cell>
+          <cell>-0.067</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.00196</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       In the results, the label <c>C(is_first)[T.True]</c> indicates that <c>is_first</c> is a categorical variable and the coefficient is associated with the value <c>True</c>.
@@ -857,17 +1100,62 @@ np.float64(-0.0625970997216918)
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg + C(is_first)"
 result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>6.9142</cell>
+          <cell>0.078</cell>
+          <cell>89.073</cell>
+          <cell>0.000</cell>
+          <cell>6.762</cell>
+          <cell>7.066</cell>
+        </row>
+        <row>
+          <cell>C(is_first)[T.True]</cell>
+          <cell>-0.0698</cell>
+          <cell>0.031</cell>
+          <cell>-2.236</cell>
+          <cell>0.025</cell>
+          <cell>-0.131</cell>
+          <cell>-0.009</cell>
+        </row>
+        <row>
+          <cell>agepreg</cell>
+          <cell>0.0154</cell>
+          <cell>0.003</cell>
+          <cell>5.499</cell>
+          <cell>0.000</cell>
+          <cell>0.010</cell>
+          <cell>0.021</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.005289</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The coefficient of <c>is_first</c> is -0.0698, which means that first babies are 0.0698 pounds lighter than others, on average, after accounting for the difference due to maternal age.
@@ -919,16 +1207,61 @@ formula = "totalwgt_lb ~ agepreg + agepreg2"
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 result_age2 = smf.ols(formula, data=valid).fit()
 display_summary(result_age2)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>5.5720</cell>
+          <cell>0.275</cell>
+          <cell>20.226</cell>
+          <cell>0.000</cell>
+          <cell>5.032</cell>
+          <cell>6.112</cell>
+        </row>
+        <row>
+          <cell>agepreg</cell>
+          <cell>0.1186</cell>
+          <cell>0.022</cell>
+          <cell>5.485</cell>
+          <cell>0.000</cell>
+          <cell>0.076</cell>
+          <cell>0.161</cell>
+        </row>
+        <row>
+          <cell>agepreg2</cell>
+          <cell>-0.0019</cell>
+          <cell>0.000</cell>
+          <cell>-4.714</cell>
+          <cell>0.000</cell>
+          <cell>-0.003</cell>
+          <cell>-0.001</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.00718</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The p-value associated with the quadratic term, <c>agepreg2</c>, is very small, which suggests that it contributes more information about birth weight than we would expect by chance.
@@ -994,17 +1327,71 @@ decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "totalwgt_lb ~ agepreg + agepreg2 + C(is_first)"
 result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>5.6923</cell>
+          <cell>0.286</cell>
+          <cell>19.937</cell>
+          <cell>0.000</cell>
+          <cell>5.133</cell>
+          <cell>6.252</cell>
+        </row>
+        <row>
+          <cell>C(is_first)[T.True]</cell>
+          <cell>-0.0504</cell>
+          <cell>0.031</cell>
+          <cell>-1.602</cell>
+          <cell>0.109</cell>
+          <cell>-0.112</cell>
+          <cell>0.011</cell>
+        </row>
+        <row>
+          <cell>agepreg</cell>
+          <cell>0.1124</cell>
+          <cell>0.022</cell>
+          <cell>5.113</cell>
+          <cell>0.000</cell>
+          <cell>0.069</cell>
+          <cell>0.155</cell>
+        </row>
+        <row>
+          <cell>agepreg2</cell>
+          <cell>-0.0018</cell>
+          <cell>0.000</cell>
+          <cell>-4.447</cell>
+          <cell>0.000</cell>
+          <cell>-0.003</cell>
+          <cell>-0.001</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.007462</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       With a more effective control for maternal age, the estimated difference between first babies and others is 0.0504 pounds, smaller than the estimate with just the linear model (0.0698 pounds).
@@ -1087,15 +1474,51 @@ result = model.fit(disp=False)
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>z</cell>
+          <cell>P&gt;|z|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-25.9871</cell>
+          <cell>4.221</cell>
+          <cell>-6.156</cell>
+          <cell>0.000</cell>
+          <cell>-34.261</cell>
+          <cell>-17.713</cell>
+        </row>
+        <row>
+          <cell>mass</cell>
+          <cell>0.0070</cell>
+          <cell>0.001</cell>
+          <cell>6.138</cell>
+          <cell>0.000</cell>
+          <cell>0.005</cell>
+          <cell>0.009</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>Pseudo R-squared:</cell>
+          <cell>0.5264</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The coefficient of determination, <m>R^2</m>, does not apply to logistic regression, but there are several alternatives that are used as "pseudo <m>R^2</m> values."
@@ -1147,18 +1570,81 @@ decorate(xlabel="Mass (g)", ylabel="Prob(male)")
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
 model = smf.logit(formula, data=adelie)
 result = model.fit(disp=False)
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>z</cell>
+          <cell>P&gt;|z|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-60.6075</cell>
+          <cell>13.793</cell>
+          <cell>-4.394</cell>
+          <cell>0.000</cell>
+          <cell>-87.642</cell>
+          <cell>-33.573</cell>
+        </row>
+        <row>
+          <cell>mass</cell>
+          <cell>0.0059</cell>
+          <cell>0.001</cell>
+          <cell>4.153</cell>
+          <cell>0.000</cell>
+          <cell>0.003</cell>
+          <cell>0.009</cell>
+        </row>
+        <row>
+          <cell>flipper_length</cell>
+          <cell>-0.0209</cell>
+          <cell>0.052</cell>
+          <cell>-0.403</cell>
+          <cell>0.687</cell>
+          <cell>-0.123</cell>
+          <cell>0.081</cell>
+        </row>
+        <row>
+          <cell>culmen_length</cell>
+          <cell>0.6208</cell>
+          <cell>0.176</cell>
+          <cell>3.536</cell>
+          <cell>0.000</cell>
+          <cell>0.277</cell>
+          <cell>0.965</cell>
+        </row>
+        <row>
+          <cell>culmen_depth</cell>
+          <cell>1.0111</cell>
+          <cell>0.349</cell>
+          <cell>2.896</cell>
+          <cell>0.004</cell>
+          <cell>0.327</cell>
+          <cell>1.695</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>Pseudo R-squared:</cell>
+          <cell>0.6622</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The pseudo <m>R^2</m> value of this model is 0.662, higher than the previous model (0.526) -- so the additional measurements contain additional information that distinguishes male and female penguins.
@@ -1269,18 +1755,81 @@ len(gentoo)
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = "y ~ mass + flipper_length + culmen_length + culmen_depth"
 model = smf.logit(formula, data=gentoo)
 result = model.fit(disp=False)
 display_summary(result)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>z</cell>
+          <cell>P&gt;|z|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-173.9123</cell>
+          <cell>62.326</cell>
+          <cell>-2.790</cell>
+          <cell>0.005</cell>
+          <cell>-296.069</cell>
+          <cell>-51.756</cell>
+        </row>
+        <row>
+          <cell>mass</cell>
+          <cell>0.0105</cell>
+          <cell>0.004</cell>
+          <cell>2.948</cell>
+          <cell>0.003</cell>
+          <cell>0.004</cell>
+          <cell>0.017</cell>
+        </row>
+        <row>
+          <cell>flipper_length</cell>
+          <cell>0.2839</cell>
+          <cell>0.183</cell>
+          <cell>1.549</cell>
+          <cell>0.121</cell>
+          <cell>-0.075</cell>
+          <cell>0.643</cell>
+        </row>
+        <row>
+          <cell>culmen_length</cell>
+          <cell>0.2734</cell>
+          <cell>0.285</cell>
+          <cell>0.958</cell>
+          <cell>0.338</cell>
+          <cell>-0.286</cell>
+          <cell>0.833</cell>
+        </row>
+        <row>
+          <cell>culmen_depth</cell>
+          <cell>3.0843</cell>
+          <cell>1.291</cell>
+          <cell>2.389</cell>
+          <cell>0.017</cell>
+          <cell>0.554</cell>
+          <cell>5.614</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>Pseudo R-squared:</cell>
+          <cell>0.848</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The pseudo-<m>R^2</m> value is 0.848, higher than what we got with Adélie penguins (0.662).

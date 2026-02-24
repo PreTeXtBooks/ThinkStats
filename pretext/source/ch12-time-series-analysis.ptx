@@ -565,17 +565,53 @@ results = smf.ols("trend ~ months", data=data).fit()
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from thinkstats import display_summary
 
 display_summary(results)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>6.482e+04</cell>
+          <cell>131.524</cell>
+          <cell>492.869</cell>
+          <cell>0.000</cell>
+          <cell>6.46e+04</cell>
+          <cell>6.51e+04</cell>
+        </row>
+        <row>
+          <cell>months</cell>
+          <cell>10.9886</cell>
+          <cell>1.044</cell>
+          <cell>10.530</cell>
+          <cell>0.000</cell>
+          <cell>8.931</cell>
+          <cell>13.046</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.3477</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The <m>R^2</m> value is about 0.35, which suggests that the model does not fit the data particularly well.
@@ -871,15 +907,60 @@ results = smf.ols("trend ~ months + I(months**2)", data=data).fit()
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 display_summary(results)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>766.1962</cell>
+          <cell>13.494</cell>
+          <cell>56.782</cell>
+          <cell>0.000</cell>
+          <cell>739.106</cell>
+          <cell>793.286</cell>
+        </row>
+        <row>
+          <cell>months</cell>
+          <cell>22.2153</cell>
+          <cell>0.938</cell>
+          <cell>23.673</cell>
+          <cell>0.000</cell>
+          <cell>20.331</cell>
+          <cell>24.099</cell>
+        </row>
+        <row>
+          <cell>I(months ** 2)</cell>
+          <cell>0.1762</cell>
+          <cell>0.014</cell>
+          <cell>12.480</cell>
+          <cell>0.000</cell>
+          <cell>0.148</cell>
+          <cell>0.205</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.9983</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The p-values of the linear and quadratic terms are very small, which suggests that the quadratic model captures more information about the trend than a linear model would -- and the <m>R^2</m> value is very high.
@@ -1095,17 +1176,71 @@ def make_formula(df):
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = make_formula(df_ar)
 results_ar = smf.ols(formula=formula, data=df_ar).fit()
 display_summary(results_ar)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>24.2674</cell>
+          <cell>114.674</cell>
+          <cell>0.212</cell>
+          <cell>0.833</cell>
+          <cell>-201.528</cell>
+          <cell>250.063</cell>
+        </row>
+        <row>
+          <cell>lag1</cell>
+          <cell>0.5847</cell>
+          <cell>0.061</cell>
+          <cell>9.528</cell>
+          <cell>0.000</cell>
+          <cell>0.464</cell>
+          <cell>0.706</cell>
+        </row>
+        <row>
+          <cell>lag2</cell>
+          <cell>-0.0908</cell>
+          <cell>0.071</cell>
+          <cell>-1.277</cell>
+          <cell>0.203</cell>
+          <cell>-0.231</cell>
+          <cell>0.049</cell>
+        </row>
+        <row>
+          <cell>lag3</cell>
+          <cell>0.1026</cell>
+          <cell>0.062</cell>
+          <cell>1.666</cell>
+          <cell>0.097</cell>
+          <cell>-0.019</cell>
+          <cell>0.224</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.3239</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       Now we can use the <c>predict</c> method to generate predictions for the past values in the series.
@@ -1197,17 +1332,62 @@ df_ma = df_ma.dropna()
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 formula = make_formula(df_ma)
 results_ma = smf.ols(formula=formula, data=df_ma).fit()
 display_summary(results_ma)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>t</cell>
+          <cell>P&gt;|t|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>Intercept</cell>
+          <cell>-14.0016</cell>
+          <cell>114.697</cell>
+          <cell>-0.122</cell>
+          <cell>0.903</cell>
+          <cell>-239.863</cell>
+          <cell>211.860</cell>
+        </row>
+        <row>
+          <cell>lag1</cell>
+          <cell>0.0014</cell>
+          <cell>0.062</cell>
+          <cell>0.023</cell>
+          <cell>0.982</cell>
+          <cell>-0.120</cell>
+          <cell>0.123</cell>
+        </row>
+        <row>
+          <cell>lag6</cell>
+          <cell>-0.1592</cell>
+          <cell>0.063</cell>
+          <cell>-2.547</cell>
+          <cell>0.011</cell>
+          <cell>-0.282</cell>
+          <cell>-0.036</cell>
+        </row>
+      </tabular>
+    </table>
+    <table>
+      <tabular halign="center">
+        <row>
+          <cell>R-squared:</cell>
+          <cell>0.0247</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The <m>R^2</m> is quite small, so it looks like this part of the model won't help very much.
@@ -1445,7 +1625,7 @@ seasonal_order = (0, 1, 0, 12)
 
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 import statsmodels.tsa.api as tsa
 
@@ -1453,11 +1633,75 @@ model = tsa.ARIMA(nuclear, order=order, seasonal_order=seasonal_order)
 results_arima = model.fit()
 display_summary(results_arima)
       </input>
-      <output>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-      </output>
-    </console>
+    </program>
     </listing>
+    <table>
+      <tabular halign="center">
+        <row header="yes" bottom="minor">
+          <cell></cell>
+          <cell>coef</cell>
+          <cell>std err</cell>
+          <cell>z</cell>
+          <cell>P&gt;|z|</cell>
+          <cell>[0.025</cell>
+          <cell>0.975]</cell>
+        </row>
+        <row>
+          <cell>ar.L1</cell>
+          <cell>0.0458</cell>
+          <cell>0.379</cell>
+          <cell>0.121</cell>
+          <cell>0.904</cell>
+          <cell>-0.697</cell>
+          <cell>0.788</cell>
+        </row>
+        <row>
+          <cell>ar.L2</cell>
+          <cell>-0.0035</cell>
+          <cell>0.116</cell>
+          <cell>-0.030</cell>
+          <cell>0.976</cell>
+          <cell>-0.230</cell>
+          <cell>0.223</cell>
+        </row>
+        <row>
+          <cell>ar.L3</cell>
+          <cell>0.0375</cell>
+          <cell>0.049</cell>
+          <cell>0.769</cell>
+          <cell>0.442</cell>
+          <cell>-0.058</cell>
+          <cell>0.133</cell>
+        </row>
+        <row>
+          <cell>ma.L1</cell>
+          <cell>0.2154</cell>
+          <cell>0.382</cell>
+          <cell>0.564</cell>
+          <cell>0.573</cell>
+          <cell>-0.533</cell>
+          <cell>0.964</cell>
+        </row>
+        <row>
+          <cell>ma.L6</cell>
+          <cell>-0.0672</cell>
+          <cell>0.019</cell>
+          <cell>-3.500</cell>
+          <cell>0.000</cell>
+          <cell>-0.105</cell>
+          <cell>-0.030</cell>
+        </row>
+        <row>
+          <cell>sigma2</cell>
+          <cell>3.473e+06</cell>
+          <cell>1.9e-07</cell>
+          <cell>1.83e+13</cell>
+          <cell>0.000</cell>
+          <cell>3.47e+06</cell>
+          <cell>3.47e+06</cell>
+        </row>
+      </tabular>
+    </table>
 
     <p>
       The results include estimated coefficients for the three lags in the AR model, the two lags in the MA model, and <c>sigma2</c>, which is the variance of the residuals.
