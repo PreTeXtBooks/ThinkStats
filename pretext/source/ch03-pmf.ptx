@@ -135,7 +135,7 @@ Name: , dtype: float64
 pmf.sum()
       </input>
       <output>
-np.float64(0.8500000000000001)
+np.float64(1)
       </output>
     </console>
     </listing>
