@@ -9,6 +9,48 @@
       We'll start with frequency tables <mdash/> which represent the values in a dataset and the number of times each of them appears <mdash/> and use them to explore data from the National Survey of Family Growth (NSFG).
       We'll also look for extreme or erroneous values, called outliers, and consider ways to handle them.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import matplotlib.pyplot as plt
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-frequency-tables">

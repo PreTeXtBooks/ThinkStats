@@ -15,6 +15,50 @@
       consider a more substantial example, age at first marriage and how it has
       changed in the United States over the last 50 years.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-survival-functions">
@@ -32,6 +76,16 @@
       expired<mdash/>and ran the experiment until all 50 bulbs expired.
       Instructions for downloading the data are in the notebook for this chapter.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download(
+    "https://gist.github.com/epogrebnyak/7933e16c0ad215742c4c104be4fbdeb1/raw/c932bc5b6aa6317770c4cbf43eb591511fec08f9/lamps.csv"
+)
+      </input>
+    </program>
+    </listing>
     <p>
       We can read the data like this.
     </p>

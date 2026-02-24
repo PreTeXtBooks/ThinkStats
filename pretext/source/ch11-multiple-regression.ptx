@@ -12,6 +12,50 @@
       In this chapter, we move on to <term>multiple regression</term>, with more than one explanatory variable, but still only one response variable.
       If there is more than one response variable, that's multivariate regression, which we won't cover in this book.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-multiple-regression-statsmodels">

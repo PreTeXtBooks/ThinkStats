@@ -15,6 +15,52 @@
       We'll use linear regression models to fit and forecast trends.
       And we'll try out a widely-used model for analyzing time series data, with the formal name "autoregressive integrated moving average" and the easier-to-say acronym ARIMA.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+
+plt.rcParams["figure.dpi"] = 300
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-time-series-electricity">

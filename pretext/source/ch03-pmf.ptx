@@ -13,6 +13,50 @@
       We'll use <c>Pmf</c> objects to compute the mean and variance of a distribution, and the skewness, which indicates whether it is skewed to the left or right.
       Finally, we will explore how a phenomenon called the "inspection paradox" can cause a sample to give a biased view of a distribution.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-pmfs">

@@ -11,6 +11,50 @@
     <p>
       Also in this chapter, we'll compute percentile-based statistics to quantify the location, spread, and skewness of a distribution.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-percentiles">
@@ -26,6 +70,17 @@
       Some years ago I ran the James Joyce Ramble, which is a 10 kilometer road race in Massachusetts.
       After the race, I downloaded the results to see how my time compared to other runners.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/relay.py")
+download(
+    "https://github.com/AllenDowney/ThinkStats/raw/v3/data/Apr25_27thAn_set1.shtml"
+)
+      </input>
+    </program>
+    </listing>
     <p>
       The <c>relay.py</c> module provides a function that reads the results and returns a Pandas <c>DataFrame</c>.
     </p>

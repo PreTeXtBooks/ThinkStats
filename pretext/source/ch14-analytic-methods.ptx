@@ -13,6 +13,50 @@
       At the end of the chapter, I make suggestions for integrating computational and analytic
       methods for data analysis.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-normal-probability-plots">
@@ -30,6 +74,16 @@
       Then we'll explore the mathematical properties of the normal distribution.
       Instructions for downloading the data are in the notebook for this chapter.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download(
+    "https://raw.githubusercontent.com/allisonhorst/palmerpenguins/c19a904462482430170bfe2c718775ddb7dbb885/inst/extdata/penguins_raw.csv"
+)
+      </input>
+    </program>
+    </listing>
     <p>
       We can read the data like this.
     </p>

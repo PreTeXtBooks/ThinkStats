@@ -9,6 +9,50 @@
       When we compared continuous distributions, we used a line plot to show their cumulative distribution functions (CDFs).
       In this chapter, we'll introduce probability density functions (PDFs), which are another way to represent and visualize continuous distributions.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-comparing-distributions">
@@ -21,6 +65,27 @@
     <p>
       We can use <c>read_fem_resp</c> to read the respondent data file, then select household sizes for people 25 and older.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
