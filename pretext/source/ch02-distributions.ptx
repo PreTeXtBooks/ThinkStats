@@ -249,6 +249,27 @@ for x, freq in ftab.items():
       In the previous chapter, we downloaded this dataset, read it into a Pandas <c>DataFrame</c>, and cleaned a few of the variables.
       The code we used to load and clean the data is in a module called <c>nsfg.py</c> <mdash/> instructions for installing this module are in the notebook for this chapter.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       We can import it and read the pregnancy file like this.
     </p>
@@ -916,6 +937,15 @@ np.float64(0.028879044654449834)
     <p>
       The codebook for the female respondent file is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       The <c>nsfg.py</c> module provides a function that reads the female respondent file, cleans some of the variables, and returns a <c>DataFrame</c>.
     </p>

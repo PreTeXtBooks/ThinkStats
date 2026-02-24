@@ -766,6 +766,27 @@ np.float64(23.692307692307693)
       <caption>Python Code</caption>
     <program language="python">
       <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 from nsfg import get_nsfg_groups
 
 live, firsts, others = get_nsfg_groups()
@@ -921,6 +942,15 @@ decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
     <p>
       The codebook for this dataset is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       The <c>nsfg.py</c> module provides a function that reads the respondent file and returns a <c>DataFrame</c>.
     </p>
