@@ -185,20 +185,88 @@ def _truncate(text, max_length=MAX_TEXT_LENGTH):
     return text
 
 
+# Regex pattern string for a <program language="python"> block with its
+# <input>…</input> content.  Groups (when used with re.DOTALL):
+#   1: prog_indent   — leading whitespace of the <program> tag, e.g. "    "
+#   2: open_tag      — "<program language="python">"
+#   3: input_open    — whitespace + "<input>", e.g. "\n      <input>"
+#   4: code          — raw code between <input> and </input>
+#   5: input_close   — "</input>"
+#   6: close_prog    — whitespace + "</program>", e.g. "\n    </program>"
+#
+# The code group uses a negative lookahead (?:(?!</input>).)* to prevent
+# matching across </input> when two program blocks appear consecutively.
+_PROG_PAT = (
+    r"([ \t]*)(<program language=\"python\">)"
+    r"(\s*<input>)((?:(?!</input>).)*?)(</input>)"
+    r"(\s*</program>)"
+)
+
+def _build_console_block(prog_indent, input_open, code, input_close, close_tag, pre_blocks):
+    """
+    Build a <console> element with <input> and <output> from a <program>
+    element and one or more <pre> output blocks.
+
+    Arguments:
+        prog_indent   -- leading whitespace of the <program> tag (e.g. "    ")
+        input_open    -- whitespace + "<input>" (e.g. "\n      <input>")
+        code          -- raw code content between <input> and </input>
+        input_close   -- "</input>"
+        close_tag     -- whitespace + "</program>" or whitespace + "</console>",
+                         used to derive the closing indent/tag for </console>
+        pre_blocks    -- string containing one or more <pre>…</pre> blocks
+    """
+    # Detect input indent from the whitespace before <input>
+    input_indent_m = re.search(r"([ \t]+)<input>", input_open)
+    input_indent = input_indent_m.group(1) if input_indent_m else prog_indent + "  "
+
+    # Extract text from each <pre> block, deduplicate, and concatenate
+    seen: set = set()
+    text_parts = []
+    for m in re.finditer(r"<pre>(.*?)</pre>", pre_blocks, re.DOTALL):
+        text = m.group(1).rstrip()
+        if text not in seen:
+            seen.add(text)
+            text_parts.append(text)
+    combined_text = "".join(text_parts)
+
+    output_elem = (
+        f"\n{input_indent}<output>{combined_text}\n{input_indent}</output>"
+    )
+    close_console = re.sub(r"</program>|</console>", "</console>", close_tag)
+
+    return (
+        prog_indent
+        + "<console>"
+        + input_open
+        + code
+        + input_close
+        + output_elem
+        + close_console
+    )
+
+
 def migrate_ptx_file(ptx_path):
     """
-    Migrate an existing PTX file so that output blocks are placed after
-    their corresponding <listing> element rather than inside it.
+    Migrate an existing PTX file so that text output blocks (<pre>) are
+    represented as <console><input>…</input><output>…</output></console>
+    inside the <listing>, and figure output blocks (<figure>) stay after
+    </listing>.
 
-    The PreTeXt schema only allows Program or Console inside <listing>,
-    so <pre> and <figure> output blocks must appear after </listing>.
+    PreTeXt's <listing> schema only allows Program or Console as content.
+    <pre> elements are not valid children of <listing>, but <console> is
+    and its <output> child carries the text output.
 
-    Handles two cases:
-    1. A separate <listing><caption>Output</caption>...</listing> that follows
-       a code listing — the output content is moved outside the code listing.
-    2. A <figure> or <pre> block placed inside <listing> after <program>
-       (inserted by an older version of this script) — the block is moved
-       to after </listing>.
+    Handles three cases:
+    1. A separate <listing><caption>Output</caption>…</listing> that follows
+       a code listing — the output content is merged into the code listing.
+    2. A <pre> block placed inside <listing> after </program> (old style) —
+       converted to a <console> with <output> inside the listing.
+    3. A <pre> block placed directly after </listing> (previous migration
+       style) — converted to a <console> with <output> inside the listing.
+
+    <figure> blocks placed after </listing> are left unchanged: figures
+    cannot be children of <listing> in the PreTeXt schema.
 
     Returns True if any changes were made.
     """
@@ -207,9 +275,9 @@ def migrate_ptx_file(ptx_path):
 
     original = content
 
-    # Case 1: merge a separate output listing into a block after the code listing.
-    # Before: </program>\n    </listing>\n    <listing>\n      <caption>Output</caption>(content)</listing>
-    # After:  </program>\n    </listing>(content)
+    # Case 1: merge a separate output listing into the preceding code listing.
+    # Before: </program>\n    </listing>\n    <listing>\n      <caption>Output</caption>CONTENT</listing>
+    # After:  </program>\n    </listing>CONTENT
     case1_pattern = re.compile(
         r"(</program>)"
         r"([ \t]*\n[ \t]*</listing>)"
@@ -220,98 +288,142 @@ def migrate_ptx_file(ptx_path):
     )
     content = case1_pattern.sub(r"\1\2\3", content)
 
-    # Case 2: move figure/pre blocks from inside <listing> to after </listing>.
-    # Before: </program>(output_blocks)\n    </listing>
-    # After:  </program>\n    </listing>(output_blocks)
+    # Case 2: <pre> blocks inside <listing> after </program>
+    # Before: <program>…</program>(pre_blocks)</listing>
+    # After:  <console>…<output>…</output></console></listing>
+    def _case2_replacer(m):
+        return (
+            _build_console_block(
+                m.group(1), m.group(3), m.group(4), m.group(5), m.group(6),
+                m.group(7),
+            )
+            + m.group(8)
+        )
+
     case2_pattern = re.compile(
-        r"(</program>)"
-        r"((?:[ \t]*\n[ \t]*<(?:figure|pre)\b.*?</(?:figure|pre)>)+)"
+        _PROG_PAT
+        + r"((?:[ \t]*\n[ \t]*<pre\b.*?</pre>)+)"
         r"([ \t]*\n[ \t]*</listing>)",
         re.DOTALL,
     )
-    content = case2_pattern.sub(r"\1\3\2", content)
+    content = case2_pattern.sub(_case2_replacer, content)
+
+    # Case 3: <pre> blocks directly after </listing>
+    # Before: <program>…</program></listing>(pre_blocks)
+    # After:  <console>…<output>…</output></console></listing>
+    def _case3_replacer(m):
+        return (
+            _build_console_block(
+                m.group(1), m.group(3), m.group(4), m.group(5), m.group(6),
+                m.group(8),
+            )
+            + m.group(7)
+        )
+
+    case3_pattern = re.compile(
+        _PROG_PAT
+        + r"([ \t]*\n[ \t]*</listing>)"
+        r"((?:[ \t]*\n[ \t]*<pre\b.*?</pre>)+)",
+        re.DOTALL,
+    )
+    content = case3_pattern.sub(_case3_replacer, content)
 
     if content != original:
         with open(ptx_path, "w") as f:
             f.write(content)
-        print(f"  Migrated {ptx_path.name}: outputs moved after listings")
+        print(f"  Migrated {ptx_path.name}: outputs converted to <console>")
         return True
     return False
 
 
 def update_ptx_file(ptx_path, code_to_outputs):
     """
-    Update a PTX source file by inserting output blocks after program
-    listing blocks whose code matches a cell in the notebook.
+    Update a PTX source file by inserting output blocks for program listing
+    blocks whose code matches a cell in the notebook.
 
-    Output blocks (<pre> or <figure>) are placed after the closing
-    </listing> tag, because the PreTeXt schema only allows Program or
-    Console inside <listing>.
+    Text outputs are placed inside the <listing> by converting the <program>
+    element to a <console> element with an <output> child.  Figure outputs
+    are placed after </listing> because <figure> is not a valid child of
+    <listing>.
 
-    This function is idempotent: it will not add outputs if they are
-    already present after the listing.
+    This function is idempotent:
+    - Once a block is converted to <console> the program_pattern no longer
+      matches it, so no duplicate output is inserted.
+    - Figure outputs already present after </listing> are detected and
+      skipped.
 
     Returns True if any changes were made.
     """
     with open(ptx_path) as f:
         content = f.read()
 
-    # Pattern to match a program block:
-    # <program language="python">
-    #   <input>
-    # ... code ...
-    #   </input>
-    # </program>
-    program_pattern = re.compile(
-        r'(<program language="python">\s*<input>)(.*?)(</input>\s*</program>)',
-        re.DOTALL,
-    )
+    # Pattern to match a <program language="python"> block (with leading
+    # whitespace captured so we can reconstruct correct indentation).
+    # Groups: (prog_indent)(open_tag)(input_open)(code)(input_close)(close_prog)
+    program_pattern = re.compile(_PROG_PAT, re.DOTALL)
 
-    # Pattern to detect an existing output block immediately after the insertion point
-    existing_output_pattern = re.compile(
-        r'\s*<(pre|figure)\b', re.DOTALL
-    )
+    # Pattern to detect an existing output block after the insertion point
+    existing_output_pattern = re.compile(r"\s*<(pre|figure)\b", re.DOTALL)
 
-    # Pattern to match a closing </listing> tag immediately after </program>
-    # (with only whitespace between). The group captures the full match so
-    # its .end() gives the insertion point (right after </listing>).
-    listing_close_pattern = re.compile(r'(\s*</listing>)', re.DOTALL)
+    # Pattern to match a closing </listing> immediately after </program>
+    listing_close_pattern = re.compile(r"(\s*</listing>)", re.DOTALL)
 
     changes_made = 0
     result_parts = []
     last_end = 0
 
     for match in program_pattern.finditer(content):
-        code_raw = match.group(2)
+        prog_indent = match.group(1)
+        input_open = match.group(3)
+        code_raw = match.group(4)
+        input_close = match.group(5)
+        close_prog = match.group(6)
 
-        # Find the </listing> that closes the listing containing this program.
-        # If listing_close_pattern matches, only whitespace sits between
-        # </program> and </listing>, so we insert AFTER </listing>.
         after_program = content[match.end():]
         listing_close_match = listing_close_pattern.match(after_program)
-        if listing_close_match:
-            # Insert output after </listing>
-            insertion_end = match.end() + listing_close_match.end()
-            # Check if there's already output right after </listing>
-            after_listing = content[insertion_end:]
-            already_has_output = bool(existing_output_pattern.match(after_listing))
-        else:
-            # Program is not in a simple listing or listing already has other
-            # content — skip (do not insert output here).
-            result_parts.append(content[last_end:match.end()])
+        if not listing_close_match:
+            # Not followed directly by </listing> — skip.
+            result_parts.append(content[last_end : match.end()])
             last_end = match.end()
             continue
+
+        listing_close_text = listing_close_match.group(1)
+        listing_close_end = match.end() + listing_close_match.end()
+        after_listing = content[listing_close_end:]
+        already_has_figure = bool(existing_output_pattern.match(after_listing))
 
         code_normalized = normalize_code(code_raw)
         outputs = code_to_outputs.get(code_normalized)
 
-        result_parts.append(content[last_end:insertion_end])
-        last_end = insertion_end
+        if not outputs:
+            result_parts.append(content[last_end:listing_close_end])
+            last_end = listing_close_end
+            continue
 
-        if outputs and not already_has_output:
-            changes_made += 1
-            output_xml = "\n" + "\n".join(outputs)
-            result_parts.append(output_xml)
+        pre_outputs = [o for o in outputs if "<pre>" in o]
+        fig_outputs = [o for o in outputs if "<figure>" in o]
+
+        changes_made += 1
+
+        if pre_outputs:
+            # Convert <program> to <console> with <output> inside the listing.
+            pre_str = "\n".join(pre_outputs)
+            console_block = _build_console_block(
+                prog_indent, input_open, code_raw, input_close, close_prog,
+                pre_str,
+            )
+            result_parts.append(content[last_end : match.start()])
+            result_parts.append(console_block)
+            result_parts.append(listing_close_text)
+        else:
+            # No text output — keep <program> as-is and append up to </listing>.
+            result_parts.append(content[last_end:listing_close_end])
+
+        last_end = listing_close_end
+
+        # Figure outputs always go after </listing>.
+        if fig_outputs and not already_has_figure:
+            result_parts.append("\n" + "\n".join(fig_outputs))
 
     result_parts.append(content[last_end:])
     new_content = "".join(result_parts)

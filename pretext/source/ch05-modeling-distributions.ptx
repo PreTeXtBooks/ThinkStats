@@ -96,22 +96,22 @@ np.random.seed(1)
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 flip(25, 0.9)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
        1, 1, 1])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we generate a longer sequence and compute the <c>Pmf</c> of the results, we can confirm that the proportions of 1s and 0s are correct, at least approximately.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Pmf
 
@@ -119,13 +119,13 @@ seq = flip(1000, 0.9)
 pmf = Pmf.from_seq(seq)
 pmf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0    0.101
 1    0.899
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now we can use <c>flip</c> to simulate a round of skeet shooting and return the number of hits.
     </p>
@@ -158,15 +158,15 @@ results_sim = [simulate_round(n, p) for i in range(1000)]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.mean(results_sim), n * p
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(22.522), 22.5)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Here's what the distribution of the results looks like.
     </p>
@@ -263,32 +263,32 @@ results = table[columns].values.flatten()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 total_shots = 25 * len(results)
 total_hits = results.sum()
 n, total_shots, total_hits
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (25, 3750, np.int64(3575))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       So the overall success rate is 95.3%.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p = total_hits / total_shots
 p
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.9533333333333334)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's compute a <c>Pmf</c> that represents the binomial distribution with <c>n=25</c> and the value of <c>p</c> we just computed, and compare that to the <c>Pmf</c> of the actual results.
     </p>
@@ -331,18 +331,18 @@ decorate(xlabel="Hits", ylabel="PMF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = 3600
 m = 6
 p = m / 3600
 p
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.0016666666666666668
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now we can use the following function to simulate <c>n</c> seconds and return the total number of goals scored.
     </p>
@@ -360,16 +360,16 @@ def simulate_goals(n, p):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 goals = [simulate_goals(n, p) for i in range(1001)]
 np.mean(goals)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(6.021978021978022)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We could use the binomial distribution to model these results, but when <c>n</c> is large and <c>p</c> is small, the results are also well-modeled by a <term>Poisson distribution</term>, which is specified by a value usually denoted with the Greek letter λ (lambda), represented in code with the variable <c>lam</c>.
       <c>lam</c> represents the goal-scoring rate, which is 6 goals per game in the example.
@@ -415,16 +415,16 @@ pmf_poisson = Pmf(ps, ks, name="Poisson model")
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf_poisson.normalize()
 pmf_poisson.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(5.999925498375129)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The following figure compares the results from the simulation to the Poisson distribution with the same mean.
     </p>
@@ -471,16 +471,16 @@ for key in keys:
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 lam = np.mean(goals)
 lam
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(6.0182926829268295)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can use <c>poisson_pmf</c> to make a <c>Pmf</c> that represents a Poisson distribution with the same mean as the data, and compare that to the <c>Pmf</c> of the data.
     </p>
@@ -524,18 +524,18 @@ decorate(xlabel="Goals", ylabel="PMF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = 3600
 m = 6
 p = m / 3600
 p
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.0016666666666666668
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The following function simulates <c>n</c> seconds and uses <c>argmax</c> to find the time of the first goal.
       This works because the result from <c>flip</c> is a sequence of 1s and 0s, so the maximum is almost always 1.
@@ -558,17 +558,17 @@ def simulate_first_goal(n, p):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 first_goal_times = [simulate_first_goal(n, p) for i in range(1001)]
 mean = np.mean(first_goal_times)
 mean
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(597.7902097902098)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       When <c>n</c> is large and <c>p</c> is small, we can show mathematically that the expected time until the first goal follows an exponential distribution.
       The CDF of the exponential distribution is easy to compute.
@@ -595,16 +595,16 @@ def exponential_cdf(x, lam):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 lam = 1 / mean
 lam
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.0016728276636563566)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we call this function with a range of time values, we can approximate the distribution of first goal times.
       The NumPy function <c>linspace</c> creates an array of equally-spaced values; in this example, it computes 201 values from 0 to 3600, including both.
@@ -667,16 +667,16 @@ for key in keys:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 lam = 1 / np.nanmean(firsts)
 lam
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.0015121567467720825)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now we can compute the CDF of an exponential distribution with the same goal-scoring rate as the data,
       and compare it to the CDF of the data, using the <c>dropna=False</c> argument to include <c>nan</c> values at the end.
@@ -692,19 +692,19 @@ cdf_expo = Cdf(ps, ts, name="exponential model")
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf_firsts = Cdf.from_seq(firsts, name="data", dropna=False)
 cdf_firsts.tail()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 3286.0    0.996951
 3581.0    0.997713
 NaN       1.000000
 Name: data, dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -761,17 +761,17 @@ def simulate_growth(n):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sim_weights = [simulate_growth(100) for i in range(1001)]
 m, s = np.mean(sim_weights), np.std(sim_weights)
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(199.37062937062936), np.float64(8.388630840376777))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To see whether the weights follow a normal distribution, we'll use the following function, which takes a sample and makes a <c>Cdf</c> that represents a normal distribution with the same mean and standard deviation as the sample, evaluated over the range from 4 standard deviations below the mean to 4 standard deviations above.
     </p>
@@ -862,16 +862,16 @@ birth_weights = preg["totalwgt_lb"].dropna()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 m, s = np.mean(birth_weights), np.std(birth_weights)
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(7.265628457623368), np.float64(1.40821553384062))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To reduce the effect of the outliers on the estimated mean and standard deviation, we'll use the SciPy function <c>trimboth</c> to remove the highest and lowest values.
       With the trimmed data, the mean is a little lower and the standard deviation is substantially lower.
@@ -879,7 +879,7 @@ m, s
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import trimboth
 
@@ -887,11 +887,11 @@ trimmed = trimboth(birth_weights, 0.01)
 m, s = np.mean(trimmed), np.std(trimmed)
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(7.280883100022579), np.float64(1.2430657948614345))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -949,16 +949,16 @@ def simulate_proportionate_growth(n):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sim_weights = [simulate_proportionate_growth(100) for i in range(1001)]
 np.mean(sim_weights), np.std(sim_weights)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(130.80183363824722), np.float64(20.956047434921466))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can show mathematically that these weights follow a <term>lognormal distribution</term>, which means that the logarithms of the weights follow a normal distribution.
       To check, we'll compute the logs of the weights and their mean and standard deviation.
@@ -966,17 +966,17 @@ np.mean(sim_weights), np.std(sim_weights)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 log_sim_weights = np.log10(sim_weights)
 m, s = np.mean(log_sim_weights), np.std(log_sim_weights)
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(2.1111299372609933), np.float64(0.06898607064749827))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's compare the distribution of the logarithms to a normal distribution with the same mean and standard deviation.
     </p>
@@ -1025,17 +1025,17 @@ brfss = read_brfss()
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 adult_weights = brfss["wtkg2"].dropna()
 m, s = np.mean(adult_weights), np.std(adult_weights)
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(78.9924529968581), np.float64(19.546132387397257))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Before we compute logarithms, let's see if the weights follow a normal distribution.
     </p>
@@ -1224,17 +1224,17 @@ for key in keys:
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 adult_heights = brfss["htm3"].dropna()
 m, s = np.mean(adult_heights), np.std(adult_heights)
 m, s
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 (np.float64(168.82518961012298), np.float64(10.35264015645592))
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Compute the CDF of these values and compare it to a normal distribution with the same mean and standard deviation.
           Then compute the logarithms of the heights and compute the distribution of the logarithms compared to a normal distribution.

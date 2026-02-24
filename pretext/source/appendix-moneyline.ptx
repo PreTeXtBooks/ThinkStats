@@ -58,30 +58,30 @@ def expected_value(p, wager, payout):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 expected_value(p=0.25, wager=100, payout=195)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 -26.25
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's compute the expected value of the second wager<mdash/>assuming the Seahawks
       have a 75% chance of winning:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 expected_value(p=0.75, wager=240, payout=100)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 15.0
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The expected value of this wager is positive, so you might want to make
       it<mdash/>but only if you have good reason to think the Seahawks have a 75% chance of
@@ -151,16 +151,16 @@ def crossover(wager, payout):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p1 = crossover(100, 195)
 p1
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.3389830508474576
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If you think the Patriots have a probability higher than the crossover, the first bet
       has positive expected value.
@@ -168,16 +168,16 @@ p1
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p2 = crossover(240, 100)
 p2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.7058823529411765
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If you think the Seahawks have a probability higher than this crossover, the second bet
       has positive expected value.
@@ -189,15 +189,15 @@ p2
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p1 + p2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1.0448654037886342
-    </pre>
+      </output>
+    </console>
+    </listing>
   </section>
 
   <section xml:id="app-moneyline-the-take">
@@ -241,16 +241,16 @@ decorate(xlabel='Actual probability Patriots win',
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p = (p1 + (1-p2)) / 2
 p
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.31655034895314055
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       In that case, here's the expected take, assuming that the implied probability is
       correct.
@@ -269,30 +269,30 @@ take
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 take / (100_000 + 240_000)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.04189636971438623
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Which we could have approximated by computing the <term>overround</term>, which is the
       amount that the sum of the implied probabilities exceeds 1.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (p1 + p2) - 1
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.04486540378863424
-    </pre>
+      </output>
+    </console>
+    </listing>
   </section>
 
   <section xml:id="app-moneyline-dont-bet">

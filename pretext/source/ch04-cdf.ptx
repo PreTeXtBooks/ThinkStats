@@ -86,23 +86,23 @@ download(
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from relay import read_results
 
 results = read_results()
 results.head()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
    Place Div/Tot Division Guntime Nettime Min/Mile        MPH
 0      1   1/362    M2039   30:43   30:42     4:57  12.121212
 1      2   2/362    M2039   31:36   31:36     5:06  11.764706
 2      3   3/362    M2039   31:42   31:42     5:07  11.726384
 3      4   4/362    M2039   32:28   32:27     5:14  11.464968
 4      5   5/362    M2039   32:52   32:52     5:18  11.320755
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>results</c> contains one row for each of 1633 runners who finished the race.
       The column we'll use to quantify performance is <c>MPH</c>, which contains each runner's average speed in miles per hour.
@@ -121,17 +121,17 @@ speeds = results["MPH"].values
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 my_result = results.query("Nettime == '42:44'")
 my_result
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
     Place Div/Tot Division Guntime Nettime Min/Mile       MPH
 96     97  26/256    M4049   42:48   42:44     6:53  8.716707
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The index of my row is 96, so we can extract my speed like this.
     </p>
@@ -148,29 +148,29 @@ my_speed = speeds[96]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (speeds &lt;= my_speed).sum()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(1537)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And we can use <c>mean</c> to compute the percentage of runners at my speed or slower.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (speeds &lt;= my_speed).mean() * 100
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(94.12124923453766)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The result is my percentile rank in the field, which was about 94%.
     </p>
@@ -211,15 +211,15 @@ my_division_speeds = my_division["MPH"].values
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 percentile_rank(my_speed, my_division_speeds)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(90.234375)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Going in the other direction, if we are given a percentile rank, the following function finds the corresponding value in a sequence.
     </p>
@@ -240,15 +240,15 @@ def percentile(p, seq):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 percentile(90, my_division_speeds)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(8.591885441527447)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       In my division, the 90th percentile was about 8.6 mph.
     </p>
@@ -259,34 +259,34 @@ np.float64(8.591885441527447)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 next_division = results.query("Division == 'M5059'")
 next_division_speeds = next_division["MPH"].values
 
 percentile(90.2, next_division_speeds)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(8.017817371937639)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The person in the <c>M5059</c> division with the same percentile rank as me ran just over 8 mph.
       We can use <c>query</c> to find him.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 next_division.query("MPH > 8.01").tail(1)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
      Place Div/Tot Division Guntime Nettime Min/Mile       MPH
 222    223  18/171    M5059   46:30   46:25     7:29  8.017817
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       He finished in 46:25 and came in 18th out of 171 people in his division.
     </p>
@@ -317,36 +317,36 @@ t = [1, 2, 2, 3, 5]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Pmf
 
 pmf = Pmf.from_seq(t)
 pmf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    0.2
 2    0.4
 3    0.2
 5    0.2
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       As we saw in the previous chapter, we can use the bracket operator to look up a value in a <c>Pmf</c>.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf[2]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.4)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The result is the proportion of values in the sequence equal to the given value.
       In this example, two out of five values are equal to <c>2</c>, so the result is 0.4.
@@ -357,35 +357,35 @@ np.float64(0.4)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf = pmf.make_cdf()
 cdf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    0.2
 2    0.6
 3    0.8
 5    1.0
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The result is a <c>Cdf</c> object, which is a kind of Pandas <c>Series</c>.
       We can use the bracket operator to look up a value.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf[2]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.6000000000000001)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The result is the proportion of values in the sequence less than or equal to the given value.
       In this example, three out of five values in the sequence are less than or equal to <c>2</c>, so the result is 0.6.
@@ -396,29 +396,29 @@ np.float64(0.6000000000000001)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf(3)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array(0.8)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The cumulative distribution function is defined for all numbers, not just the ones that appear in the sequence.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf(4)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array(0.8)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To visualize the <c>Cdf</c>, we can use the <c>step</c> method, which plots the <c>Cdf</c> as a step function.
     </p>
@@ -470,15 +470,15 @@ decorate(xlabel="Speed (mph)", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf_speeds(my_speed) * 100
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(94.12124923453766)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       So that's one way to think about the <c>Cdf</c> <mdash/> given a value, it computes something like a percentile rank, except that it's a proportion between 0 and 1 rather than a percentage between 0 and 100.
     </p>
@@ -490,15 +490,15 @@ np.float64(94.12124923453766)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 cdf_speeds.inverse(0.5)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array(6.70391061)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If you have a proportion and you use the inverse CDF to find the corresponding value, the result is called a <term>quantile</term> <mdash/> so the inverse CDF is sometimes called the quantile function.
     </p>
@@ -532,28 +532,28 @@ live, firsts, others = get_nsfg_groups()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 first_weights = firsts["totalwgt_lb"].dropna()
 first_weights.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(7.201094430437772)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 other_weights = others["totalwgt_lb"].dropna()
 other_weights.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(7.325855614973262)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       It looks like first babies are a little lighter on average.
       But there are several ways a difference like that could happen <mdash/> for example, there might be a small number of first babies who are especially light, or a small number of other babies who are especially heavy.
@@ -678,15 +678,13 @@ birthwgt_oz = preg["birthwgt_oz"]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Hist
 
 Hist.from_seq(birthwgt_oz).tail(5)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 birthwgt_oz
 14.0    475
 15.0    378
@@ -694,19 +692,19 @@ birthwgt_oz
 98.0      1
 99.0     46
 Name: , dtype: int64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The <c>birthwgt_lb</c> column includes the same special values; it also includes the value 51, which has to be a mistake.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 Hist.from_seq(birthwgt_lb).tail(5)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 birthwgt_lb
 15.0     1
 51.0     1
@@ -714,7 +712,9 @@ birthwgt_lb
 98.0     1
 99.0    57
 Name: , dtype: int64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's imagine two scenarios.
       In one scenario, we clean these variables by replacing missing and invalid values with <c>nan</c>, and then compute total weight in pounds.
@@ -747,74 +747,74 @@ total_weight_bogus = birthwgt_lb + birthwgt_oz / 16
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 count1, count2 = total_weight_bogus.count(), total_weight_clean.count()
 diff = count1 - count2
 
 diff, diff / count2 * 100
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.int64(49), np.float64(0.5421553441026776))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's compute the mean of the data in both scenarios.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mean1, mean2 = total_weight_bogus.mean(), total_weight_clean.mean()
 mean1, mean2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(7.319680587652691), np.float64(7.265628457623368))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The bogus values have a moderate effect on the mean.
       If we take the mean of the cleaned data to be correct, the mean of the bogus data is off by less than 1%.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (mean1 - mean2) / mean2 * 100
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.74394294099376)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       An error like that might go undetected <mdash/> but now let's see what happens to the standard deviations.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 std1, std2 = total_weight_bogus.std(), total_weight_clean.std()
 std1, std2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(2.096001779161835), np.float64(1.4082934455690173))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 (std1 - std2) / std2 * 100
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(48.83274403900607)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The standard deviation of the bogus data is off by almost 50%, so that's more noticeable.
       Finally, here's the skewness of the two datasets.
@@ -837,28 +837,28 @@ def skewness(seq):
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 skew1, skew2 = skewness(total_weight_bogus), skewness(total_weight_clean)
 skew1, skew2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(22.251846195422484), np.float64(-0.5895062687577697))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 # how much is skew1 off by?
 (skew1 - skew2) / skew2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(-38.74658112171128)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The skewness of the bogus dataset is off by a factor of almost 40, and it has the wrong sign!
       With the outliers added to the data, the distribution is strongly skewed to the right, as indicated by large positive skewness.
@@ -912,15 +912,15 @@ def median(cdf):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 median(cdf_total_weight_bogus), median(cdf_total_weight_clean)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (array(7.375), array(7.375))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The results are identical, so in this case, the outliers have no effect on the median at all.
       In general, outliers have a smaller effect on the median than on the mean.
@@ -944,15 +944,15 @@ def iqr(cdf):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 iqr(cdf_total_weight_bogus), iqr(cdf_total_weight_clean)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(1.625), np.float64(1.625))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       In general, outliers have less effect on the IQR than on the standard deviation <mdash/> in this case they have no effect at all.
     </p>
@@ -981,17 +981,17 @@ def quartile_skewness(cdf):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 qskew1 = quartile_skewness(cdf_total_weight_bogus)
 qskew2 = quartile_skewness(cdf_total_weight_clean)
 qskew1, qskew2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(-0.07692307692307693), np.float64(-0.07692307692307693))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The small number of outliers in these examples has no effect on the quartile skewness.
       These examples show that percentile-based statistics are less sensitive to outliers and errors in the data.
@@ -1163,17 +1163,17 @@ sample = cdf_speeds.sample(1001)
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 male = live.query("babysex == 1")
 female = live.query("babysex == 2")
 len(male), len(female)
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 (4641, 4500)
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Make <c>Cdf</c> objects that represent the distribution of birth weights for male and female babies.
           Plot the two CDFs.

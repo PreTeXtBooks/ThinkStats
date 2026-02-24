@@ -37,14 +37,12 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/LLCP2022.hdf5")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 brfss = pd.read_hdf("LLCP2022.hdf5", key="brfss")
 brfss.describe()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
                 _SEX           HTM4          WTKG3        _LLCPWT
 count  445132.000000  416480.000000  403054.000000  445132.000000
 mean        1.529942     170.269057    8307.447039     594.856344
@@ -54,7 +52,9 @@ min         1.000000      91.000000    2268.000000       0.020464
 50%         2.000000     170.000000    8074.000000     274.632388
 75%         2.000000     178.000000    9525.000000     627.913694
 max         2.000000     241.000000   29257.000000   54390.520926
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The dataset includes self-reported heights for almost 200,000 men and almost 220,000
       women.
@@ -62,15 +62,13 @@ max         2.000000     241.000000   29257.000000   54390.520926
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 xtab = pd.crosstab(brfss["HTM4"], brfss["_SEX"])
 xtab.columns = ["Male", "Female"]
 xtab.head()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
       Male  Female
 HTM4              
 91.0     7      17
@@ -78,19 +76,19 @@ HTM4
 95.0     1       0
 97.0     1       3
 99.0     1       0
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And the tallest recorded heights.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 xtab.tail()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
        Male  Female
 HTM4               
 226.0     9       2
@@ -98,7 +96,9 @@ HTM4
 234.0     4       0
 236.0     1       0
 241.0     4       1
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       According to the codebook, heights below 91 cm are set to 91 cm, and heights above
       241 cm are set to 241 cm.
@@ -191,15 +191,15 @@ def diff_means(sample):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff_means(sample)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 14.455796580284954
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Men are about 14 cm taller than women, on average.
     </p>
@@ -232,16 +232,16 @@ def sampling_dist(df, test_stat, iters=201):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 t1 = sampling_dist(brfss, diff_means)
 np.mean(t1)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 14.433755828000592
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The following function uses KDE to estimate the density of the sampling distribution,
       uses the estimated density to compute a confidence interval, and generates a plot that
@@ -307,15 +307,15 @@ def p_value(t):
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p_value(t1)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.0
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The p-value is so close to zero we can't compute it with floating-point arithmetic,
       which means it is truly negligible.
@@ -357,15 +357,15 @@ def diff_stds(sample):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diff_stds(sample)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 0.7755433526023632
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can use <c>sampling_dist</c> again with a different test statistic.
     </p>

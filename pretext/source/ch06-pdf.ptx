@@ -308,15 +308,15 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 normal_pdf(m, m, s)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.32093416297880123)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       By itself, a probability density doesn't mean much <mdash/> most importantly, it is <em>not</em> a probability.
       It would be incorrect to say that the probability is 32% that a randomly-chosen birth weight equals <c>m</c>.
@@ -331,32 +331,32 @@ np.float64(0.32093416297880123)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import NormalPdf
 
 pdf_model = NormalPdf(m, s, name="normal model")
 pdf_model
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 NormalPdf(7.280883100022579, 1.2430657948614345, name='normal model')
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we call this object like a function, it evaluates the normal PDF.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pdf_model(m)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.32093416297880123)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now, to compute the area under the PDF, we can use the following function, which takes a <c>NormalPdf</c> object and the bounds of an interval, <c>low</c> and <c>high</c>.
       It evaluates the normal PDF at equally-spaced quantities between <c>low</c> and <c>high</c>, and uses the SciPy function <c>simpson</c> to estimate the area under the curve (<c>simpson</c> is so named because it uses an algorithm called Simpson's method).
@@ -380,15 +380,15 @@ def area_under(pdf, low, high):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 area_under(pdf_model, 2, 12)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.9999158086616793)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we extend the interval from negative infinity to positive infinity, the total area is exactly 1.
     </p>
@@ -397,60 +397,60 @@ np.float64(0.9999158086616793)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 area_under(pdf_model, 0, 8.5)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8366380335513807)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       You might recall that the "fraction less than or equal to a given value" is the definition of the CDF.
       So we could compute the same result using the CDF of the normal distribution.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import norm
 
 norm.cdf(8.5, m, s)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8366380358092718)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Similarly, we can use the area under the density curve to compute the fraction of birth weights between 6 and 8 pounds.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 area_under(pdf_model, 6, 8)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.5671317752927691)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Or we can get the same result using the CDF to compute the fraction less than 8 and then subtracting off the fraction less than 6.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 norm.cdf(8, m, s) - norm.cdf(6, m, s)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.5671317752921801)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       So the CDF is the area under the curve of the PDF.
       If you know calculus, another way to say the same thing is that the CDF is the integral of the PDF.
@@ -507,7 +507,7 @@ def exponential_pdf(x, lam):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import ExponentialPdf
 
@@ -515,11 +515,11 @@ lam = 6
 pdf_expo = ExponentialPdf(lam, name="exponential model")
 pdf_expo
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 ExponentialPdf(6, name='exponential model')
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>ExponentialPdf</c> provides a <c>plot</c> function we can use to plot the PDF <mdash/> notice that the unit of time is games here, rather than seconds as in the previous chapter.
     </p>
@@ -545,61 +545,61 @@ decorate(xlabel="Time (games)", ylabel="Density")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 area_under(pdf_expo, 0, 1.5)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.999876590779019)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we extend the interval much farther, the result is slightly greater than 1, but that's because we're approximating the area numerically.
       Mathematically, it is exactly 1, as we can confirm using the exponential CDF.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import exponential_cdf
 
 exponential_cdf(7, lam)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(1.0)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can use the area under the density curve to compute the probability of a goal during any interval.
       For example, here is the probability of a goal during the first minute of a 60-minute game.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 area_under(pdf_expo, 0, 1 / 60)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.09516258196404043)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can compute the same result using the exponential CDF.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 exponential_cdf(1 / 60, lam)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.09516258196404048)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       In summary, if we evaluate a PDF, the result is a probability density <mdash/> which is not a probability.
       However, if we compute the area under the PDF, the result is the probability that a quantity falls in an interval.
@@ -681,15 +681,15 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PMF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 len(pmf_model), len(pmf_birth_weight)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (201, 184)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The other problem is that the <c>Pmf</c> of the data is noisy.
       So let's try something else.
@@ -898,23 +898,23 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import read_baby_boom
 
 boom = read_baby_boom()
 boom.head()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
    time  sex  weight_g  minutes
 0     5    1      3837        5
 1   104    1      3334       64
 2   118    2      3554       78
 3   155    2      3838      115
 4   257    2      3625      177
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The <c>minutes</c> column records "the number of minutes since midnight for each birth".
       So we can use the <c>diff</c> method to compute the interval between each successive birth.
@@ -983,15 +983,15 @@ pmf_diffs2 = cdf_diffs.make_pmf()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.allclose(pmf_diffs, pmf_diffs2)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 True
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And it is.
     </p>
@@ -1101,7 +1101,7 @@ decorate(xlabel="Interval (minutes)", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 import sympy as sp
 
@@ -1111,37 +1111,37 @@ x = sp.Symbol("x", real=True, positive=True)
 cdf = 1 - sp.exp(-λ * x)
 cdf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1 - exp(-x*λ)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pdf = sp.diff(cdf, x)
 pdf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 λ*exp(-x*λ)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And if we integrate the result, we get the CDF back <mdash/> although we lose the constant of integration in the process.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sp.integrate(pdf, x)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 -exp(-x*λ)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       This example shows how we use <c>Pmf</c>, <c>Cdf</c>, and <c>Pdf</c> objects to represent PMFs, CDFs, and PDFs, and demonstrates the process for converting from each to the others.
     </p>
@@ -1224,7 +1224,7 @@ heights = male["htm3"].dropna()
         </listing>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 from scipy.stats import trimboth
 
@@ -1232,11 +1232,11 @@ trimmed = trimboth(heights, 0.01)
 m, s = np.mean(trimmed), np.std(trimmed)
 m, s
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 (np.float64(178.10278947124948), np.float64(7.017054887136004))
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Here's a <c>NormalCdf</c> object that represents a normal distribution with the same mean and standard deviation as the trimmed data.
         </p>

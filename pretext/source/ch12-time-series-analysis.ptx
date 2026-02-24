@@ -111,13 +111,11 @@ elec = (
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 elec.columns
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Index(['Net generation for all sectors', 'United States',
        'United States : all fuels (utility-scale)', 'United States : nuclear',
        'United States : conventional hydroelectric',
@@ -128,7 +126,9 @@ Index(['Net generation for all sectors', 'United States',
        'United States : all solar',
        'United States : small-scale solar photovoltaic'],
       dtype='object', name='description')
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The labels in the index are strings indicating months and years -- here are the first 12.
@@ -136,17 +136,17 @@ Index(['Net generation for all sectors', 'United States',
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 elec.index[:12]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Index(['Jan 2001', 'Feb 2001', 'Mar 2001', 'Apr 2001', 'May 2001', 'Jun 2001',
        'Jul 2001', 'Aug 2001', 'Sep 2001', 'Oct 2001', 'Nov 2001', 'Dec 2001'],
       dtype='object')
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       It will be easier to work with this data if we replace these strings with Pandas <c>Timestamp</c> objects.
@@ -155,18 +155,18 @@ Index(['Jan 2001', 'Feb 2001', 'Mar 2001', 'Apr 2001', 'May 2001', 'Jun 2001',
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 elec.index = pd.date_range(start="2001-01", periods=len(elec), freq="ME")
 elec.index[:6]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 DatetimeIndex(['2001-01-31', '2001-02-28', '2001-03-31', '2001-04-30',
                '2001-05-31', '2001-06-30'],
               dtype='datetime64[ns]', freq='ME')
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       Now the index is a <c>DataTimeIndex</c> with the data type <c>datetime64[ns]</c>, which is defined in NumPy -- <c>64</c> means each label uses 64 bits, and <c>ns</c> means it has nanosecond precision.
@@ -397,16 +397,16 @@ decorate(xlabel="Residual (GWh)", ylabel="Density")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 rsquared = 1 - resid.var() / nuclear.var()
 rsquared
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.9054559977517084)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The <m>R^2</m> value is about 0.92, which means that the long-term trend and seasonal component account for 92% of the variability in the series.
@@ -514,16 +514,16 @@ def split_series(series, n=60):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 training, test = split_series(nuclear)
 test.index[0]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Timestamp('2019-07-31 00:00:00')
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       Now, suppose it's June 2019 and you are asked to generate a five-year forecast for electricity production from nuclear generators.
@@ -565,20 +565,17 @@ results = smf.ols("trend ~ months", data=data).fit()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from thinkstats import display_summary
 
 display_summary(results)
       </input>
-    </program>
+      <output>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+      </output>
+    </console>
     </listing>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
 
     <p>
       The <m>R^2</m> value is about 0.35, which suggests that the model does not fit the data particularly well.
@@ -725,15 +722,15 @@ def MAPE(predicted, actual):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 MAPE(forecast, test)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(3.811940747879257)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       We'll come back to this example later in the chapter and see if we can do better with a different model.
@@ -838,16 +835,16 @@ resid = decomposition.resid
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 rsquared = 1 - resid.var() / training.var()
 rsquared
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.9999999992978134)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The production of a solar panel is largely a function of the sunlight it's exposed to, so it makes sense that production follows an annual cycle so closely.
@@ -874,18 +871,15 @@ results = smf.ols("trend ~ months + I(months**2)", data=data).fit()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 display_summary(results)
       </input>
-    </program>
+      <output>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+      </output>
+    </console>
     </listing>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
 
     <p>
       The p-values of the linear and quadratic terms are very small, which suggests that the quadratic model captures more information about the trend than a linear model would -- and the <m>R^2</m> value is very high.
@@ -1059,19 +1053,19 @@ df_ar = df_ar.dropna()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 df_ar.corr()[["diff"]]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
           diff
 diff  1.000000
 lag1  0.562212
 lag2  0.292454
 lag3  0.222228
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       These correlations are called lagged correlations or <term>autocorrelations</term> -- the prefix "auto" indicates that we're taking the correlation of the series with itself.
@@ -1101,20 +1095,17 @@ def make_formula(df):
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = make_formula(df_ar)
 results_ar = smf.ols(formula=formula, data=df_ar).fit()
 display_summary(results_ar)
       </input>
-    </program>
+      <output>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+      </output>
+    </console>
     </listing>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
 
     <p>
       Now we can use the <c>predict</c> method to generate predictions for the past values in the series.
@@ -1142,17 +1133,17 @@ decorate(ylabel="GWh")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 resid_ar = (diff - pred_ar).dropna()
 R2 = 1 - resid_ar.var() / diff.var()
 R2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.3190252265690783)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       One way to improve the predictions is to compute the residuals from this model and use another model to predict the residuals -- which is the third idea of autoregression.
@@ -1206,20 +1197,17 @@ df_ma = df_ma.dropna()
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 formula = make_formula(df_ma)
 results_ma = smf.ols(formula=formula, data=df_ma).fit()
 display_summary(results_ma)
       </input>
-    </program>
+      <output>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+      </output>
+    </console>
     </listing>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
 
     <p>
       The <m>R^2</m> is quite small, so it looks like this part of the model won't help very much.
@@ -1257,17 +1245,17 @@ pred_diff = pred_ar + pred_ma
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 resid_ma = (diff - pred_diff).dropna()
 R2 = 1 - resid_ma.var() / diff.var()
 R2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.3315101001391231)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       Next we'll use these year-over-year differences to generate retrodictions for the original values.
@@ -1297,16 +1285,16 @@ pred_diff = pd.Series(pred_diff, index=nuclear.index)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n_missing = pred_diff.isna().sum()
 n_missing
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(21)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       That's because we shifted the <c>Series</c> by 12 months to compute year-over-year differences, then we shifted the differences 3 months for the first autoregression model, and we shifted the residuals of the first model by 6 months for the second model.
@@ -1378,17 +1366,17 @@ decorate(ylabel="GWh")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 resid = (nuclear - pred_series).dropna()
 R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8586566911201015)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The model we used to compute these retrodictions is called SARIMA, which is one of a family of models called ARIMA.
@@ -1457,7 +1445,7 @@ seasonal_order = (0, 1, 0, 12)
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 import statsmodels.tsa.api as tsa
 
@@ -1465,11 +1453,11 @@ model = tsa.ARIMA(nuclear, order=order, seasonal_order=seasonal_order)
 results_arima = model.fit()
 display_summary(results_arima)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The results include estimated coefficients for the three lags in the AR model, the two lags in the MA model, and <c>sigma2</c>, which is the variance of the residuals.
@@ -1512,17 +1500,17 @@ decorate(ylabel="GWh")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 resid = fittedvalues - nuclear
 R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8262717330822065)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The <c>ARIMA</c> function makes it easy to experiment with different versions of the model.
@@ -1613,15 +1601,15 @@ decorate(ylabel="GWh")
 
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 MAPE(forecast_mean, test)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(3.3817549248044547)
-    </pre>
+      </output>
+    </console>
+    </listing>
 
     <p>
       The predictions are off by 3.38% on average, somewhat better than the results we got from seasonal decomposition (3.81%).
@@ -1726,13 +1714,11 @@ temp = pd.read_csv("monthly-average-surface-temperatures-by-year.csv")
         </listing>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 temp.head()
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
         Entity Code  Year       2024       2023       2022       2021  \
 0  Afghanistan  AFG     1   3.300064  -4.335608  -0.322859  -1.001608   
 1  Afghanistan  AFG     2   1.024550   4.187041   2.165870   5.688000   
@@ -1755,7 +1741,9 @@ temp.head()
 4  18.432117  17.614851  15.505956  15.599709  17.865084  17.095737  17.329062  
 
 [5 rows x 78 columns]
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           The following cell selects data for the United States from 2001 to the end of the series and packs it into a Pandas <c>Series</c>.
         </p>

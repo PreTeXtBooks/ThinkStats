@@ -69,56 +69,56 @@ from thinkstats import decorate
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import FreqTab
 
 ftab = FreqTab.from_seq([1, 2, 2, 3, 5])
 ftab
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    1
 2    2
 3    1
 5    1
 Name: , dtype: int64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The sum of the frequencies is the size of the original sequence.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = ftab.sum()
 n
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(5)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If we divide the frequencies by <c>n</c>, they represent proportions, rather than counts.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf = ftab / n
 pmf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    0.2
 2    0.4
 3    0.2
 5    0.2
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       This result indicates that 20% of the values in the sequence are 1, 40% are 2, and so on.
     </p>
@@ -130,15 +130,15 @@ Name: , dtype: float64
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.sum()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8500000000000001)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       A normalized <c>FreqTab</c> object represents a <term>probability mass function</term> (PMF), so-called because probabilities associated with discrete values are also called "probability masses".
     </p>
@@ -147,156 +147,156 @@ np.float64(0.8500000000000001)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Pmf
 
 pmf = Pmf.from_seq([1, 2, 2, 3, 5])
 pmf
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    0.2
 2    0.4
 3    0.2
 5    0.2
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The <c>Pmf</c> is normalized so the total probability is 1.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.sum()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8500000000000001)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>Pmf</c> and <c>FreqTab</c> objects are similar in many ways.
       To look up the probability associated with a value, we can use the bracket operator.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf[2]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.4)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Or use parentheses to call the <c>Pmf</c> like a function.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf(2)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.4)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To assign a probability to a value, you have to use the bracket operator.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf[2] = 0.2
 pmf(2)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.2)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       You can modify an existing <c>Pmf</c> by incrementing the probability associated with a value:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf[2] += 0.3
 pmf[2]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.5)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Or you can multiply a probability by a factor:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf[2] *= 0.5
 pmf[2]
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.25)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If you modify a <c>Pmf</c>, the result may not be normalized <mdash/> that is, the probabilities may no longer add up to 1.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.sum()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8500000000000001)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The <c>normalize</c> method renormalizes the <c>Pmf</c> by dividing through by the sum <mdash/> and returning the sum.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.normalize()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.8500000000000001)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>Pmf</c> objects provide a <c>copy</c> method so you can make and modify a copy without affecting the original.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.copy()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1    0.235294
 2    0.294118
 3    0.235294
 5    0.235294
 Name: , dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Like a <c>FreqTab</c> object, a <c>Pmf</c> object has a <c>qs</c> attribute that accesses the quantities and a <c>ps</c> attribute that accesses the probabilities.
       It also has a <c>bar</c> method that plots the <c>Pmf</c> as a bar graph and a <c>plot</c> method that plots it as a line graph.
@@ -312,7 +312,7 @@ Name: , dtype: float64
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 seq = [1, 2, 2, 3, 5]
 
@@ -320,11 +320,11 @@ n = len(seq)
 mean = np.sum(seq) / n
 mean
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(2.6)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now suppose we compute the PMF of the values in the sequence.
     </p>
@@ -341,31 +341,31 @@ pmf = Pmf.from_seq(seq)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 mean = np.sum(pmf.ps * pmf.qs)
 mean
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(2.6)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Notice that we <em>don't</em> have to divide by <c>n</c>, because we already did that when we normalized the <c>Pmf</c>.
       <c>Pmf</c> objects have a <c>mean</c> method that does the same thing.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(2.6)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Given a <c>Pmf</c>, we can compute the variance by computing the deviation of each quantity from the mean.
     </p>
@@ -382,72 +382,72 @@ deviations = pmf.qs - mean
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 var = np.sum(pmf.ps * deviations**2)
 var
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(1.84)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The <c>var</c> method does the same thing.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.var()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(1.84)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       From the variance, we can compute the standard deviation in the usual way.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.sqrt(var)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(1.3564659966250536)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Or the <c>std</c> method does the same thing.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.std()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(1.3564659966250536)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>Pmf</c> also provides a <c>mode</c> method that finds the value with the highest probability.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 pmf.mode()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(2)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We'll see more methods as we go along, but that's enough to get started.
     </p>
@@ -479,7 +479,7 @@ np.int64(2)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ranges = pd.interval_range(start=5, end=50, freq=5, closed="left")
 ranges.name = "class size"
@@ -488,9 +488,7 @@ data = pd.DataFrame(index=ranges)
 data["count"] = [8, 8, 14, 4, 6, 12, 8, 3, 2]
 data
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
             count
 class size       
 [5, 10)         8
@@ -502,7 +500,9 @@ class size
 [35, 40)        8
 [40, 45)        3
 [45, 50)        2
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The Pandas function <c>interval_range</c> makes an <c>Index</c> where each label represents a range of values.
       The notation <c>[5, 10)</c> means that <c>5</c> is included in the interval and <c>10</c> is not.
@@ -510,16 +510,16 @@ class size
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 sizes = ranges.left + 2
 sizes
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Index([7, 12, 17, 22, 27, 32, 37, 42, 47], dtype='int64')
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's make a <c>Pmf</c> that represents the distribution of class sizes.
       Because we know the sizes and their frequencies, we can create a <c>Pmf</c> directly, passing as arguments the counts, sizes, and a name.
@@ -527,31 +527,31 @@ Index([7, 12, 17, 22, 27, 32, 37, 42, 47], dtype='int64')
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 counts = data["count"]
 actual_pmf = Pmf(counts, sizes, name="actual")
 actual_pmf.normalize()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(65)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       If you ask the college for the average class size, they report the mean of this distribution, which is 23.7.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 actual_pmf.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(23.692307692307693)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       But if you survey a group of students, ask them how many students are in their classes, and compute the mean, the average is bigger.
       Let's see how much bigger.
@@ -610,15 +610,15 @@ decorate(xlabel="Class size", ylabel="PMF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 observed_pmf.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(29.123376623376622)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       It is also possible to invert this operation.
       Suppose you want to find the distribution of class sizes at a college, but you can't get reliable data.
@@ -647,16 +647,16 @@ def unbias(pmf, name):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 debiased_pmf = unbias(observed_pmf, "debiased")
 debiased_pmf.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(23.692307692307693)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The mean of the debiased <c>Pmf</c> is the same as the mean of the actual distribution we started with.
     </p>
@@ -758,48 +758,48 @@ decorate(xlabel="Weeks", ylabel="Probability", xlim=[20, 50])
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 weeks = range(35, 46)
 first_pmf(weeks)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([0.03602991, 0.03897575, 0.04713347, 0.06163608, 0.4790392 ,
        0.12145932, 0.08157716, 0.04645366, 0.01971448, 0.00521187,
        0.00135962])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 other_pmf(weeks)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([0.03210137, 0.03146779, 0.05216473, 0.07074974, 0.54466737,
        0.12249208, 0.04794087, 0.02597677, 0.01288279, 0.00485744,
        0.00084477])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       So we can compute the differences in the probabilities like this.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 diffs = first_pmf(weeks) - other_pmf(weeks)
 diffs
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([ 0.00392854,  0.00750796, -0.00503126, -0.00911366, -0.06562817,
        -0.00103276,  0.03363629,  0.02047689,  0.00683169,  0.00035443,
         0.00051485])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Here's what they look like, multiplied by 100 to express the differences in percentage points.
     </p>
@@ -863,18 +863,18 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from nsfg import read_fem_resp
 
 resp = read_fem_resp()
 resp.shape
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (7643, 3092)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       This <c>DataFrame</c> contains 7643 rows and 3092 columns.
     </p>
@@ -915,17 +915,17 @@ numbabes = resp["numbabes"].replace(97, np.nan)
         </listing>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 deviations = numbabes - numbabes.mean()
 skewness = np.mean(deviations**3) / numbabes.std(ddof=0) ** 3
 skewness
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 np.float64(1.7018914266755958)
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           A positive value indicates that a distribution is skewed to the right, and a negative value indicates that it is skewed to the left.
         </p>

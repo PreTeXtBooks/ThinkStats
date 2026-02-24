@@ -89,32 +89,32 @@ download(
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 penguins = pd.read_csv("penguins_raw.csv")
 penguins.shape
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (344, 17)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The dataset contains measurements from three penguin species.
       For this example, we'll select the Adélie penguins.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 adelie = penguins.query('Species.str.startswith("Adelie")').copy()
 len(adelie)
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 152
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To see if penguin weights follow a normal distribution, we'll compute the empirical CDF
       of the data.
@@ -136,16 +136,16 @@ cdf_weights = Cdf.from_seq(weights)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 m, s = weights.mean(), weights.std()
 m, s
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 (np.float64(3700.662251655629), np.float64(458.5661259101348))
-    </pre>
+      </output>
+    </console>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -357,34 +357,34 @@ class Normal:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 m, s = weights_male.mean(), weights_male.std()
 dist_male = Normal(m, s**2)
 dist_male
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(4043.4931506849316, 120278.25342465754)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And another <c>Normal</c> object with the same mean and variance as the weights of the
       female penguins.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 m, s = weights_female.mean(), weights_female.std()
 dist_female = Normal(m, s**2)
 dist_female
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(3368.8356164383563, 72565.63926940637)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Next we'll add a method to the <c>Normal</c> class that generates a random sample from
       a normal distribution.
@@ -458,16 +458,16 @@ def __add__(self, other):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 dist_sum = dist_male + dist_female
 dist_sum
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(7412.328767123288, 192843.8926940639)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To confirm that this result is correct, we'll use the following method, which plots the
       analytic CDF of a normal distribution.
@@ -520,17 +520,17 @@ decorate(xlabel="Total weight (g)", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = len(weights_male)
 sample_sums_male = [dist_male.sample(n).sum() for i in range(1001)]
 n
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 73
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The following method makes a <c>Normal</c> object that represents the distribution of
       the sums.
@@ -674,16 +674,16 @@ decorate(xlabel="Average weight (g)", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 standard_error = np.sqrt(dist_mean_male.sigma2)
 standard_error
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(40.591222045992765)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       This result suggests a shortcut we can use to compute the standard error directly,
       without computing the sampling distribution.
@@ -696,16 +696,16 @@ np.float64(40.591222045992765)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 standard_error = weights_male.std() / np.sqrt(n)
 standard_error
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(40.59122204599277)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now let's consider one more result we can compute with normal distributions, the
       distribution of differences.
@@ -721,17 +721,17 @@ np.float64(40.59122204599277)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n = len(weights_female)
 dist_mean_female = dist_female.sum(n) / n
 dist_mean_female
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(3368.835616438356, 994.0498530055667)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       Now we have sampling distributions for the average weight of male and female
       penguins<mdash/>let's compute the distribution of the differences.
@@ -777,16 +777,16 @@ def __sub__(self, other):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 dist_diff_means = dist_mean_male - dist_mean_female
 dist_diff_means
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(674.6575342465753, 2641.697160192656)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And here's a random sample of differences.
     </p>
@@ -842,30 +842,30 @@ def ppf(self, xs):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 ci90 = dist_diff_means.ppf([0.05, 0.95])
 ci90
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([590.1162635 , 759.19880499])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We get approximately the same results from the random sample.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 np.percentile(sample_diff_means, [5, 95])
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 array([590.86245503, 762.96045373])
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The analytic method is faster than resampling, and it is deterministic<mdash/>that is,
       not random.
@@ -959,18 +959,18 @@ for n in [1, 10, 100]:
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 df_sample_expo.mean()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 1        0.989885
 10       9.825744
 100    100.022555
 dtype: float64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The average value from this distribution is 1, so if we add up 10 values, the average
       of the sum is close to 10, and if we add up 100 values the average of the sum is close
@@ -1218,35 +1218,34 @@ normal_plot_samples(df_sample, ylabel="Sum of correlated values")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from nsfg import get_nsfg_groups
 
 live, firsts, others = get_nsfg_groups()
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 /home/downey/ThinkStats/soln/nsfg.py:220: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
-
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       As we've seen, first babies are born a little later, on average<mdash/>the apparent
       difference is about 0.078 weeks.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 delta = firsts["prglngth"].mean() - others["prglngth"].mean()
 delta
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.07803726677754952)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       To see whether this difference might have happened by chance, we'll assume as a null
       hypothesis that the mean and variance of pregnancy lengths is actually the same for both
@@ -1288,48 +1287,48 @@ def sampling_dist_mean(data, n):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n1 = firsts["totalwgt_lb"].count()
 dist_firsts = sampling_dist_mean(all_lengths, n1)
 n1
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(4363)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And here's the sampling distribution for other babies.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 n2 = others["totalwgt_lb"].count()
 dist_others = sampling_dist_mean(all_lengths, n2)
 n2
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.int64(4675)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can compute the sampling distribution of the difference like this.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 dist_diff = dist_firsts - dist_others
 dist_diff
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 Normal(0.0, 0.003235837567930557)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The mean is 0, which makes sense because if we draw two samples from the same
       distribution, we expect the difference in means to be 0, on average.
@@ -1395,32 +1394,32 @@ def cdf(self, xs):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 right = 1 - dist_diff.cdf(delta)
 right
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.08505405315526993)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       And here's the probability of a difference as negative as <c>-delta</c>, which is the
       area under the left tail.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 left = dist_diff.cdf(-delta)
 left
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.08505405315526993)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       <c>left</c> and <c>right</c> are the same because the normal distribution is symmetric.
       The sum of the two is the probability of a difference as large as <c>delta</c>, positive
@@ -1428,15 +1427,15 @@ np.float64(0.08505405315526993)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 left + right
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(5.722951275096036e-11)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The resulting p-value is 0.170, which is consistent with the estimate we computed by
       resampling in <xref ref="ch-hypothesis-testing"/>.
@@ -1449,18 +1448,18 @@ np.float64(5.722951275096036e-11)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import ttest_ind
 
 result = ttest_ind(firsts["prglngth"], others["prglngth"])
 result.pvalue
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.16755412639414996)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       When the sample sizes are large, the result of the <m>t</m> test is close to what we
       computed with normal distributions.
@@ -1603,33 +1602,33 @@ decorate(xlabel="Transformed correlation", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 valid = live.dropna(subset=["agepreg", "totalwgt_lb"])
 n = len(valid)
 n
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 9038
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The actual correlation is about 0.07.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 data = valid["agepreg"].values, valid["totalwgt_lb"].values
 r_actual = correlation(data)
 r_actual
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.0688339703541091)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       As we did in <xref ref="ch-hypothesis-testing"/>, we can simulate the null hypothesis
       by permuting the samples.
@@ -1707,64 +1706,64 @@ t_actual = transform_correlation(r_actual, n)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 right = 1 - student_t.cdf(t_actual, df=n - 2)
 right
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(2.8614777214386322e-11)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       We can also compute the probability of a value as negative as <c>-t_actual</c>.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 left = student_t.cdf(-t_actual, df=n - 2)
 left
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(2.8614735536574038e-11)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The sum of the two is the probability of a correlation as big as <c>r_actual</c>,
       positive or negative.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 left + right
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(5.722951275096036e-11)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       SciPy provides a function that does the same calculation and returns the p-value of the
       observed correlation.
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from scipy.stats import pearsonr
 
 corr, p_value = pearsonr(*data)
 p_value
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(5.722947107314364e-11)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The results are nearly the same.
     </p>
@@ -1790,7 +1789,7 @@ np.float64(5.722947107314364e-11)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 from empiricaldist import Hist
 
@@ -1800,9 +1799,7 @@ observed = Hist(freqs, qs)
 observed.index.name = "outcome"
 observed
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 outcome
 1     8
 2     9
@@ -1811,7 +1808,9 @@ outcome
 5     8
 6    11
 dtype: int64
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       First we computed the expected frequency for each outcome.
     </p>
@@ -1938,16 +1937,16 @@ decorate(xlabel="Chi-squared statistic", ylabel="CDF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p_value = 1 - chi2_dist.cdf(observed_chi2, df=n - 1)
 p_value
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.04069938850404997)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       SciPy provides a function that does the same computation.
     </p>
@@ -1963,15 +1962,15 @@ chi2_stat, p_value = chisquare(f_obs=observed, f_exp=expected)
     </listing>
     <listing>
       <caption>Python Code</caption>
-    <program language="python">
+    <console>
       <input>
 p_value
       </input>
-    </program>
-    </listing>
-    <pre>
+      <output>
 np.float64(0.040699388504049985)
-    </pre>
+      </output>
+    </console>
+    </listing>
     <p>
       The result is the same as the p-value we computed.
     </p>
@@ -2118,7 +2117,7 @@ np.float64(0.040699388504049985)
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 grouped = adelie.groupby("Sex")
 
@@ -2127,11 +2126,11 @@ lengths_female = grouped.get_group("FEMALE")["Flipper Length (mm)"]
 observed_diff = lengths_male.mean() - lengths_female.mean()
 observed_diff
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 np.float64(4.616438356164366)
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Use <c>sampling_dist_mean</c> to make <c>Normal</c> objects that represent sampling
           distributions for the mean flipper length in the two groups<mdash/>noting that the
@@ -2152,33 +2151,33 @@ np.float64(4.616438356164366)
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 valid = live.dropna(subset=["hpagelb", "totalwgt_lb"])
 n = len(valid)
 n
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 8933
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           The observed correlation is about 0.065.
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 data = valid["hpagelb"].values, valid["totalwgt_lb"].values
 r_actual = correlation(data)
 r_actual
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 np.float64(0.06468629895432174)
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Compute the transformed correlation, <c>t_actual</c>.
           Use the CDF of the <m>t</m> distribution to compute a p-value<mdash/>is this
@@ -2227,16 +2226,14 @@ female = live.query("babysex == 2")
         </pre>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 observed = pd.DataFrame()
 observed["male"] = male["fmarital"].value_counts().sort_index()
 observed["female"] = female["fmarital"].value_counts().sort_index()
 observed
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
           male  female
 fmarital              
 1         2576    2559
@@ -2244,23 +2241,23 @@ fmarital
 3          568     572
 4          355     330
 5         1086     985
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           The null hypothesis is that the distribution of marital status is the same for both
           groups, so we can use the whole dataset to compute it.
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 from empiricaldist import Pmf
 
 pmf_fmarital = Pmf.from_seq(live["fmarital"])
 pmf_fmarital
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
 fmarital
 1    0.561653
 2    0.012024
@@ -2268,23 +2265,23 @@ fmarital
 4    0.075208
 5    0.226498
 Name: , dtype: float64
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           To compute the expected values, we multiply the probabilities in <c>pmf_marital</c>
           by the total number of cases in each column.
         </p>
         <listing>
           <caption>Python Code</caption>
-        <program language="python">
+        <console>
           <input>
 expected = pd.DataFrame()
 expected["male"] = pmf_fmarital * observed["male"].sum()
 expected["female"] = pmf_fmarital * observed["female"].sum()
 expected
           </input>
-        </program>
-        </listing>
-    <pre>
+          <output>
                  male       female
 fmarital                          
 1         2606.630739  2527.437691
@@ -2292,7 +2289,9 @@ fmarital
 3          578.349366   560.778312
 4          349.038916   338.434631
 5         1051.175339  1019.239178
-    </pre>
+          </output>
+        </console>
+        </listing>
         <p>
           Use <c>observed</c> and <c>expected</c> to compute a chi-squared statistic.
           Then use the CDF of the chi-squared distribution to compute a p-value.
