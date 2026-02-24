@@ -91,12 +91,12 @@ download(
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 df = pd.read_csv("lamps.csv", index_col=0)
 df.tail()
       </input>
-      <output>
+      </program><console><output>
        h  f  K
 i             
 28  1812  1  4
@@ -115,14 +115,14 @@ i
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from empiricaldist import Pmf
 
 pmf_bulblife = Pmf(df["f"].values, index=df["h"])
 pmf_bulblife.normalize()
       </input>
-      <output>
+      </program><console><output>
 np.int64(50)
       </output>
     </console>
@@ -134,12 +134,12 @@ np.int64(50)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 cdf_bulblife = pmf_bulblife.make_cdf()
 cdf_bulblife[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.7800000000000002)
       </output>
     </console>
@@ -151,12 +151,12 @@ np.float64(0.7800000000000002)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 complementary_cdf = 1 - cdf_bulblife
 complementary_cdf[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.21999999999999975)
       </output>
     </console>
@@ -170,12 +170,12 @@ np.float64(0.21999999999999975)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 surv_bulblife = cdf_bulblife.make_surv()
 surv_bulblife[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.21999999999999997)
       </output>
     </console>
@@ -224,12 +224,12 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 at_risk = pmf_bulblife + surv_bulblife
 at_risk[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.25999999999999995)
       </output>
     </console>
@@ -239,11 +239,11 @@ np.float64(0.25999999999999995)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 pmf_bulblife[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.04)
       </output>
     </console>
@@ -253,12 +253,12 @@ np.float64(0.04)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 hazard = pmf_bulblife / at_risk
 hazard[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.15384615384615388)
       </output>
     </console>
@@ -273,12 +273,12 @@ np.float64(0.15384615384615388)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 hazard_bulblife = surv_bulblife.make_hazard()
 hazard_bulblife[1656]
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.15384615384615397)
       </output>
     </console>
@@ -357,12 +357,12 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 resp = pd.read_csv("marriage_nsfg_female.csv.gz")
 resp.shape
       </input>
-      <output>
+      </program><console><output>
 (70183, 34)
       </output>
     </console>
@@ -430,14 +430,14 @@ def decade_of_birth(cmbirth):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from thinkstats import value_counts
 
 resp["cohort"] = resp["cmbirth"].apply(decade_of_birth)
 value_counts(resp["cohort"])
       </input>
-      <output>
+      </program><console><output>
 cohort
 1930      325
 1940     3608
@@ -652,6 +652,8 @@ for label, surv in survs_resampled.items():
     surv.plot(label=label)
 
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
+
+plt.rc("axes", prop_cycle=plt.rcParamsDefault["axes.prop_cycle"])
       </input>
     </program>
     </listing>
@@ -714,12 +716,12 @@ resp60 = sample.query("cohort == 1960")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 complete = resp60.query("evrmarry == 1")["agemarr"]
 complete.count()
       </input>
-      <output>
+      </program><console><output>
 np.int64(9921)
       </output>
     </console>
@@ -730,12 +732,12 @@ np.int64(9921)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 ongoing = resp60.query("evrmarry == 0")["age"]
 ongoing.count()
       </input>
-      <output>
+      </program><console><output>
 np.int64(5468)
       </output>
     </console>
@@ -763,11 +765,11 @@ ft_ongoing = FreqTab.from_seq(ongoing)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 ft_complete[25]
       </input>
-      <output>
+      </program><console><output>
 np.int64(58)
       </output>
     </console>
@@ -778,11 +780,11 @@ np.int64(58)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 ft_ongoing[25]
       </input>
-      <output>
+      </program><console><output>
 np.int64(5)
       </output>
     </console>
@@ -805,11 +807,11 @@ surv_ongoing = ft_ongoing.make_surv()
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 surv_complete[25]
       </input>
-      <output>
+      </program><console><output>
 np.int64(2848)
       </output>
     </console>
@@ -819,11 +821,11 @@ np.int64(2848)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 surv_ongoing[25]
       </input>
-      <output>
+      </program><console><output>
 np.int64(2273)
       </output>
     </console>
@@ -839,12 +841,12 @@ np.int64(2273)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 at_risk = ft_complete[25] + ft_ongoing[25] + surv_complete[25] + surv_ongoing[25]
 at_risk
       </input>
-      <output>
+      </program><console><output>
 np.int64(5184)
       </output>
     </console>
@@ -855,12 +857,12 @@ np.int64(5184)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 hazard = ft_complete[25] / at_risk
 hazard
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.011188271604938271)
       </output>
     </console>
@@ -1076,6 +1078,11 @@ def estimate_survival(group):
       <caption>Python Code</caption>
     <program language="python">
       <input>
+try:
+    import lifelines
+except ImportError:
+    %pip install lifelines
+
 surv = estimate_survival(resp60)
       </input>
     </program>
@@ -1099,14 +1106,14 @@ event_observed = np.concatenate([np.ones(len(complete)), np.zeros(len(ongoing))]
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from lifelines import KaplanMeierFitter
 
 kmf = KaplanMeierFitter()
 kmf.fit(durations=durations, event_observed=event_observed)
       </input>
-      <output>
+      </program><console><output>
 &lt;lifelines.KaplanMeierFitter:"KM_estimate", fitted with 15389 total observations, 5468 right-censored observations&gt;
       </output>
     </console>
@@ -1136,12 +1143,12 @@ decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 ps = kmf.survival_function_["KM_estimate"].drop(0)
 np.allclose(ps, surv)
       </input>
-      <output>
+      </program><console><output>
 True
       </output>
     </console>
@@ -1294,13 +1301,13 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 from nsfg import get_nsfg_groups
 
 live, firsts, others = get_nsfg_groups()
       </input>
-      <output>
+      </program><console><output>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
       </output>
@@ -1365,11 +1372,11 @@ pmf_remaining = Pmf(ps, qs)
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 pmf_remaining.normalize()
       </input>
-      <output>
+      </program><console><output>
 np.float64(0.9155006558810669)
       </output>
     </console>
@@ -1395,11 +1402,11 @@ decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 pmf_remaining.mean()
       </input>
-      <output>
+      </program><console><output>
 np.float64(3.2145671641791043)
       </output>
     </console>
@@ -1448,12 +1455,12 @@ def expected_remaining(pmf):
     </p>
     <listing>
       <caption>Python Code</caption>
-    <console>
+    <program language="python">
       <input>
 expected = expected_remaining(pmf_durations)
 expected
       </input>
-      <output>
+      </program><console><output>
 36    3.214567
 37    2.337714
 38    1.479095
