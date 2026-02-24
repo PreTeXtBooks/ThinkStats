@@ -62,9 +62,12 @@ observed_stat
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(15.0)
     </pre>
+    </listing>
 
     <p>
       If the coin is actually fair, we can simulate the coin-spinning experiment by generating a sequence of random strings -- either <c>'H'</c> or <c>'T'</c> with equal probability -- and counting the number of times <c>'H'</c> appears.
@@ -103,9 +106,12 @@ simulate_flips()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(119)
     </pre>
+    </listing>
 
     <p>
       The following loop simulates the experiment many times, computes the deviation for each one, and uses a list comprehension to collect the results in a list.
@@ -156,9 +162,12 @@ decorate(xlabel="Absolute deviation", ylabel="PMF")
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(7.079292070792921)
     </pre>
+    </listing>
 
     <p>
       So, if the coin is fair, we expect a deviation as big as the one we saw about 7.1% of the time, just by chance.
@@ -217,6 +226,8 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 Downloaded 2002FemPreg.dct
 
@@ -225,6 +236,7 @@ Downloaded 2002FemPreg.dct
 Downloaded 2002FemPreg.dat.gz
 
     </pre>
+    </listing>
 
     <listing>
       <caption>Python Code</caption>
@@ -252,11 +264,14 @@ live, firsts, others = get_nsfg_groups()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
 
     </pre>
+    </listing>
 
     <p>
       Now we can select pregnancy lengths, in weeks, for both groups.
@@ -300,9 +315,12 @@ observed_diff
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.07803726677754952)
     </pre>
+    </listing>
 
     <p>
       So the hypothesis we'll test is whether there is a difference in pregnancy length between first babies and others.
@@ -338,9 +356,12 @@ abs_diff_means(simulate_groups(data))
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.031193045602279312)
     </pre>
+    </listing>
 
     <p>
       The following loop simulates the experiment many times and computes the difference in means for each simulated dataset.
@@ -450,9 +471,12 @@ compute_p_value(simulated_diffs, observed_diff)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.17082917082917082)
     </pre>
+    </listing>
 
     <p>
       Based on this result, we can't be sure that pregnancy lengths are generally longer for first babies -- it's possible that the difference in this dataset is due to chance.
@@ -504,9 +528,12 @@ observed_diff
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.17600895913991677)
     </pre>
+    </listing>
 
     <p>
       To see whether this difference might be due to chance, we can use permutation again.
@@ -554,9 +581,12 @@ compute_p_value(simulated_diffs, observed_diff)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.17082917082917082)
     </pre>
+    </listing>
 
     <p>
       The p-value is about 0.17, so it is plausible that we could see a difference this big even if the two groups are the same.
@@ -587,9 +617,12 @@ valid.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (9038, 244)
     </pre>
+    </listing>
 
     <p>
       Then we'll select the relevant columns.
@@ -635,9 +668,12 @@ observed_corr
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.0688339703541091)
     </pre>
+    </listing>
 
     <p>
       The null hypothesis is that there is no correlation between mother's age and birth weight.
@@ -673,9 +709,12 @@ abs_correlation(permute(data))
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.0019269515502894465)
     </pre>
+    </listing>
 
     <p>
       The following loop generates many shuffled datasets and computes the correlation of each one.
@@ -723,9 +762,12 @@ compute_p_value(simulated_corrs, observed_corr)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.0)
     </pre>
+    </listing>
 
     <p>
       Based on this calculation, we can conclude that the p-value is probably less that 1 per 1000, but it is not actually zero.
@@ -779,6 +821,8 @@ observed
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 outcome
 1     8
@@ -789,6 +833,7 @@ outcome
 6    11
 dtype: int64
     </pre>
+    </listing>
 
     <p>
       On average you expect each value to appear 10 times.
@@ -837,9 +882,12 @@ observed_dev
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(20.0)
     </pre>
+    </listing>
 
     <p>
       The following function takes the observed data, simulates rolling a fair die the same number of times, and returns a <c>Hist</c> object that contains the simulated frequencies.
@@ -903,9 +951,12 @@ compute_p_value(simulated_devs, observed_dev)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.13086913086913088)
     </pre>
+    </listing>
 
     <p>
       But the test statistic we chose was not the only option.
@@ -937,9 +988,12 @@ observed_chi2
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(11.6)
     </pre>
+    </listing>
 
     <p>
       The chi-squared statistic of the observed data is 11.6.
@@ -988,9 +1042,12 @@ compute_p_value(simulated_chi2, observed_chi2)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.04495504495504495)
     </pre>
+    </listing>
 
     <p>
       The p-value using the chi-squared statistic is about 0.04, substantially smaller than what we got using total deviation, 0.13.
@@ -1064,10 +1121,13 @@ download(
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 Downloaded penguins_raw.csv
 
     </pre>
+        </listing>
         <p>
           Here's how we read the data and select the Chinstrap penguins.
         </p>
@@ -1081,9 +1141,12 @@ chinstrap.shape
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 (68, 17)
     </pre>
+        </listing>
         <p>
           And here's how we can extract the weights for male and female penguins in kilograms.
         </p>
@@ -1097,9 +1160,12 @@ weights_male.mean()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 np.float64(3.9389705882352937)
     </pre>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">
@@ -1110,9 +1176,12 @@ weights_female.mean()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 np.float64(3.5272058823529413)
     </pre>
+        </listing>
         <p>
           Use <c>abs_diff_means</c> and <c>simulate_groups</c> to generate a large number of simulated datasets under the null hypothesis that the two groups have the same distribution of weights, and compute the difference in means for each one.
           Compare the simulation results to the observed difference and compute a p-value.
@@ -1147,9 +1216,12 @@ observed_corr
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 np.float64(0.2563170802728449)
     </pre>
+        </listing>
         <p>
           Let's see whether this correlation could happen by chance, even if there is actually no correlation between the measurements.
           Use <c>permute</c> to generate many permutations of this data and <c>abs_correlation</c> to compute the correlation for each one.

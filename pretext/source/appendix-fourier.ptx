@@ -47,9 +47,12 @@ np.mean(ys)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(-2.220446049250313e-16)
     </pre>
+    </listing>
     <p>
       And add in zero-mean Gaussian noise.
     </p>
@@ -118,6 +121,8 @@ res.summary()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 &lt;class 'statsmodels.iolib.summary.Summary'&gt;
 """
@@ -149,6 +154,7 @@ Notes:
 [2] Standard
 ... (output truncated)
     </pre>
+    </listing>
     <p>
       Here's what the fitted model looks like compared to the data.
     </p>
@@ -222,9 +228,12 @@ c
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.complex128(1.2602143401738164+0.68455041144776j)
     </pre>
+    </listing>
     <p>
       The result is a complex number that represents the estimated amplitude and phase of the
       signal.
@@ -240,9 +249,12 @@ A_hat, phi_hat
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(1.4341371792799409), np.float64(0.49760870975866645))
     </pre>
+    </listing>
     <p>
       And the estimated values are the same as what we got from linear regression.
     </p>

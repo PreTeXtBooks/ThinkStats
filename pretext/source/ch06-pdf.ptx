@@ -249,9 +249,12 @@ normal_pdf(m, m, s)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
+    </listing>
     <p>
       By itself, a probability density doesn't mean much <mdash/> most importantly, it is <em>not</em> a probability.
       It would be incorrect to say that the probability is 32% that a randomly-chosen birth weight equals <c>m</c>.
@@ -275,9 +278,12 @@ pdf_model
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 NormalPdf(7.280883100022579, 1.2430657948614345, name='normal model')
     </pre>
+    </listing>
     <p>
       If we call this object like a function, it evaluates the normal PDF.
     </p>
@@ -289,9 +295,12 @@ pdf_model(m)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
+    </listing>
     <p>
       Now, to compute the area under the PDF, we can use the following function, which takes a <c>NormalPdf</c> object and the bounds of an interval, <c>low</c> and <c>high</c>.
       It evaluates the normal PDF at equally-spaced quantities between <c>low</c> and <c>high</c>, and uses the SciPy function <c>simpson</c> to estimate the area under the curve (<c>simpson</c> is so named because it uses an algorithm called Simpson's method).
@@ -321,9 +330,12 @@ area_under(pdf_model, 2, 12)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.9999158086616793)
     </pre>
+    </listing>
     <p>
       If we extend the interval from negative infinity to positive infinity, the total area is exactly 1.
     </p>
@@ -338,9 +350,12 @@ area_under(pdf_model, 0, 8.5)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8366380335513807)
     </pre>
+    </listing>
     <p>
       You might recall that the "fraction less than or equal to a given value" is the definition of the CDF.
       So we could compute the same result using the CDF of the normal distribution.
@@ -355,9 +370,12 @@ norm.cdf(8.5, m, s)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8366380358092718)
     </pre>
+    </listing>
     <p>
       Similarly, we can use the area under the density curve to compute the fraction of birth weights between 6 and 8 pounds.
     </p>
@@ -369,9 +387,12 @@ area_under(pdf_model, 6, 8)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.5671317752927691)
     </pre>
+    </listing>
     <p>
       Or we can get the same result using the CDF to compute the fraction less than 8 and then subtracting off the fraction less than 6.
     </p>
@@ -383,9 +404,12 @@ norm.cdf(8, m, s) - norm.cdf(6, m, s)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.5671317752921801)
     </pre>
+    </listing>
     <p>
       So the CDF is the area under the curve of the PDF.
       If you know calculus, another way to say the same thing is that the CDF is the integral of the PDF.
@@ -452,9 +476,12 @@ pdf_expo
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 ExponentialPdf(6, name='exponential model')
     </pre>
+    </listing>
     <p>
       <c>ExponentialPdf</c> provides a <c>plot</c> function we can use to plot the PDF <mdash/> notice that the unit of time is games here, rather than seconds as in the previous chapter.
     </p>
@@ -486,9 +513,12 @@ area_under(pdf_expo, 0, 1.5)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.999876590779019)
     </pre>
+    </listing>
     <p>
       If we extend the interval much farther, the result is slightly greater than 1, but that's because we're approximating the area numerically.
       Mathematically, it is exactly 1, as we can confirm using the exponential CDF.
@@ -503,9 +533,12 @@ exponential_cdf(7, lam)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(1.0)
     </pre>
+    </listing>
     <p>
       We can use the area under the density curve to compute the probability of a goal during any interval.
       For example, here is the probability of a goal during the first minute of a 60-minute game.
@@ -518,9 +551,12 @@ area_under(pdf_expo, 0, 1 / 60)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.09516258196404043)
     </pre>
+    </listing>
     <p>
       We can compute the same result using the exponential CDF.
     </p>
@@ -532,9 +568,12 @@ exponential_cdf(1 / 60, lam)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.09516258196404048)
     </pre>
+    </listing>
     <p>
       In summary, if we evaluate a PDF, the result is a probability density <mdash/> which is not a probability.
       However, if we compute the area under the PDF, the result is the probability that a quantity falls in an interval.
@@ -622,9 +661,12 @@ len(pmf_model), len(pmf_birth_weight)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (201, 184)
     </pre>
+    </listing>
     <p>
       The other problem is that the <c>Pmf</c> of the data is noisy.
       So let's try something else.
@@ -842,6 +884,8 @@ boom.head()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
    time  sex  weight_g  minutes
 0     5    1      3837        5
@@ -850,6 +894,7 @@ boom.head()
 3   155    2      3838      115
 4   257    2      3625      177
     </pre>
+    </listing>
     <p>
       The <c>minutes</c> column records "the number of minutes since midnight for each birth".
       So we can use the <c>diff</c> method to compute the interval between each successive birth.
@@ -924,9 +969,12 @@ np.allclose(pmf_diffs, pmf_diffs2)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 True
     </pre>
+    </listing>
     <p>
       And it is.
     </p>
@@ -1048,9 +1096,12 @@ cdf
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1 - exp(-x*λ)
     </pre>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1060,9 +1111,12 @@ pdf
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 λ*exp(-x*λ)
     </pre>
+    </listing>
     <p>
       And if we integrate the result, we get the CDF back <mdash/> although we lose the constant of integration in the process.
     </p>
@@ -1074,9 +1128,12 @@ sp.integrate(pdf, x)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 -exp(-x*λ)
     </pre>
+    </listing>
     <p>
       This example shows how we use <c>Pmf</c>, <c>Cdf</c>, and <c>Pdf</c> objects to represent PMFs, CDFs, and PDFs, and demonstrates the process for converting from each to the others.
     </p>
@@ -1169,9 +1226,12 @@ m, s
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 (np.float64(178.10278947124948), np.float64(7.017054887136004))
     </pre>
+        </listing>
         <p>
           Here's a <c>NormalCdf</c> object that represents a normal distribution with the same mean and standard deviation as the trimmed data.
         </p>

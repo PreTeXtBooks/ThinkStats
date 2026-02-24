@@ -69,9 +69,12 @@ penguins.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (342, 17)
     </pre>
+    </listing>
 
     <p>
       The dataset includes measurements of 151 Adélie penguins.
@@ -87,9 +90,12 @@ len(adelie)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 151
     </pre>
+    </listing>
 
     <p>
       Now suppose we know the flipper length of an Adélie penguin -- let's see how well we can predict its weight.
@@ -138,9 +144,12 @@ np.corrcoef(flipper_length, body_mass)[0, 1]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
+    </listing>
 
     <p>
       The correlation is about 0.47, so penguins with longer flippers tend to be heavier.
@@ -167,9 +176,12 @@ result
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535.8368022002514), rvalue=np.float64(0.46820169421793933), pvalue=np.float64(1.3432645947790051e-09), stderr=np.float64(5.076138407990821), intercept_stderr=np.float64(964.7984274994059))
     </pre>
+    </listing>
 
     <p>
       The result is a <c>LinregressResult</c> object that contains the slope and intercept of the fitted line, along with other information we'll unpack soon.
@@ -190,9 +202,12 @@ x, y
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(189.95364238410596), np.float64(3700.662251655629))
     </pre>
+    </listing>
 
     <p>
       For a penguin with the average flipper length, about 190 mm, the expected body weight is about 3700 grams.
@@ -292,9 +307,12 @@ x, y
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(181.0), np.float64(3406.699042757914))
     </pre>
+    </listing>
 
     <p>
       The flipper length of the selected penguin is 181 mm and the predicted body mass is 3407 grams.
@@ -309,9 +327,12 @@ body_mass[0], residuals[0]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(3750.0), np.float64(343.30095724208604))
     </pre>
+    </listing>
 
     <p>
       The actual mass of this penguin is 3750 grams, and the residual -- after subtracting away the prediction -- is 343 grams.
@@ -329,9 +350,12 @@ mse
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(163098.85902884745)
     </pre>
+    </listing>
 
     <p>
       By itself, this number doesn't mean very much.
@@ -374,9 +398,12 @@ np.mean(deviations**2)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(208890.28989956583)
     </pre>
+    </listing>
 
     <p>
       You might remember that the mean squared deviation is the variance.
@@ -390,9 +417,12 @@ np.var(body_mass)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(208890.28989956583)
     </pre>
+    </listing>
 
     <p>
       So we can think of the variance of the masses as the MSE if we always guess the mean, and the variance of the residuals as the MSE if we use the regression line.
@@ -425,9 +455,12 @@ R2
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.21921282646854912)
     </pre>
+    </listing>
 
     <p>
       It turns out that there's a relationship between the coefficient of determination, <m>R^2</m>, and the coefficient of correlation, <m>r</m>.
@@ -446,9 +479,12 @@ r
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.4682016942179397)
     </pre>
+    </listing>
 
     <p>
       And comparing it to the correlation we computed earlier.
@@ -463,9 +499,12 @@ corr
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
+    </listing>
 
     <p>
       They are the same except for a small difference due to floating-point approximation.
@@ -482,9 +521,12 @@ result.rvalue
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.46820169421793933)
     </pre>
+    </listing>
 
     <p>
       The coefficients of determination and correlation convey mostly the same information, but they are interpreted differently:
@@ -532,10 +574,13 @@ fake_result
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 namespace(intercept=np.float64(-2533.193389187175),
           slope=np.float64(32.15393529728294))
     </pre>
+    </listing>
 
     <p>
       We can pass this object to <c>compute_residuals</c> and use the residuals to compute the MSE.
@@ -563,9 +608,12 @@ mse, fake_mse, fake_mse > mse
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(163098.85902884745), np.float64(179019.20812685465), np.True_)
     </pre>
+    </listing>
 
     <p>
       Minimizing MSE is nice, but it's not the only definition of "best".
@@ -611,9 +659,12 @@ intercept, slope
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(-2535.8368022002524), np.float64(32.831689751150094))
     </pre>
+    </listing>
 
     <p>
       And we can confirm that we get the same results we got from <c>linregress</c>.
@@ -627,9 +678,12 @@ np.allclose([intercept, slope], [result.intercept, result.slope])
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 True
     </pre>
+    </listing>
 
     <p>
       Minimizing MSE made sense when computational efficiency was more important than choosing the method most appropriate to the problem at hand.
@@ -736,10 +790,13 @@ print(result.slope, ci90)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 32.83168975115009 [25.39604591 40.21054526]
 
     </pre>
+    </listing>
 
     <p>
       So we could report that the estimated slope is 33 grams / mm with a 90% CI [25, 40] grams / mm.
@@ -757,9 +814,12 @@ stderr
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(4.570238986584832)
     </pre>
+    </listing>
 
     <p>
       The <c>RegressionResult</c> object we got from <c>linregress</c> provides an approximation of the standard error, based on some assumptions about the shape of the distribution.
@@ -773,9 +833,12 @@ result.stderr
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(5.076138407990821)
     </pre>
+    </listing>
 
     <p>
       The standard error we computed by resampling is a little smaller, but the difference probably doesn't matter in practice.
@@ -963,9 +1026,12 @@ result_brfss.intercept, result_brfss.slope
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(-82.65926054409877), np.float64(0.957074585033226))
     </pre>
+    </listing>
 
     <p>
       The slope is about 0.96, which means that an increase of 1 centimeter corresponds to an increase of almost 1 kilogram, on average.
@@ -1085,9 +1151,12 @@ result_brfss2.intercept, result_brfss2.slope
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(0.9930804163932876), np.float64(0.005281454169417777))
     </pre>
+    </listing>
 
     <p>
       Because we transformed one of the variables, the slope and intercept are harder to interpret.
@@ -1164,9 +1233,12 @@ result_brfss.rvalue, result_brfss2.rvalue
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(0.5087364789734582), np.float64(0.5317282605983435))
     </pre>
+    </listing>
 
     <p>
       Which means that the <m>R^2</m> value is slightly higher, too.
@@ -1180,9 +1252,12 @@ result_brfss.rvalue**2, result_brfss2.rvalue**2
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(0.2588128050383119), np.float64(0.28273494311893993))
     </pre>
+    </listing>
 
     <p>
       If we use heights to guess weights, the guesses are a little better if we work with the log-transformed weights.

@@ -60,9 +60,12 @@ nlsy.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (8984, 34)
     </pre>
+    </listing>
 
     <listing>
       <caption>Python Code</caption>
@@ -72,6 +75,8 @@ nlsy.head()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
    R0000100  R0490200  R0536300  R0536401  R0536402  R1235800  R1318200  \
 0         1       NaN         2         9      1981         1       NaN   
@@ -96,6 +101,7 @@ nlsy.head()
 
 [5 rows x 34 columns]
     </pre>
+    </listing>
 
     <p>
       The <c>DataFrame</c> contains one row for each of the 8984 participants in the survey and one column for each of the 34 variables I selected.
@@ -142,9 +148,12 @@ nlsy_valid.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (1398, 36)
     </pre>
+    </listing>
 
     <p>
       SAT scores are standardized so the mean is 500 and the standard deviation is 100.
@@ -160,9 +169,12 @@ sat_verbal.mean(), sat_verbal.std()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(501.80972818311875), np.float64(108.36562024213643))
     </pre>
+    </listing>
 
     <listing>
       <caption>Python Code</caption>
@@ -173,9 +185,12 @@ sat_math.mean(), sat_math.std()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(503.0829756795422), np.float64(109.8329973731453))
     </pre>
+    </listing>
 
     <p>
       Now, to see whether there is a relationship between these variables, let's look at a <term>scatter plot</term>.
@@ -325,6 +340,8 @@ deciles.value_counts().sort_index()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 sat_verbal
 1     142
@@ -339,6 +356,7 @@ sat_verbal
 10    131
 Name: count, dtype: int64
     </pre>
+    </listing>
 
     <p>
       The number of respondents in each decile is roughly equal.
@@ -356,9 +374,12 @@ df_groupby
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 &lt;pandas.core.groupby.generic.DataFrameGroupBy object at 0x7fa0adfd49d0&gt;
     </pre>
+    </listing>
 
     <p>
       The result is a <c>DataFrameGroupBy</c> object that represents the groups.
@@ -374,9 +395,12 @@ series_groupby
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 &lt;pandas.core.groupby.generic.SeriesGroupBy object at 0x7fa0b01af7d0&gt;
     </pre>
+    </listing>
 
     <p>
       The result is a <c>SeriesGroupBy</c> object that represents the math scores in each decile.
@@ -462,6 +486,8 @@ nlsy["piat_math"].describe()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 count    6044.000000
 mean       93.903706
@@ -473,6 +499,7 @@ min        55.000000
 max       145.000000
 Name: piat_math, dtype: float64
     </pre>
+    </listing>
 
     <p>
       Here's what the distribution of scores looks like.
@@ -595,9 +622,12 @@ np.mean(piat_math_standard), np.std(piat_math_standard)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(-2.4321756236287047e-16), np.float64(1.0))
     </pre>
+    </listing>
 
     <p>
       The results are <term>standard scores</term>, also called "z-scores".
@@ -616,9 +646,12 @@ np.mean(sat_math_standard), np.std(sat_math_standard)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(-1.737268302591932e-16), np.float64(0.9999999999999998))
     </pre>
+    </listing>
 
     <p>
       The following figure shows sequences of these scores for the first 100 participants.
@@ -668,9 +701,12 @@ np.mean(piat_math_standard * sat_math_standard)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.639735816517885)
     </pre>
+    </listing>
 
     <p>
       The result, which is about 0.64, is the correlation coefficient.
@@ -688,9 +724,12 @@ np.mean(sat_math_standard * piat_math_standard)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.639735816517885)
     </pre>
+    </listing>
 
     <p>
       So the correlation coefficient is symmetric: if someone's SAT math score is 1 standard deviation above the mean, we expect their PIAT math score to be 0.64 standard deviations above the mean, on average.
@@ -707,10 +746,13 @@ np.corrcoef(piat_math, sat_math)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([[1.        , 0.63973582],
        [0.63973582, 1.        ]])
     </pre>
+    </listing>
 
     <p>
       The result is a <term>correlation matrix</term>, with one row and one column for each variable.
@@ -735,9 +777,12 @@ corrcoef(nlsy, "piat_math", "sat_math")
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.6397358165178849)
     </pre>
+    </listing>
 
     <p>
       We can use this function to compute the correlation of <c>piat_math</c> and <c>sat_verbal</c>.
@@ -751,9 +796,12 @@ corrcoef(nlsy, "piat_math", "sat_verbal")
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.509413914696731)
     </pre>
+    </listing>
 
     <p>
       The correlation is about 0.51, so if someone's PIAT math score is one standard deviation above the mean, we expect their SAT verbal score to be 0.51 standard deviations above the mean, on average.
@@ -884,6 +932,8 @@ nlsy["income"].describe()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 count      6051.000000
 mean     104274.239960
@@ -895,6 +945,7 @@ min           0.000000
 max      599728.000000
 Name: income, dtype: float64
     </pre>
+    </listing>
 
     <p>
       The values in this column are gross family income, which is total income of the respondent and the other members of their household, from all sources, reported in U.S. dollars (USD).
@@ -948,9 +999,12 @@ corrcoef(nlsy, "piat_math", "income")
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.30338587288641233)
     </pre>
+    </listing>
 
     <p>
       The correlation is about 0.3, which means that if someone gets a PIAT math score one standard deviation above the mean when they are 15 years old, we expect their income to be about 0.3 standard deviations above the mean when they are 40.
@@ -990,9 +1044,12 @@ income_rank.min(), income_rank.max()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(1.0), np.float64(4101.0))
     </pre>
+    </listing>
 
     <p>
       Here's a scatter plot of income ranks versus math score ranks.
@@ -1024,9 +1081,12 @@ np.corrcoef(piat_math_rank, income_rank)[0, 1]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.38148396696764847)
     </pre>
+    </listing>
 
     <p>
       The result is about 0.38, somewhat higher than the Pearson correlation, which is 0.30.
@@ -1046,9 +1106,12 @@ rankcorr(nlsy, "piat_math", "income")
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.38474681505344815)
     </pre>
+    </listing>
 
     <p>
       And SciPy provides a similar function called <c>spearmanr</c>, because rank correlation is also called Spearman's correlation.
@@ -1064,9 +1127,12 @@ spearmanr(valid["piat_math"], valid["income"]).statistic
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.38474681505344815)
     </pre>
+    </listing>
 
     <p>
       As an exercise, you'll have a chance to compute the correlation between SAT verbal scores and income, using both Pearson correlation and rank correlation.
@@ -1252,6 +1318,8 @@ nlsy["gpa"].describe()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 count    6004.000000
 mean        2.818408
@@ -1263,6 +1331,7 @@ min         0.100000
 max         4.170000
 Name: gpa, dtype: float64
     </pre>
+        </listing>
         <p>
           And here's what the distribution of GPAs looks like.
         </p>
@@ -1304,6 +1373,8 @@ nlsy["degree"].value_counts().sort_index()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 degree
 0.0     877
@@ -1316,6 +1387,7 @@ degree
 7.0     130
 Name: count, dtype: int64
     </pre>
+        </listing>
         <p>
           But we can use these lists to decode them.
         </p>
@@ -1406,6 +1478,8 @@ brfss["htm3"].describe()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 count    409129.000000
 mean        168.825190
@@ -1417,6 +1491,7 @@ min          61.000000
 max         236.000000
 Name: htm3, dtype: float64
     </pre>
+        </listing>
         <p>
           Make a decile plot of weight versus height. Does the relationship seem to be linear?
           Compute the correlation coefficient and rank correlation. Are they substantially different? Which one do you think better quantifies the relationship between these variables?
