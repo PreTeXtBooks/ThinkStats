@@ -16,6 +16,7 @@ import json
 import os
 import re
 import sys
+from html.parser import HTMLParser
 from pathlib import Path
 
 REPO_ROOT = Path(__file__).parent.parent
@@ -75,6 +76,94 @@ def xml_escape(text):
     return text
 
 
+def html_table_to_ptx(html_str, indent="    "):
+    """Convert HTML simpletable(s) to PTX <table><tabular> element(s).
+
+    Args:
+        html_str: HTML string containing one or more <table class="simpletable">
+            elements (e.g. the output of statsmodels res.summary()).
+        indent: Leading whitespace for indentation.
+
+    Returns:
+        PTX XML string (one <table> per HTML simpletable joined by newlines),
+        or None if no rows were parsed.
+    """
+
+    class _TableParser(HTMLParser):
+        def __init__(self):
+            super().__init__()
+            self.tables = []          # list of row-lists, one per simpletable
+            self._current_table = None
+            self._current_row = None
+            self._current_cell = None
+            self._current_is_header = False
+
+        def handle_starttag(self, tag, attrs):
+            if tag == "table":
+                attrs_dict = dict(attrs)
+                if "simpletable" in attrs_dict.get("class", ""):
+                    self._current_table = []
+            elif tag == "tr":
+                if self._current_table is not None:
+                    self._current_row = []
+            elif tag in ("td", "th"):
+                if self._current_row is not None:
+                    self._current_cell = ""
+                    self._current_is_header = tag == "th"
+
+        def handle_endtag(self, tag):
+            if tag == "table":
+                if self._current_table is not None:
+                    self.tables.append(self._current_table)
+                    self._current_table = None
+            elif tag == "tr":
+                if self._current_table is not None and self._current_row is not None:
+                    self._current_table.append(self._current_row)
+                    self._current_row = None
+            elif tag in ("td", "th"):
+                if self._current_row is not None and self._current_cell is not None:
+                    self._current_row.append(
+                        (self._current_is_header, self._current_cell.strip())
+                    )
+                    self._current_cell = None
+
+        def handle_data(self, data):
+            if self._current_cell is not None:
+                self._current_cell += data
+
+    parser = _TableParser()
+    parser.feed(html_str)
+
+    inner_indent = indent + "  "
+    row_indent = indent + "    "
+    cell_indent = indent + "      "
+
+    ptx_tables = []
+    for table_rows in parser.tables:
+        rows = [r for r in table_rows if r]
+        if not rows:
+            continue
+        lines = [f"{indent}<table>", f"{inner_indent}<tabular halign=\"center\">"]
+        for row_idx, row in enumerate(rows):
+            # The first row is treated as a header row when any cell after the
+            # first is a <th> element (statsmodels simpletable marks column headers
+            # with <th>; the first cell is either empty or a row label).
+            # row[1:] is safe because empty rows are already filtered out above.
+            is_header = row_idx == 0 and any(is_th for is_th, _ in row[1:])
+            if is_header:
+                lines.append(f'{row_indent}<row header="yes" bottom="minor">')
+            else:
+                lines.append(f"{row_indent}<row>")
+            for _, cell_text in row:
+                lines.append(f"{cell_indent}<cell>{xml_escape(cell_text)}</cell>")
+            lines.append(f"{row_indent}</row>")
+        lines.append(f"{inner_indent}</tabular>")
+        lines.append(f"{indent}</table>")
+        ptx_tables.append("\n".join(lines))
+
+    if not ptx_tables:
+        return None
+    return "\n".join(ptx_tables)
 def strip_ansi(text):
     """Remove ANSI escape sequences and control chars from text to keep PTX XML valid."""
     # Strip CSI (ESC [) sequences: \x20-\x3f = parameter bytes (digits, ;, ?, etc.)
@@ -133,6 +222,21 @@ def extract_outputs_from_notebook(notebook_path):
                         f'      <image source="images/{img_filename}" width="80%"/>\n'
                         f'    </figure>'
                     )
+                elif "text/html" in data:
+                    # Convert HTML simpletables (e.g. from statsmodels) to PTX.
+                    html = "".join(data["text/html"])
+                    if 'class="simpletable"' in html:
+                        ptx_table = html_table_to_ptx(html)
+                        if ptx_table:
+                            ptx_blocks.append(ptx_table)
+                    elif "text/plain" in data:
+                        text = "".join(data["text/plain"])
+                        if text.strip() and not _is_boring_output(text):
+                            text = _truncate(text)
+                            text = xml_escape(text)
+                            ptx_blocks.append(
+                                f"    <pre>\n{text}\n    </pre>"
+                            )
                 elif "text/plain" in data:
                     # Use text/plain representation
                     text = "".join(data["text/plain"])
@@ -262,6 +366,44 @@ def _build_console_block(prog_indent, input_open, code, input_close, close_tag, 
     )
 
 
+# Pattern matching a <console> block whose <output> starts with (or contains
+# only) a boring Python class representation
+# (e.g. "<class 'statsmodels.iolib.table.SimpleTable'>").
+# These were generated by previous runs when text/html output was not handled.
+# The output may have additional text after the class name (e.g. res.summary()
+# appends the full formatted summary), which is also discarded here because
+# update_ptx_file will replace it with proper PTX table output from text/html.
+_BORING_CONSOLE_PAT = re.compile(
+    r"([ \t]*)<console>"
+    r"(\s*<input>)((?:(?!</input>).)*?)(</input>)"
+    r"\s*<output>\s*&lt;class\s+'[^']*'&gt;.*?</output>"
+    r"(\s*</console>)",
+    re.DOTALL,
+)
+
+
+def clean_boring_console_outputs(content):
+    """Revert <console> blocks whose <output> starts with a boring Python
+    class representation back to <program> blocks, so that update_ptx_file
+    can replace them with proper table output.
+
+    Returns the updated content string.
+    """
+
+    def _replacer(m):
+        prog_indent = m.group(1)
+        input_open = m.group(2)
+        code = m.group(3)
+        input_close = m.group(4)
+        close_tag = m.group(5).replace("</console>", "</program>")
+        return (
+            f"{prog_indent}<program language=\"python\">"
+            f"{input_open}{code}{input_close}{close_tag}"
+        )
+
+    return _BORING_CONSOLE_PAT.sub(_replacer, content)
+
+
 def migrate_ptx_file(ptx_path):
     """
     Migrate an existing PTX file so that text output blocks (<pre>) are
@@ -344,6 +486,10 @@ def migrate_ptx_file(ptx_path):
     )
     content = case3_pattern.sub(_case3_replacer, content)
 
+    # Case 4: <console> blocks with boring <class '...'> output — revert to
+    # <program> so that update_ptx_file can replace them with proper table output.
+    content = clean_boring_console_outputs(content)
+
     if content != original:
         with open(ptx_path, "w") as f:
             f.write(content)
@@ -379,7 +525,7 @@ def update_ptx_file(ptx_path, code_to_outputs):
     program_pattern = re.compile(_PROG_PAT, re.DOTALL)
 
     # Pattern to detect an existing output block after the insertion point
-    existing_output_pattern = re.compile(r"\s*<(pre|figure)\b", re.DOTALL)
+    existing_output_pattern = re.compile(r"\s*<(pre|figure|table)\b", re.DOTALL)
 
     # Pattern to match a closing </listing> immediately after </program>
     listing_close_pattern = re.compile(r"(\s*</listing>)", re.DOTALL)
@@ -406,7 +552,7 @@ def update_ptx_file(ptx_path, code_to_outputs):
         listing_close_text = listing_close_match.group(1)
         listing_close_end = match.end() + listing_close_match.end()
         after_listing = content[listing_close_end:]
-        already_has_figure = bool(existing_output_pattern.match(after_listing))
+        already_has_post_output = bool(existing_output_pattern.match(after_listing))
 
         code_normalized = normalize_code(code_raw)
         outputs = code_to_outputs.get(code_normalized)
@@ -418,6 +564,7 @@ def update_ptx_file(ptx_path, code_to_outputs):
 
         pre_outputs = [o for o in outputs if "<pre>" in o]
         fig_outputs = [o for o in outputs if "<figure>" in o]
+        table_outputs = [o for o in outputs if "<table>" in o]
 
         changes_made += 1
 
@@ -437,9 +584,11 @@ def update_ptx_file(ptx_path, code_to_outputs):
 
         last_end = listing_close_end
 
-        # Figure outputs always go after </listing>.
-        if fig_outputs and not already_has_figure:
-            result_parts.append("\n" + "\n".join(fig_outputs))
+        # Figure and table outputs always go after </listing>.
+        if not already_has_post_output:
+            post_outputs = fig_outputs + table_outputs
+            if post_outputs:
+                result_parts.append("\n" + "\n".join(post_outputs))
 
     result_parts.append(content[last_end:])
     new_content = "".join(result_parts)
