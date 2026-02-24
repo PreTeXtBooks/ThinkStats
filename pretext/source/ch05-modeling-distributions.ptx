@@ -774,6 +774,11 @@ decorate(xlabel="Time of first goal (seconds)", ylabel="CDF")
       <caption>Python Code</caption>
     <program language="python">
       <input>
+filename = "nhl_2023_2024.hdf"
+
+with pd.HDFStore(filename, "r") as store:
+    keys = store.keys()
+
 firsts = []
 
 for key in keys:
