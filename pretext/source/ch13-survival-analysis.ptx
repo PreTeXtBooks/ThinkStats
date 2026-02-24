@@ -353,6 +353,19 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
       Instructions for downloading this excerpt are in the notebook for this chapter.
     </p>
     <p>
+      The following cell downloads the data, which is a CSV file I created that combines data
+      from several iterations of the NSFG survey, from 1982 to 2019.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+filename = "marriage_nsfg_female.csv.gz"
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
+      </input>
+    </program>
+    </listing>
+    <p>
       We can read the data like this.
     </p>
     <listing>
@@ -660,6 +673,14 @@ plt.rc("axes", prop_cycle=plt.rcParamsDefault["axes.prop_cycle"])
     <figure>
       <image source="images/chap13_005.png" width="80%"/>
     </figure>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+plt.rc("axes", prop_cycle=plt.rcParamsDefault["axes.prop_cycle"])
+      </input>
+    </program>
+    </listing>
     <p>
       The difference, with and without resampling, is substantial, which shows that we need to
       correct for stratified sampling to get accurate results.
@@ -1296,6 +1317,19 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       To demonstrate, we'll use pregnancy data from the NSFG.
     </p>
     <p>
+      The following cells download the data files we need to read the data.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
+    <p>
       We'll use <c>get_nsfg_groups</c> to read the data and divide it into first babies and
       others.
     </p>
@@ -1612,6 +1646,16 @@ decorate(
           Plot the cumulative hazard function<mdash/>when is the danger of divorce highest?
           Plot the survival function<mdash/>what fraction of marriages end in divorce?
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+# I suggest you use a single resampling of the data
+
+sample = resample_cycles(resp)
+          </input>
+        </program>
+        </listing>
       </statement>
     </exercise>
 
@@ -1638,6 +1682,16 @@ decorate(
         <p>
           We can load the data like this.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+download(
+    "https://github.com/AllenDowney/ThinkStats/raw/v3/data/mortality_rates_beltran2012.csv"
+)
+          </input>
+        </program>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">

@@ -1213,6 +1213,19 @@ normal_plot_samples(df_sample, ylabel="Sum of correlated values")
       for this chapter.
     </p>
     <p>
+      The following cell downloads the data.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
+    <p>
       We'll use <c>get_nsfg_groups</c> to read the data and divide it into first babies and
       others.
     </p>

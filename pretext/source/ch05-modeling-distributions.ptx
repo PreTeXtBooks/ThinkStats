@@ -246,6 +246,52 @@ decorate(xlabel="Hits", ylabel="PMF")
     </p>
     <p>
       From the Wikipedia page for the men's skeet shooting competition at the 2020 Summer Olympics, we can extract a table that shows the results for the qualification rounds.
+    </p>
+    <p>
+      Downloaded from <url href="https://en.wikipedia.org/wiki/Shooting_at_the_2020_Summer_Olympics_%E2%80%93_Men%27s_skeet">https://en.wikipedia.org/wiki/Shooting_at_the_2020_Summer_Olympics_–_Men's_skeet</url> on July 15, 2024.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+filename = "Shooting_at_the_2020_Summer_Olympics_Mens_skeet"
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/" + filename)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <console>
+      <input>
+tables = pd.read_html(filename)
+table = tables[6]
+table.head()
+      </input>
+      <output>
+   Rank              Athlete        Country   1   2   3   4   5 Total[3]  \
+0     1        Éric Delaunay         France  25  25  25  24  25      124   
+1     2    Tammaro Cassandro          Italy  24  25  25  25  25      124   
+2     3      Eetu Kallioinen        Finland  25  25  24  25  24      123   
+3     4      Vincent Hancock  United States  25  25  25  25  22      122   
+4     5  Abdullah Al-Rashidi         Kuwait  25  25  24  25  23      122   
+
+   Shoot-off  Notes  
+0        +6  Q, OR  
+1        +5  Q, OR  
+2       NaN      Q  
+3        +8      Q  
+4        +7      Q  
+      </output>
+    </console>
+    </listing>
+    <p>
       The table has one row for each competitor, with one column for each of five rounds.
       We'll select the columns that contain these results and use the NumPy function <c>flatten</c> to put them into a single array.
     </p>
@@ -453,8 +499,74 @@ decorate(xlabel="Goals", ylabel="PMF")
       The results are in an HDF file with one key for each game, and a list of times, in seconds since the beginning of the game, when a goal was scored.
     </p>
     <p>
+      Raw data downloaded from <url href="https://www.hockey-reference.com/leagues/NHL_2024_games.html">https://www.hockey-reference.com/leagues/NHL_2024_games.html</url> on July 16, 2024.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/nhl_2023_2024.hdf")
+      </input>
+    </program>
+    </listing>
+    <p>
+      Here's how we read the keys from the file.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <console>
+      <input>
+filename = "nhl_2023_2024.hdf"
+
+with pd.HDFStore(filename, "r") as store:
+    keys = store.keys()
+
+len(keys), keys[0]
+      </input>
+      <output>
+(1312, '/202310100PIT')
+      </output>
+    </console>
+    </listing>
+    <p>
+      There were 1312 games during the regular season.
+      Each key contains the date of the game and a three-letter abbreviation for the home team.
+      We can use <c>read_hdf</c> to look up a key and get the list of times when a goal was scored.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <console>
+      <input>
+times = pd.read_hdf(filename, key=keys[0])
+times
+      </input>
+      <output>
+0     424
+1    1916
+2    2137
+3    3005
+4    3329
+5    3513
+dtype: int64
+      </output>
+    </console>
+    </listing>
+    <p>
+      In the first game of the season, six goals were scored, the first after 424 seconds of play, the last after 3513 seconds <mdash/> with only 87 seconds left in the game.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <console>
+      <input>
+3600 - times[5]
+      </input>
+      <output>
+np.int64(87)
+      </output>
+    </console>
+    </listing>
+    <p>
       The following loop reads the results for all games, counts the number of goals in each one, and stores the results in a list.
-      The average number of goals per game is just over 6.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -469,6 +581,9 @@ for key in keys:
       </input>
     </program>
     </listing>
+    <p>
+      The average number of goals per game is just over 6.
+    </p>
     <listing>
       <caption>Python Code</caption>
     <console>
@@ -556,6 +671,14 @@ def simulate_first_goal(n, p):
       The average time until the first goal is close to 600 seconds, or 10 minutes.
       And that makes sense <mdash/> if we expect 6 goals per sixty-minute game, we expect one goal every 10 minutes, on average.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+np.random.seed(3)
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <console>
@@ -846,6 +969,19 @@ two_cdf_plots(cdf_model, cdf_sim_weights, xlabel="Weight (pounds)")
       But first let's see how well the normal distribution fits real data.
       As an example, we'll look at the distribution of birth weights in the National Survey of Family Growth (NSFG).
     </p>
+    <p>
+      The following cells download the data files we need to read the data.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1017,6 +1153,14 @@ two_cdf_plots(
       <caption>Python Code</caption>
     <program language="python">
       <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 from thinkstats import read_brfss
 
 brfss = read_brfss()
@@ -1163,6 +1307,15 @@ two_cdf_plots(cdf_model, cdf_log_adult_weights, xlabel="Adult weight (log10 kg)"
           <caption>Python Code</caption>
         <program language="python">
           <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+          </input>
+        </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
 from nsfg import read_fem_resp
 
 resp = read_fem_resp()
@@ -1196,6 +1349,17 @@ num_family = older["numfmhh"]
         <p>
           The following loop reads the hockey data again, computes the time between successive goals, if there is more than one in a game, and collects the inter-goal times in a list.
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+filename = "nhl_2023_2024.hdf"
+
+with pd.HDFStore(filename, "r") as store:
+    keys = store.keys()
+          </input>
+        </program>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">
