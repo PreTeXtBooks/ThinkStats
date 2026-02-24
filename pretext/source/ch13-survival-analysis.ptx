@@ -531,7 +531,13 @@ custom_cycler = cycler.cycler(color=default_colors) + cycler.cycler(
 
 # Apply the new cycler
 plt.rc("axes", prop_cycle=custom_cycler)
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 for cohort, surv in surv_map.items():
     surv.plot(label=f"{cohort}s")
 
@@ -652,7 +658,13 @@ for label, surv in survs_resampled.items():
     surv.plot(label=label)
 
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 plt.rc("axes", prop_cycle=plt.rcParamsDefault["axes.prop_cycle"])
       </input>
     </program>
@@ -1082,7 +1094,13 @@ try:
     import lifelines
 except ImportError:
     %pip install lifelines
-
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 surv = estimate_survival(resp60)
       </input>
     </program>
