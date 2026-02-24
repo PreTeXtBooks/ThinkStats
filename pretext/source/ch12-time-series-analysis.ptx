@@ -116,6 +116,7 @@ elec = (
 elec.columns
       </input>
     </program>
+    </listing>
     <pre>
 Index(['Net generation for all sectors', 'United States',
        'United States : all fuels (utility-scale)', 'United States : nuclear',
@@ -128,7 +129,6 @@ Index(['Net generation for all sectors', 'United States',
        'United States : small-scale solar photovoltaic'],
       dtype='object', name='description')
     </pre>
-    </listing>
 
     <p>
       The labels in the index are strings indicating months and years -- here are the first 12.
@@ -141,12 +141,12 @@ Index(['Net generation for all sectors', 'United States',
 elec.index[:12]
       </input>
     </program>
+    </listing>
     <pre>
 Index(['Jan 2001', 'Feb 2001', 'Mar 2001', 'Apr 2001', 'May 2001', 'Jun 2001',
        'Jul 2001', 'Aug 2001', 'Sep 2001', 'Oct 2001', 'Nov 2001', 'Dec 2001'],
       dtype='object')
     </pre>
-    </listing>
 
     <p>
       It will be easier to work with this data if we replace these strings with Pandas <c>Timestamp</c> objects.
@@ -161,12 +161,12 @@ elec.index = pd.date_range(start="2001-01", periods=len(elec), freq="ME")
 elec.index[:6]
       </input>
     </program>
+    </listing>
     <pre>
 DatetimeIndex(['2001-01-31', '2001-02-28', '2001-03-31', '2001-04-30',
                '2001-05-31', '2001-06-30'],
               dtype='datetime64[ns]', freq='ME')
     </pre>
-    </listing>
 
     <p>
       Now the index is a <c>DataTimeIndex</c> with the data type <c>datetime64[ns]</c>, which is defined in NumPy -- <c>64</c> means each label uses 64 bits, and <c>ns</c> means it has nanosecond precision.
@@ -204,10 +204,10 @@ nuclear.plot(label="nuclear", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       It looks like there are some increases and decreases, but they are hard to see clearly because there are large variations from month to month.
@@ -240,10 +240,10 @@ trend.plot(label="trend", **trend_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The trend is still quite variable.
@@ -263,10 +263,10 @@ detrended.plot(label="detrended", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       It seems like there is a repeating annual pattern, which makes sense because demand for electricity varies from one season to another, as it is used to generate heat in the winter and run air conditioning in the summer.
@@ -283,10 +283,10 @@ monthly_averages.plot(label="monthly average", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       On the x-axis, month 1 is January and month 12 is December.
@@ -307,10 +307,10 @@ seasonal.plot(label="seasonal", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_005.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Each 12-month period is identical to the others.
@@ -341,10 +341,10 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_006.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       If we subtract this sum from the original series, the result is the residual component, which represents the departure from the expected value for each month.
@@ -359,10 +359,10 @@ resid.plot(label="residual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_007.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       We can think of the residual as the sum of everything in the world that affects energy production, but is not explained by the long-term trend or the seasonal component.
@@ -383,10 +383,10 @@ plot_kde(resid.dropna())
 decorate(xlabel="Residual (GWh)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_008.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       It resembles the bell curve of the normal distribution, which is consistent with the assumption that it is the sum of many random contributions.
@@ -403,10 +403,10 @@ rsquared = 1 - resid.var() / nuclear.var()
 rsquared
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9054559977517084)
     </pre>
-    </listing>
 
     <p>
       The <m>R^2</m> value is about 0.92, which means that the long-term trend and seasonal component account for 92% of the variability in the series.
@@ -473,10 +473,10 @@ def plot_decomposition(original, decomposition):
 plot_decomposition(nuclear, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_009.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The results are similar to those we computed ourselves, with small differences due to the details of the implementation.
@@ -520,10 +520,10 @@ training, test = split_series(nuclear)
 test.index[0]
       </input>
     </program>
+    </listing>
     <pre>
 Timestamp('2019-07-31 00:00:00')
     </pre>
-    </listing>
 
     <p>
       Now, suppose it's June 2019 and you are asked to generate a five-year forecast for electricity production from nuclear generators.
@@ -572,13 +572,13 @@ from thinkstats import display_summary
 display_summary(results)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The <m>R^2</m> value is about 0.35, which suggests that the model does not fit the data particularly well.
@@ -611,10 +611,10 @@ pred_trend.plot(label="linear model", **model_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_010.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       There's a lot going on that's not captured by the linear model, but it looks like there is a generally increasing trend.
@@ -673,10 +673,10 @@ training.plot(label="training", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_011.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The predictions fit the training data reasonably well, and the forecast looks like a reasonable projection, based on the assumption that the long-term trend will continue.
@@ -696,10 +696,10 @@ test.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_012.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The first year of the forecast was pretty good, but production from nuclear reactors in 2020 was lower than expected -- possibly due to the COVID-19 pandemic -- and it never returned to the long-term trend.
@@ -730,10 +730,10 @@ def MAPE(predicted, actual):
 MAPE(forecast, test)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.811940747879257)
     </pre>
-    </listing>
 
     <p>
       We'll come back to this example later in the chapter and see if we can do better with a different model.
@@ -760,10 +760,10 @@ solar.plot(label="solar", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_013.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Over this interval, total production has increased several times over.
@@ -809,10 +809,10 @@ decomposition = seasonal_decompose(training, model="multiplicative", period=12)
 plot_decomposition(training, decomposition)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_014.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Now the seasonal and residual components are multiplicative factors.
@@ -844,10 +844,10 @@ rsquared = 1 - resid.var() / training.var()
 rsquared
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9999999992978134)
     </pre>
-    </listing>
 
     <p>
       The production of a solar panel is largely a function of the sunlight it's exposed to, so it makes sense that production follows an annual cycle so closely.
@@ -879,13 +879,13 @@ results = smf.ols("trend ~ months + I(months**2)", data=data).fit()
 display_summary(results)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The p-values of the linear and quadratic terms are very small, which suggests that the quadratic model captures more information about the trend than a linear model would -- and the <m>R^2</m> value is very high.
@@ -919,10 +919,10 @@ trend.plot(**trend_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_015.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The quadratic model fits the past trend well.
@@ -966,10 +966,10 @@ pred.plot(label="prediction", **pred_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_016.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The retrodictions fit the training data well and the predictions seem plausible -- now let's see if they turned out to be accurate.
@@ -986,10 +986,10 @@ test.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_017.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       For the first three years, the predictions are very good.
@@ -1023,10 +1023,10 @@ diff.plot(label="year over year differences", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_018.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The magnitudes of these differences are substantially smaller than the magnitudes of the original series, which suggests the second idea of autoregression, which is that it might be easier to predict these differences, rather than the original values.
@@ -1064,6 +1064,7 @@ df_ar = df_ar.dropna()
 df_ar.corr()[["diff"]]
       </input>
     </program>
+    </listing>
     <pre>
           diff
 diff  1.000000
@@ -1071,7 +1072,6 @@ lag1  0.562212
 lag2  0.292454
 lag3  0.222228
     </pre>
-    </listing>
 
     <p>
       These correlations are called lagged correlations or <term>autocorrelations</term> -- the prefix "auto" indicates that we're taking the correlation of the series with itself.
@@ -1108,13 +1108,13 @@ results_ar = smf.ols(formula=formula, data=df_ar).fit()
 display_summary(results_ar)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       Now we can use the <c>predict</c> method to generate predictions for the past values in the series.
@@ -1131,10 +1131,10 @@ diff.plot(label="differences", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_019.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The predictions are good in some places, but the <m>R^2</m> value is only about 0.319, so there is room for improvement.
@@ -1149,10 +1149,10 @@ R2 = 1 - resid_ar.var() / diff.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.3190252265690783)
     </pre>
-    </listing>
 
     <p>
       One way to improve the predictions is to compute the residuals from this model and use another model to predict the residuals -- which is the third idea of autoregression.
@@ -1213,13 +1213,13 @@ results_ma = smf.ols(formula=formula, data=df_ma).fit()
 display_summary(results_ma)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The <m>R^2</m> is quite small, so it looks like this part of the model won't help very much.
@@ -1264,10 +1264,10 @@ R2 = 1 - resid_ma.var() / diff.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.3315101001391231)
     </pre>
-    </listing>
 
     <p>
       Next we'll use these year-over-year differences to generate retrodictions for the original values.
@@ -1303,10 +1303,10 @@ n_missing = pred_diff.isna().sum()
 n_missing
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(21)
     </pre>
-    </listing>
 
     <p>
       That's because we shifted the <c>Series</c> by 12 months to compute year-over-year differences, then we shifted the differences 3 months for the first autoregression model, and we shifted the residuals of the first model by 6 months for the second model.
@@ -1367,10 +1367,10 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_020.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       They look pretty good, and the <m>R^2</m> value is about 0.86.
@@ -1385,10 +1385,10 @@ R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8586566911201015)
     </pre>
-    </listing>
 
     <p>
       The model we used to compute these retrodictions is called SARIMA, which is one of a family of models called ARIMA.
@@ -1466,10 +1466,10 @@ results_arima = model.fit()
 display_summary(results_arima)
       </input>
     </program>
+    </listing>
     <pre>
 &lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
     </pre>
-    </listing>
 
     <p>
       The results include estimated coefficients for the three lags in the AR model, the two lags in the MA model, and <c>sigma2</c>, which is the variance of the residuals.
@@ -1501,10 +1501,10 @@ nuclear.plot(label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_021.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The <m>R^2</m> value is also similar but not precisely the same.
@@ -1519,10 +1519,10 @@ R2 = 1 - resid.var() / nuclear.var()
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8262717330822065)
     </pre>
-    </listing>
 
     <p>
       The <c>ARIMA</c> function makes it easy to experiment with different versions of the model.
@@ -1601,10 +1601,10 @@ plt.plot(test.index, test, label="actual", **actual_options)
 decorate(ylabel="GWh")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap12_022.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The actual values fall almost entirely within the confidence interval of the predictions.
@@ -1618,10 +1618,10 @@ decorate(ylabel="GWh")
 MAPE(forecast_mean, test)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(3.3817549248044547)
     </pre>
-    </listing>
 
     <p>
       The predictions are off by 3.38% on average, somewhat better than the results we got from seasonal decomposition (3.81%).
@@ -1731,6 +1731,7 @@ temp = pd.read_csv("monthly-average-surface-temperatures-by-year.csv")
 temp.head()
           </input>
         </program>
+        </listing>
     <pre>
         Entity Code  Year       2024       2023       2022       2021  \
 0  Afghanistan  AFG     1   3.300064  -4.335608  -0.322859  -1.001608   
@@ -1755,7 +1756,6 @@ temp.head()
 
 [5 rows x 78 columns]
     </pre>
-        </listing>
         <p>
           The following cell selects data for the United States from 2001 to the end of the series and packs it into a Pandas <c>Series</c>.
         </p>
@@ -1781,10 +1781,10 @@ temp_series.plot(label="monthly average", **actual_options)
 decorate(ylabel="Surface temperature (degC)")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_023.png" width="80%"/>
     </figure>
-        </listing>
         <p>
           Not surprisingly, there is a strong seasonal pattern.
           Compute an additive seasonal decomposition with a period of 12 months.
@@ -1813,10 +1813,10 @@ util_solar.plot(**actual_options)
 decorate(ylabel="GWh")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_027.png" width="80%"/>
     </figure>
-        </listing>
         <p>
           Use <c>split_series</c> to split this data into a training and test series.
           Compute a multiplicative decomposition of the training series with a 12-month period.
@@ -1842,10 +1842,10 @@ hydro.plot(**actual_options)
 decorate(ylabel="GWh")
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap12_032.png" width="80%"/>
     </figure>
-        </listing>
         <p>
           Fit a SARIMA model to this data with a seasonal period of 12 months.
           Experiment with different lags in the autoregression and moving average parts of the model and see if you can find a combination that maximizes the <m>R^2</m> value of the model.

@@ -124,10 +124,10 @@ penguins = (
 penguins.shape
       </input>
     </program>
+    </listing>
     <pre>
 (342, 17)
     </pre>
-    </listing>
 
     <p>
       The dataset contains three species of penguins.
@@ -142,10 +142,10 @@ adelie = penguins.query('Species.str.startswith("Adelie")').copy()
 len(adelie)
       </input>
     </program>
+    </listing>
     <pre>
 151
     </pre>
-    </listing>
 
     <p>
       In the previous chapter, we computed a least squares fit between the penguins' flipper lengths and weights.
@@ -175,10 +175,10 @@ result_linregress = linregress(flipper_length, body_mass)
 result_linregress.intercept, result_linregress.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
     </pre>
-    </listing>
 
     <p>
       <c>StatsModels</c> provides two interfaces (APIs) -- we'll use the "formula" API, which uses the Patsy formula language to specify the response and explanatory variables.
@@ -208,10 +208,10 @@ model = smf.ols(formula, data=adelie)
 type(model)
       </input>
     </program>
+    </listing>
     <pre>
 statsmodels.regression.linear_model.OLS
     </pre>
-    </listing>
 
     <p>
       The name <c>ols</c> stands for "ordinary least squares", which indicates that this function computes a least squares fit under the most common, or "ordinary", set of assumptions.
@@ -243,10 +243,10 @@ result_ols = model.fit()
 type(result_ols)
       </input>
     </program>
+    </listing>
     <pre>
 statsmodels.regression.linear_model.RegressionResultsWrapper
     </pre>
-    </listing>
 
     <p>
       The <c>RegressionResults</c> object contains a lot of information, so <c>thinkstats</c> provides a function that just displays the information we need for now.
@@ -261,13 +261,13 @@ from thinkstats import display_summary
 display_summary(result_ols)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The first column contains the intercept and slope, which are the <term>coefficients</term> of the model.
@@ -281,10 +281,10 @@ display_summary(result_ols)
 result_linregress.intercept, result_linregress.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002514), np.float64(32.83168975115009))
     </pre>
-    </listing>
 
     <p>
       The second column contains the standard errors of the coefficients -- again, they are the same as the values we got from <c>linregress</c>.
@@ -297,10 +297,10 @@ result_linregress.intercept, result_linregress.slope
 result_linregress.intercept_stderr, result_linregress.stderr,
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(964.7984274994059), np.float64(5.076138407990821))
     </pre>
-    </listing>
 
     <p>
       The next column reports <m>t</m> statistics, which are used to compute p-values -- we can ignore them, because the p-values are in the next column, labeled <c>P>|t|</c>.
@@ -314,10 +314,10 @@ result_linregress.intercept_stderr, result_linregress.stderr,
 result_ols.pvalues["flipper_length"]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.3432645947789321e-09)
     </pre>
-    </listing>
 
     <p>
       And confirm that <c>linregress</c> computed the same result.
@@ -330,10 +330,10 @@ np.float64(1.3432645947789321e-09)
 result_linregress.pvalue
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.3432645947790051e-09)
     </pre>
-    </listing>
 
     <p>
       The p-value is very small, which means that if there were actually no relationship between weight and flipper length, it is very unlikely we would see a slope as big as the estimated value by chance.
@@ -357,10 +357,10 @@ np.float64(1.3432645947790051e-09)
 result_ols.rsquared, result_linregress.rvalue**2
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.21921282646854878), np.float64(0.21921282646854875))
     </pre>
-    </listing>
 
     <p>
       They are the same except for a small difference due to floating-point approximation.
@@ -378,13 +378,13 @@ result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       Again, the p-value of the slope is very small, which means that if there were actually no relationship between mass and culmen length, it is unlikely we would see a slope this big by chance.
@@ -426,13 +426,13 @@ result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       This model has three coefficients: an intercept and two slopes.
@@ -461,10 +461,10 @@ from thinkstats import corrcoef
 corrcoef(adelie, "flipper_length", "culmen_length")
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32578471516515944)
     </pre>
-    </listing>
 
     <p>
       A penguin with a longer flipper also has a longer culmen, on average.
@@ -484,13 +484,13 @@ result = smf.ols(formula, data=adelie).fit()
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       This model has four coefficients.
@@ -511,10 +511,10 @@ display_summary(result)
 ]
       </input>
     </program>
+    </listing>
     <pre>
 [np.float64(0.30762017939668534), np.float64(0.39149169183587634)]
     </pre>
-    </listing>
 
     <p>
       This example demonstrates a common use of multiple regression, combining multiple explanatory variables to make better predictions.
@@ -606,13 +606,13 @@ result_age = smf.ols(formula, data=valid).fit()
 display_summary(result_age)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The slope is small, only 0.0175 pounds per year.
@@ -697,10 +697,10 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="linear model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Because the slope of the fitted line is small, we can barely see the difference in the expected birth weight between the youngest and oldest mothers.
@@ -730,13 +730,13 @@ from thinkstats import value_counts
 value_counts(valid["is_first"])
       </input>
     </program>
+    </listing>
     <pre>
 is_first
 False    4675
 True     4363
 Name: count, dtype: int64
     </pre>
-    </listing>
 
     <p>
       Here's the formula for a model with birth weight as the response variable and <c>is_first</c> as the explanatory variable.
@@ -764,13 +764,13 @@ result_first = smf.ols(formula, data=valid).fit()
 display_summary(result_first)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       In the results, the label <c>C(is_first)[T.True]</c> indicates that <c>is_first</c> is a categorical variable and the coefficient is associated with the value <c>True</c>.
@@ -791,10 +791,10 @@ display_summary(result_first)
 others["totalwgt_lb"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.325855614973262)
     </pre>
-    </listing>
 
     <listing>
       <caption>Python Code</caption>
@@ -804,10 +804,10 @@ diff_weight = firsts["totalwgt_lb"].mean() - others["totalwgt_lb"].mean()
 diff_weight
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-0.12476118453549034)
     </pre>
-    </listing>
 
     <p>
       In addition to these coefficients, <c>StatsModels</c> also computes p-values, confidence intervals, and <m>R^2</m>.
@@ -827,10 +827,10 @@ diff_age = firsts["agepreg"].mean() - others["agepreg"].mean()
 diff_age
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-3.5864347661500275)
     </pre>
-    </listing>
 
     <p>
       And the slope of birth weight as a function of age is 0.0175 pounds per year.
@@ -844,10 +844,10 @@ slope = result_age.params["agepreg"]
 slope
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.017453851471802638)
     </pre>
-    </listing>
 
     <p>
       If we multiply the slope by the difference in ages, we get the expected difference in birth weight for first babies and others, due to mother's age.
@@ -860,10 +860,10 @@ np.float64(0.017453851471802638)
 slope * diff_age
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(-0.0625970997216918)
     </pre>
-    </listing>
 
     <p>
       The result is 0.063 pounds, which is about half of the observed difference.
@@ -882,13 +882,13 @@ result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The coefficient of <c>is_first</c> is -0.0698, which means that first babies are 0.0698 pounds lighter than others, on average, after accounting for the difference due to maternal age.
@@ -946,13 +946,13 @@ result_age2 = smf.ols(formula, data=valid).fit()
 display_summary(result_age2)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The p-value associated with the quadratic term, <c>agepreg2</c>, is very small, which suggests that it contributes more information about birth weight than we would expect by chance.
@@ -1003,10 +1003,10 @@ plt.plot(agepreg_range, fit_ys, color="C1", label="quadratic model")
 decorate(xlabel="Maternal age", ylabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The curvature is subtle, but it suggests that birth weights are lower for the youngest and oldest mothers, and higher in the middle.
@@ -1025,13 +1025,13 @@ result = smf.ols(formula, data=valid).fit()
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       With a more effective control for maternal age, the estimated difference between first babies and others is 0.0504 pounds, smaller than the estimate with just the linear model (0.0698 pounds).
@@ -1085,13 +1085,13 @@ adelie["y"] = (adelie["Sex"] == "MALE").astype(int)
 adelie["y"].value_counts()
       </input>
     </program>
+    </listing>
     <pre>
 y
 0    78
 1    73
 Name: count, dtype: int64
     </pre>
-    </listing>
 
     <p>
       We'll start with a simple model with <c>y</c> as the response variable and <c>mass</c> as the explanatory variable.
@@ -1119,13 +1119,13 @@ result = model.fit(disp=False)
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The coefficient of determination, <m>R^2</m>, does not apply to logistic regression, but there are several alternatives that are used as "pseudo <m>R^2</m> values."
@@ -1163,10 +1163,10 @@ plt.plot(mass_range, fit_ys)
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The lightest penguins are almost certain to be female, and the heaviest are likely to be male -- in the middle, a penguin weighing 3750 grams is about equally likely to be male or female.
@@ -1185,13 +1185,13 @@ result = model.fit(disp=False)
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The pseudo <m>R^2</m> value of this model is 0.662, higher than the previous model (0.526) -- so the additional measurements contain additional information that distinguishes male and female penguins.
@@ -1247,10 +1247,10 @@ plot_predictions(mass_range, m - s, ls=":", label="Below average culmen length")
 decorate(xlabel="Mass (g)", ylabel="Prob(male)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap11_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       As we saw in the simpler model, heavier penguins are more likely to be male.
@@ -1291,10 +1291,10 @@ gentoo = get_species(penguins, "Gentoo")
 len(gentoo)
       </input>
     </program>
+    </listing>
     <pre>
 123
     </pre>
-    </listing>
 
     <p>
       Here are the results of the logistic regression model.
@@ -1310,13 +1310,13 @@ result = model.fit(disp=False)
 display_summary(result)
       </input>
     </program>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
-    <pre>
-&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
-    </pre>
     </listing>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
+    <pre>
+&lt;class 'statsmodels.iolib.table.SimpleTable'&gt;
+    </pre>
 
     <p>
       The pseudo-<m>R^2</m> value is 0.848, higher than what we got with Adélie penguins (0.662).
@@ -1447,10 +1447,10 @@ chinstrap = get_species(penguins, "Chinstrap")
 len(chinstrap)
           </input>
         </program>
+        </listing>
     <pre>
 68
     </pre>
-        </listing>
       </statement>
     </exercise>
 

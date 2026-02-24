@@ -316,10 +316,10 @@ preg = read_stata(dct_file, dat_file)
 preg.shape
       </input>
     </program>
+    </listing>
     <pre>
 (13593, 243)
     </pre>
-    </listing>
     <p>
       This dataset has 243 variables with information about 13,593 pregnancies.
       The <c>DataFrame</c> provides a method called <c>head</c> that displays the first few rows.
@@ -331,6 +331,7 @@ preg.shape
 preg.head()
       </input>
     </program>
+    </listing>
     <pre>
    caseid  pregordr  howpreg_n  howpreg_p  moscurrp  nowprgdk  pregend1  \
 0       1         1        NaN        NaN       NaN       NaN       6.0   
@@ -355,7 +356,6 @@ preg.head()
 
 [5 rows x 243 columns]
     </pre>
-    </listing>
     <p>
       The left column is the index of the <c>DataFrame</c>, which contains a label for each row.
       In this case, the labels are integers starting from 0, but they can also be strings and other types.
@@ -370,6 +370,7 @@ preg.head()
 preg.columns
       </input>
     </program>
+    </listing>
     <pre>
 Index(['caseid', 'pregordr', 'howpreg_n', 'howpreg_p', 'moscurrp', 'nowprgdk',
        'pregend1', 'pregend2', 'nbrnaliv', 'multbrth',
@@ -378,7 +379,6 @@ Index(['caseid', 'pregordr', 'howpreg_n', 'howpreg_p', 'moscurrp', 'nowprgdk',
        'adj_mod_basewgt', 'finalwgt', 'secu_p', 'sest', 'cmintvw'],
       dtype='object', length=243)
     </pre>
-    </listing>
     <p>
       The column names are contained in an <c>Index</c> object, which is another Pandas data structure.
       To access a column from a <c>DataFrame</c>, you can use the column name as a key.
@@ -391,10 +391,10 @@ pregordr = preg["pregordr"]
 type(pregordr)
       </input>
     </program>
+    </listing>
     <pre>
 pandas.core.series.Series
     </pre>
-    </listing>
     <p>
       The result is a Pandas <c>Series</c>, which represents a sequence of values.
       <c>Series</c> also provides <c>head</c>, which displays the first few values and their labels.
@@ -406,6 +406,7 @@ pandas.core.series.Series
 pregordr.head()
       </input>
     </program>
+    </listing>
     <pre>
 0    1
 1    2
@@ -414,7 +415,6 @@ pregordr.head()
 4    3
 Name: pregordr, dtype: int64
     </pre>
-    </listing>
     <p>
       The last line includes the name of the <c>Series</c> and <c>dtype</c>, which is the type of the values.
       In this example, <c>int64</c> indicates that the values are 64-bit integers.
@@ -530,6 +530,7 @@ Name: pregordr, dtype: int64
 preg["outcome"].value_counts().sort_index()
       </input>
     </program>
+    </listing>
     <pre>
 outcome
 1    9148
@@ -540,7 +541,6 @@ outcome
 6     352
 Name: count, dtype: int64
     </pre>
-    </listing>
     <p>
       Comparing the results with the published table, we can confirm that the values in <c>outcome</c> are correct.
       Similarly, here is the published table for <c>birthwgt_lb</c>.
@@ -621,6 +621,7 @@ counts = preg["birthwgt_lb"].value_counts(dropna=False).sort_index()
 counts
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_lb
 0.0        8
@@ -646,7 +647,6 @@ birthwgt_lb
 NaN     4449
 Name: count, dtype: int64
     </pre>
-    </listing>
     <p>
       The argument <c>dropna=False</c> means that <c>value_counts</c> does not ignore values that are "NA" or "Not applicable".
       These values appear in the results as <c>NaN</c>, which stands for "Not a number" <mdash/> and the count of these values is consistent with the count of inapplicable cases in the codebook.
@@ -662,6 +662,7 @@ Name: count, dtype: int64
 counts.loc[0:5]
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_lb
 0.0      8
@@ -672,7 +673,6 @@ birthwgt_lb
 5.0    697
 Name: count, dtype: int64
     </pre>
-    </listing>
     <p>
       And we can use the <c>sum</c> method to add them up.
     </p>
@@ -683,10 +683,10 @@ Name: count, dtype: int64
 counts.loc[0:5].sum()
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(1125)
     </pre>
-    </listing>
     <p>
       The total is consistent with the codebook.
     </p>
@@ -734,10 +734,10 @@ preg["birthwgt_lb"] = preg["birthwgt_lb"].replace([51, 97, 98, 99], np.nan)
 preg["agepreg"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(2468.8151197039497)
     </pre>
-    </listing>
     <p>
       To convert it to years, we can divide through by 100.
     </p>
@@ -749,10 +749,10 @@ preg["agepreg"] /= 100.0
 preg["agepreg"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(24.6881511970395)
     </pre>
-    </listing>
     <p>
       Now the average is more credible.
     </p>
@@ -770,6 +770,7 @@ np.float64(24.6881511970395)
 preg["birthwgt_oz"].value_counts(dropna=False).sort_index()
       </input>
     </program>
+    </listing>
     <pre>
 birthwgt_oz
 0.0     1037
@@ -794,7 +795,6 @@ birthwgt_oz
 NaN     4506
 Name: count, dtype: int64
     </pre>
-    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -814,10 +814,10 @@ preg["totalwgt_lb"] = preg["birthwgt_lb"] + preg["birthwgt_oz"] / 16.0
 preg["totalwgt_lb"].mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
-    </listing>
     <p>
       The average of the result seems plausible.
     </p>
@@ -842,10 +842,10 @@ n = weights.count()
 n
       </input>
     </program>
+    </listing>
     <pre>
 np.int64(9038)
     </pre>
-    </listing>
     <p>
       It also provides a <c>sum</c> method that returns the sum of the values <mdash/> we can use it to compute the mean like this.
     </p>
@@ -857,10 +857,10 @@ mean = weights.sum() / n
 mean
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
-    </listing>
     <p>
       But as we've already seen, there's also a <c>mean</c> method that does the same thing.
     </p>
@@ -871,10 +871,10 @@ np.float64(7.265628457623368)
 weights.mean()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(7.265628457623368)
     </pre>
-    </listing>
     <p>
       In this dataset, the average birth weight is about 7.3 pounds.
     </p>
@@ -901,10 +901,10 @@ var = squared_deviations.sum() / n
 var
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.983070989750022)
     </pre>
-    </listing>
     <p>
       As you might expect, <c>Series</c> provides a <c>var</c> method that does <em>almost</em> the same thing.
     </p>
@@ -915,10 +915,10 @@ np.float64(1.983070989750022)
 weights.var()
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.9832904288326545)
     </pre>
-    </listing>
     <p>
       The result is slightly different because when the <c>var</c> method computes the mean of the squared deviations, it divides by <c>n-1</c> rather than <c>n</c>.
       That's because there are two ways to compute the variance of a sample, depending on what you are trying to do.
@@ -932,10 +932,10 @@ np.float64(1.9832904288326545)
 weights.var(ddof=0)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.983070989750022)
     </pre>
-    </listing>
     <p>
       In this dataset, the variance of the birth weights is about 1.98, but that value is hard to interpret <mdash/> for one thing, it is in units of pounds squared.
       Variance is useful in some computations, but not a good way to describe a dataset.
@@ -950,10 +950,10 @@ std = np.sqrt(var)
 std
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.40821553384062)
     </pre>
-    </listing>
     <p>
       Or, we can use the <c>std</c> method.
     </p>
@@ -964,10 +964,10 @@ np.float64(1.40821553384062)
 weights.std(ddof=0)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.40821553384062)
     </pre>
-    </listing>
     <p>
       In this dataset, the standard deviation of birth weights is about 1.4 pounds.
       Informally, values that are one or two standard deviations from the mean are common <mdash/> values farther from the mean are rare.
@@ -990,10 +990,10 @@ subset = preg.query("caseid == 10229")
 subset.shape
       </input>
     </program>
+    </listing>
     <pre>
 (7, 244)
     </pre>
-    </listing>
     <p>
       The result is a <c>DataFrame</c> that contains only the rows where the query is <c>True</c>.
       This respondent reported seven pregnancies <mdash/> here are their outcomes, which are recorded in chronological order.
@@ -1005,10 +1005,10 @@ subset.shape
 subset["outcome"].values
       </input>
     </program>
+    </listing>
     <pre>
 array([4, 4, 4, 4, 4, 4, 1])
     </pre>
-    </listing>
     <p>
       The outcome code <c>1</c> indicates a live birth.
       Code <c>4</c> indicates a miscarriage <mdash/> that is, a pregnancy loss, usually with no known medical cause.

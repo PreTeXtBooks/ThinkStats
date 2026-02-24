@@ -43,6 +43,7 @@ brfss = pd.read_hdf("LLCP2022.hdf5", key="brfss")
 brfss.describe()
       </input>
     </program>
+    </listing>
     <pre>
                 _SEX           HTM4          WTKG3        _LLCPWT
 count  445132.000000  416480.000000  403054.000000  445132.000000
@@ -54,7 +55,6 @@ min         1.000000      91.000000    2268.000000       0.020464
 75%         2.000000     178.000000    9525.000000     627.913694
 max         2.000000     241.000000   29257.000000   54390.520926
     </pre>
-    </listing>
     <p>
       The dataset includes self-reported heights for almost 200,000 men and almost 220,000
       women.
@@ -69,6 +69,7 @@ xtab.columns = ["Male", "Female"]
 xtab.head()
       </input>
     </program>
+    </listing>
     <pre>
       Male  Female
 HTM4              
@@ -78,7 +79,6 @@ HTM4
 97.0     1       3
 99.0     1       0
     </pre>
-    </listing>
     <p>
       And the tallest recorded heights.
     </p>
@@ -89,6 +89,7 @@ HTM4
 xtab.tail()
       </input>
     </program>
+    </listing>
     <pre>
        Male  Female
 HTM4               
@@ -98,7 +99,6 @@ HTM4
 236.0     1       0
 241.0     4       1
     </pre>
-    </listing>
     <p>
       According to the codebook, heights below 91 cm are set to 91 cm, and heights above
       241 cm are set to 241 cm.
@@ -196,10 +196,10 @@ def diff_means(sample):
 diff_means(sample)
       </input>
     </program>
+    </listing>
     <pre>
 14.455796580284954
     </pre>
-    </listing>
     <p>
       Men are about 14 cm taller than women, on average.
     </p>
@@ -238,10 +238,10 @@ t1 = sampling_dist(brfss, diff_means)
 np.mean(t1)
       </input>
     </program>
+    </listing>
     <pre>
 14.433755828000592
     </pre>
-    </listing>
     <p>
       The following function uses KDE to estimate the density of the sampling distribution,
       uses the estimated density to compute a confidence interval, and generates a plot that
@@ -312,10 +312,10 @@ def p_value(t):
 p_value(t1)
       </input>
     </program>
+    </listing>
     <pre>
 0.0
     </pre>
-    </listing>
     <p>
       The p-value is so close to zero we can't compute it with floating-point arithmetic,
       which means it is truly negligible.
@@ -362,10 +362,10 @@ def diff_stds(sample):
 diff_stds(sample)
       </input>
     </program>
+    </listing>
     <pre>
 0.7755433526023632
     </pre>
-    </listing>
     <p>
       We can use <c>sampling_dist</c> again with a different test statistic.
     </p>

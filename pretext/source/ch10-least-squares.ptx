@@ -112,10 +112,10 @@ penguins = pd.read_csv("penguins_raw.csv").dropna(subset=["Body Mass (g)"])
 penguins.shape
       </input>
     </program>
+    </listing>
     <pre>
 (342, 17)
     </pre>
-    </listing>
 
     <p>
       The dataset includes measurements of 151 Adélie penguins.
@@ -130,10 +130,10 @@ adelie = penguins.query('Species.str.startswith("Adelie")')
 len(adelie)
       </input>
     </program>
+    </listing>
     <pre>
 151
     </pre>
-    </listing>
 
     <p>
       Now suppose we know the flipper length of an Adélie penguin -- let's see how well we can predict its weight.
@@ -165,10 +165,10 @@ plt.scatter(flipper_length, body_mass, marker=".", alpha=0.5)
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_001.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       It looks like they are related -- we can quantify the strength of the relationship by computing the coefficient of correlation.
@@ -181,10 +181,10 @@ decorate(xlabel=xvar, ylabel=yvar)
 np.corrcoef(flipper_length, body_mass)[0, 1]
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
-    </listing>
 
     <p>
       The correlation is about 0.47, so penguins with longer flippers tend to be heavier.
@@ -210,10 +210,10 @@ result = linregress(flipper_length, body_mass)
 result
       </input>
     </program>
+    </listing>
     <pre>
 LinregressResult(slope=np.float64(32.83168975115009), intercept=np.float64(-2535.8368022002514), rvalue=np.float64(0.46820169421793933), pvalue=np.float64(1.3432645947790051e-09), stderr=np.float64(5.076138407990821), intercept_stderr=np.float64(964.7984274994059))
     </pre>
-    </listing>
 
     <p>
       The result is a <c>LinregressResult</c> object that contains the slope and intercept of the fitted line, along with other information we'll unpack soon.
@@ -233,10 +233,10 @@ y = result.intercept + result.slope * x
 x, y
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(189.95364238410596), np.float64(3700.662251655629))
     </pre>
-    </listing>
 
     <p>
       For a penguin with the average flipper length, about 190 mm, the expected body weight is about 3700 grams.
@@ -286,10 +286,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_002.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       As expected, the fitted line goes through the center of the data and follows the trend.
@@ -335,10 +335,10 @@ y = predict(result, x)
 x, y
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(181.0), np.float64(3406.699042757914))
     </pre>
-    </listing>
 
     <p>
       The flipper length of the selected penguin is 181 mm and the predicted body mass is 3407 grams.
@@ -352,10 +352,10 @@ x, y
 body_mass[0], residuals[0]
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(3750.0), np.float64(343.30095724208604))
     </pre>
-    </listing>
 
     <p>
       The actual mass of this penguin is 3750 grams, and the residual -- after subtracting away the prediction -- is 343 grams.
@@ -372,10 +372,10 @@ mse = np.mean(residuals**2)
 mse
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(163098.85902884745)
     </pre>
-    </listing>
 
     <p>
       By itself, this number doesn't mean very much.
@@ -417,10 +417,10 @@ deviations = body_mass - np.mean(body_mass)
 np.mean(deviations**2)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(208890.28989956583)
     </pre>
-    </listing>
 
     <p>
       You might remember that the mean squared deviation is the variance.
@@ -433,10 +433,10 @@ np.float64(208890.28989956583)
 np.var(body_mass)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(208890.28989956583)
     </pre>
-    </listing>
 
     <p>
       So we can think of the variance of the masses as the MSE if we always guess the mean, and the variance of the residuals as the MSE if we use the regression line.
@@ -468,10 +468,10 @@ R2 = coefficient_of_determination(body_mass, residuals)
 R2
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.21921282646854912)
     </pre>
-    </listing>
 
     <p>
       It turns out that there's a relationship between the coefficient of determination, <m>R^2</m>, and the coefficient of correlation, <m>r</m>.
@@ -489,10 +489,10 @@ r = np.sqrt(R2)
 r
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179397)
     </pre>
-    </listing>
 
     <p>
       And comparing it to the correlation we computed earlier.
@@ -506,10 +506,10 @@ corr = np.corrcoef(flipper_length, body_mass)[0, 1]
 corr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.4682016942179394)
     </pre>
-    </listing>
 
     <p>
       They are the same except for a small difference due to floating-point approximation.
@@ -525,10 +525,10 @@ np.float64(0.4682016942179394)
 result.rvalue
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.46820169421793933)
     </pre>
-    </listing>
 
     <p>
       The coefficients of determination and correlation convey mostly the same information, but they are interpreted differently:
@@ -575,11 +575,11 @@ fake_result = SimpleNamespace(intercept=intercept, slope=slope)
 fake_result
       </input>
     </program>
+    </listing>
     <pre>
 namespace(intercept=np.float64(-2533.193389187175),
           slope=np.float64(32.15393529728294))
     </pre>
-    </listing>
 
     <p>
       We can pass this object to <c>compute_residuals</c> and use the residuals to compute the MSE.
@@ -606,10 +606,10 @@ fake_mse = np.mean(fake_residuals**2)
 mse, fake_mse, fake_mse > mse
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(163098.85902884745), np.float64(179019.20812685465), np.True_)
     </pre>
-    </listing>
 
     <p>
       Minimizing MSE is nice, but it's not the only definition of "best".
@@ -654,10 +654,10 @@ intercept, slope = least_squares(flipper_length, body_mass)
 intercept, slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-2535.8368022002524), np.float64(32.831689751150094))
     </pre>
-    </listing>
 
     <p>
       And we can confirm that we get the same results we got from <c>linregress</c>.
@@ -670,10 +670,10 @@ intercept, slope
 np.allclose([intercept, slope], [result.intercept, result.slope])
       </input>
     </program>
+    </listing>
     <pre>
 True
     </pre>
-    </listing>
 
     <p>
       Minimizing MSE made sense when computational efficiency was more important than choosing the method most appropriate to the problem at hand.
@@ -762,10 +762,10 @@ plot_kde(resampled_slopes)
 decorate(xlabel="Slope of the fitted line (g / mm)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_003.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       We can use <c>percentile</c> to compute a 90% confidence interval.
@@ -779,11 +779,11 @@ ci90 = np.percentile(resampled_slopes, [5, 95])
 print(result.slope, ci90)
       </input>
     </program>
+    </listing>
     <pre>
 32.83168975115009 [25.39604591 40.21054526]
 
     </pre>
-    </listing>
 
     <p>
       So we could report that the estimated slope is 33 grams / mm with a 90% CI [25, 40] grams / mm.
@@ -800,10 +800,10 @@ stderr = np.std(resampled_slopes)
 stderr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(4.570238986584832)
     </pre>
-    </listing>
 
     <p>
       The <c>RegressionResult</c> object we got from <c>linregress</c> provides an approximation of the standard error, based on some assumptions about the shape of the distribution.
@@ -816,10 +816,10 @@ np.float64(4.570238986584832)
 result.stderr
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(5.076138407990821)
     </pre>
-    </listing>
 
     <p>
       The standard error we computed by resampling is a little smaller, but the difference probably doesn't matter in practice.
@@ -880,10 +880,10 @@ for i in range(101):
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_004.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       Near the middle, the fitted lines are close together -- at the extremes, they are farther apart.
@@ -934,10 +934,10 @@ plt.plot(fit_xs, median, color="C1")
 decorate(xlabel=xvar, ylabel=yvar)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_005.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       This is my favorite way to represent the variability of a fitted line due to random sampling.
@@ -1006,10 +1006,10 @@ result_brfss = linregress(heights, weights)
 result_brfss.intercept, result_brfss.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(-82.65926054409877), np.float64(0.957074585033226))
     </pre>
-    </listing>
 
     <p>
       The slope is about 0.96, which means that an increase of 1 centimeter corresponds to an increase of almost 1 kilogram, on average.
@@ -1070,10 +1070,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_006.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The fitted line doesn't pass through the densest part of the scatter plot.
@@ -1105,10 +1105,10 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_007.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The distribution of the residuals is skewed to the right.
@@ -1128,10 +1128,10 @@ result_brfss2 = linregress(heights, log_weights)
 result_brfss2.intercept, result_brfss2.slope
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.9930804163932876), np.float64(0.005281454169417777))
     </pre>
-    </listing>
 
     <p>
       Because we transformed one of the variables, the slope and intercept are harder to interpret.
@@ -1162,10 +1162,10 @@ plt.plot(fit_xs, fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (log10 kg)", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_008.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The fitted line passes through the densest part of the plot, and the actual values extend about the same distance above and below the line -- so the distribution of the residuals is roughly symmetric.
@@ -1190,10 +1190,10 @@ pmf_kde.plot()
 decorate(xlabel="Residual (kg)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_009.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       The appearance of the scatter plot and the distribution of the residuals suggest that the relationship of height and log-transformed weight is well described by the fitted line.
@@ -1207,10 +1207,10 @@ decorate(xlabel="Residual (kg)", ylabel="Density")
 result_brfss.rvalue, result_brfss2.rvalue
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.5087364789734582), np.float64(0.5317282605983435))
     </pre>
-    </listing>
 
     <p>
       Which means that the <m>R^2</m> value is slightly higher, too.
@@ -1223,10 +1223,10 @@ result_brfss.rvalue, result_brfss2.rvalue
 result_brfss.rvalue**2, result_brfss2.rvalue**2
       </input>
     </program>
+    </listing>
     <pre>
 (np.float64(0.2588128050383119), np.float64(0.28273494311893993))
     </pre>
-    </listing>
 
     <p>
       If we use heights to guess weights, the guesses are a little better if we work with the log-transformed weights.
@@ -1246,10 +1246,10 @@ plt.plot(fit_xs, 10**fit_ys, color="C1")
 decorate(xlabel="Height (cm)", ylabel="Weight (kg)", xlim=xlim, ylim=ylim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap10_010.png" width="80%"/>
     </figure>
-    </listing>
 
     <p>
       A fitted line that's straight with respect to the transformed data is curved with respect to the original data.

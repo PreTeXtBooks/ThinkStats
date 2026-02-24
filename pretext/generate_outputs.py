@@ -187,14 +187,18 @@ def _truncate(text, max_length=MAX_TEXT_LENGTH):
 
 def migrate_ptx_file(ptx_path):
     """
-    Migrate an existing PTX file so that output blocks are inside their
-    corresponding <listing> element rather than after it.
+    Migrate an existing PTX file so that output blocks are placed after
+    their corresponding <listing> element rather than inside it.
+
+    The PreTeXt schema only allows Program or Console inside <listing>,
+    so <pre> and <figure> output blocks must appear after </listing>.
 
     Handles two cases:
     1. A separate <listing><caption>Output</caption>...</listing> that follows
-       a code listing — the output content is merged into the code listing.
-    2. A <figure> or <pre> block placed directly after </listing> (inserted by
-       an older version of this script) — the block is moved inside the listing.
+       a code listing — the output content is moved outside the code listing.
+    2. A <figure> or <pre> block placed inside <listing> after <program>
+       (inserted by an older version of this script) — the block is moved
+       to after </listing>.
 
     Returns True if any changes were made.
     """
@@ -203,45 +207,49 @@ def migrate_ptx_file(ptx_path):
 
     original = content
 
-    # Case 1: merge a separate output listing into the preceding code listing.
+    # Case 1: merge a separate output listing into a block after the code listing.
     # Before: </program>\n    </listing>\n    <listing>\n      <caption>Output</caption>(content)</listing>
-    # After:  </program>(content)</listing>
+    # After:  </program>\n    </listing>(content)
     case1_pattern = re.compile(
         r"(</program>)"
-        r"[ \t]*\n[ \t]*</listing>"
+        r"([ \t]*\n[ \t]*</listing>)"
         r"[ \t]*\n[ \t]*<listing>[ \t]*\n[ \t]*<caption>Output</caption>"
         r"(.*?)"
-        r"([ \t]*\n[ \t]*</listing>)",
+        r"[ \t]*\n[ \t]*</listing>",
         re.DOTALL,
     )
     content = case1_pattern.sub(r"\1\2\3", content)
 
-    # Case 2: move a figure/pre block that sits directly after </listing> inside it.
-    # Before: </program>\n    </listing>\n    <figure|pre>...</figure|pre>
-    # After:  </program>\n    <figure|pre>...</figure|pre>\n    </listing>
+    # Case 2: move figure/pre blocks from inside <listing> to after </listing>.
+    # Before: </program>(output_blocks)\n    </listing>
+    # After:  </program>\n    </listing>(output_blocks)
     case2_pattern = re.compile(
         r"(</program>)"
-        r"([ \t]*\n[ \t]*)</listing>"
-        r"((?:[ \t]*\n[ \t]*<(?:figure|pre)\b.*?</(?:figure|pre)>)+)",
+        r"((?:[ \t]*\n[ \t]*<(?:figure|pre)\b.*?</(?:figure|pre)>)+)"
+        r"([ \t]*\n[ \t]*</listing>)",
         re.DOTALL,
     )
-    content = case2_pattern.sub(r"\1\3\2</listing>", content)
+    content = case2_pattern.sub(r"\1\3\2", content)
 
     if content != original:
         with open(ptx_path, "w") as f:
             f.write(content)
-        print(f"  Migrated {ptx_path.name}: outputs moved inside listings")
+        print(f"  Migrated {ptx_path.name}: outputs moved after listings")
         return True
     return False
 
 
 def update_ptx_file(ptx_path, code_to_outputs):
     """
-    Update a PTX source file by inserting output blocks inside program
+    Update a PTX source file by inserting output blocks after program
     listing blocks whose code matches a cell in the notebook.
 
+    Output blocks (<pre> or <figure>) are placed after the closing
+    </listing> tag, because the PreTeXt schema only allows Program or
+    Console inside <listing>.
+
     This function is idempotent: it will not add outputs if they are
-    already present inside the listing.
+    already present after the listing.
 
     Returns True if any changes were made.
     """
@@ -264,9 +272,10 @@ def update_ptx_file(ptx_path, code_to_outputs):
         r'\s*<(pre|figure)\b', re.DOTALL
     )
 
-    # Pattern to detect a closing </listing> tag immediately after </program>
-    # (with only whitespace between) — means the listing has no output yet.
-    listing_close_pattern = re.compile(r'\s*</listing>', re.DOTALL)
+    # Pattern to match a closing </listing> tag immediately after </program>
+    # (with only whitespace between). The group captures the full match so
+    # its .end() gives the insertion point (right after </listing>).
+    listing_close_pattern = re.compile(r'(\s*</listing>)', re.DOTALL)
 
     changes_made = 0
     result_parts = []
@@ -275,20 +284,23 @@ def update_ptx_file(ptx_path, code_to_outputs):
     for match in program_pattern.finditer(content):
         code_raw = match.group(2)
 
-        # Check if this program is wrapped in a <listing> block with no output
-        # inside yet.  If listing_close_pattern matches, only whitespace sits
-        # between </program> and </listing>, so we insert there (inside the
-        # listing).  Otherwise the listing already has output (or the program
-        # is not in a listing) and we check right after </program>.
+        # Find the </listing> that closes the listing containing this program.
+        # If listing_close_pattern matches, only whitespace sits between
+        # </program> and </listing>, so we insert AFTER </listing>.
         after_program = content[match.end():]
         listing_close_match = listing_close_pattern.match(after_program)
         if listing_close_match:
-            # Insert output inside the listing, right after </program>
-            insertion_end = match.end()
-            already_has_output = False
+            # Insert output after </listing>
+            insertion_end = match.end() + listing_close_match.end()
+            # Check if there's already output right after </listing>
+            after_listing = content[insertion_end:]
+            already_has_output = bool(existing_output_pattern.match(after_listing))
         else:
-            insertion_end = match.end()
-            already_has_output = bool(existing_output_pattern.match(after_program))
+            # Program is not in a simple listing or listing already has other
+            # content — skip (do not insert output here).
+            result_parts.append(content[last_end:match.end()])
+            last_end = match.end()
+            continue
 
         code_normalized = normalize_code(code_raw)
         outputs = code_to_outputs.get(code_normalized)

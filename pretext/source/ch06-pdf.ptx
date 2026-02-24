@@ -148,10 +148,10 @@ two_bar_plots(pmf_family, pmf_poisson)
 decorate(xlabel="Number of family members")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_001.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Comparing the PMFs, we can see that the model fits the data well, but with some deviations.
     </p>
@@ -181,10 +181,10 @@ two_cdf_plots(cdf_poisson, cdf_family)
 decorate(xlabel="Number of family members")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_002.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       When we compare CDFs, the deviations are less prominent, but we can see where and how the distributions differ.
       PMFs tend to emphasize small differences <mdash/> sometimes CDFs provide a better sense of the big picture.
@@ -232,10 +232,10 @@ cdf_birth_weight = Cdf.from_seq(birth_weights, name="sample")
 two_cdf_plots(cdf_model, cdf_birth_weight, xlabel="Birth weight (pounds)")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_003.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       As we saw in the previous chapter, the normal model fits the data well except in the range of the lightest babies.
     </p>
@@ -295,10 +295,10 @@ plt.plot(qs, ps, label="normal model", ls=":", color="gray")
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_004.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The result looks like a bell curve, which is characteristic of the normal distribution.
     </p>
@@ -313,10 +313,10 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
 normal_pdf(m, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
-    </listing>
     <p>
       By itself, a probability density doesn't mean much <mdash/> most importantly, it is <em>not</em> a probability.
       It would be incorrect to say that the probability is 32% that a randomly-chosen birth weight equals <c>m</c>.
@@ -339,10 +339,10 @@ pdf_model = NormalPdf(m, s, name="normal model")
 pdf_model
       </input>
     </program>
+    </listing>
     <pre>
 NormalPdf(7.280883100022579, 1.2430657948614345, name='normal model')
     </pre>
-    </listing>
     <p>
       If we call this object like a function, it evaluates the normal PDF.
     </p>
@@ -353,10 +353,10 @@ NormalPdf(7.280883100022579, 1.2430657948614345, name='normal model')
 pdf_model(m)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.32093416297880123)
     </pre>
-    </listing>
     <p>
       Now, to compute the area under the PDF, we can use the following function, which takes a <c>NormalPdf</c> object and the bounds of an interval, <c>low</c> and <c>high</c>.
       It evaluates the normal PDF at equally-spaced quantities between <c>low</c> and <c>high</c>, and uses the SciPy function <c>simpson</c> to estimate the area under the curve (<c>simpson</c> is so named because it uses an algorithm called Simpson's method).
@@ -385,10 +385,10 @@ def area_under(pdf, low, high):
 area_under(pdf_model, 2, 12)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.9999158086616793)
     </pre>
-    </listing>
     <p>
       If we extend the interval from negative infinity to positive infinity, the total area is exactly 1.
     </p>
@@ -402,10 +402,10 @@ np.float64(0.9999158086616793)
 area_under(pdf_model, 0, 8.5)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8366380335513807)
     </pre>
-    </listing>
     <p>
       You might recall that the "fraction less than or equal to a given value" is the definition of the CDF.
       So we could compute the same result using the CDF of the normal distribution.
@@ -419,10 +419,10 @@ from scipy.stats import norm
 norm.cdf(8.5, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.8366380358092718)
     </pre>
-    </listing>
     <p>
       Similarly, we can use the area under the density curve to compute the fraction of birth weights between 6 and 8 pounds.
     </p>
@@ -433,10 +433,10 @@ np.float64(0.8366380358092718)
 area_under(pdf_model, 6, 8)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.5671317752927691)
     </pre>
-    </listing>
     <p>
       Or we can get the same result using the CDF to compute the fraction less than 8 and then subtracting off the fraction less than 6.
     </p>
@@ -447,10 +447,10 @@ np.float64(0.5671317752927691)
 norm.cdf(8, m, s) - norm.cdf(6, m, s)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.5671317752921801)
     </pre>
-    </listing>
     <p>
       So the CDF is the area under the curve of the PDF.
       If you know calculus, another way to say the same thing is that the CDF is the integral of the PDF.
@@ -516,10 +516,10 @@ pdf_expo = ExponentialPdf(lam, name="exponential model")
 pdf_expo
       </input>
     </program>
+    </listing>
     <pre>
 ExponentialPdf(6, name='exponential model')
     </pre>
-    </listing>
     <p>
       <c>ExponentialPdf</c> provides a <c>plot</c> function we can use to plot the PDF <mdash/> notice that the unit of time is games here, rather than seconds as in the previous chapter.
     </p>
@@ -532,10 +532,10 @@ pdf_expo.plot(qs, ls=":", color="gray")
 decorate(xlabel="Time (games)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_005.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Looking at the y-axis, you might notice that some of these densities are greater than 1, which is a reminder that a probability density is not a probability.
       But the area under a density curve is a probability, so it should never be greater than 1.
@@ -550,10 +550,10 @@ decorate(xlabel="Time (games)", ylabel="Density")
 area_under(pdf_expo, 0, 1.5)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.999876590779019)
     </pre>
-    </listing>
     <p>
       If we extend the interval much farther, the result is slightly greater than 1, but that's because we're approximating the area numerically.
       Mathematically, it is exactly 1, as we can confirm using the exponential CDF.
@@ -567,10 +567,10 @@ from thinkstats import exponential_cdf
 exponential_cdf(7, lam)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(1.0)
     </pre>
-    </listing>
     <p>
       We can use the area under the density curve to compute the probability of a goal during any interval.
       For example, here is the probability of a goal during the first minute of a 60-minute game.
@@ -582,10 +582,10 @@ np.float64(1.0)
 area_under(pdf_expo, 0, 1 / 60)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.09516258196404043)
     </pre>
-    </listing>
     <p>
       We can compute the same result using the exponential CDF.
     </p>
@@ -596,10 +596,10 @@ np.float64(0.09516258196404043)
 exponential_cdf(1 / 60, lam)
       </input>
     </program>
+    </listing>
     <pre>
 np.float64(0.09516258196404048)
     </pre>
-    </listing>
     <p>
       In summary, if we evaluate a PDF, the result is a probability density <mdash/> which is not a probability.
       However, if we compute the area under the PDF, the result is the probability that a quantity falls in an interval.
@@ -637,10 +637,10 @@ pmf_birth_weight.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF? Density?")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_006.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       It doesn't work very well.
       One reason is that they are not in the same units.
@@ -671,10 +671,10 @@ pmf_birth_weight.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_007.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       But this is still not a good way to compare distributions.
       One problem is that the two <c>Pmf</c> objects contain different numbers of quantities, and the quantities in <c>pmf_birth_weight</c> are not equally spaced, so the probability masses are not really comparable.
@@ -686,10 +686,10 @@ decorate(xlabel="Birth weight (pounds)", ylabel="PMF")
 len(pmf_model), len(pmf_birth_weight)
       </input>
     </program>
+    </listing>
     <pre>
 (201, 184)
     </pre>
-    </listing>
     <p>
       The other problem is that the <c>Pmf</c> of the data is noisy.
       So let's try something else.
@@ -727,10 +727,10 @@ xlim = [1.5, 12.5]
 decorate(xlabel="Birth weight (pounds)", ylabel="PMF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_008.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       This way of representing the distribution treats the data as if it is discrete, so each probability mass is stacked up on a single point.
       But birth weight is actually <term>continuous</term>, so the quantities between the measurements are also possible.
@@ -749,10 +749,10 @@ for weight in sample:
 decorate(xlabel="Birth weight (pounds)", ylabel="PDF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_009.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       For each weight in the sample, we create a <c>NormalPdf</c> with the observed weight as the mean <mdash/> now let's add them up.
     </p>
@@ -771,10 +771,10 @@ for weight in sample:
 decorate(xlabel="Birth weight (pounds)", ylabel="PDF", xlim=xlim)
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_010.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       When we add up the probability densities for each data point, the result is an estimate of the probability density for the whole sample.
       This process is called <term>kernel density estimation</term> or KDE.
@@ -818,10 +818,10 @@ plt.plot(qs, ps)
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_011.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       <c>thinkstats</c> provides a <c>Pdf</c> object that takes the result from <c>gaussian_kde</c>, and a domain that indicates where the density should be evaluated.
       Here's how we make one.
@@ -850,10 +850,10 @@ kde_birth_weights.plot()
 decorate(xlabel="Birth weight (pounds)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_012.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Kernel density estimation makes it possible to compare the distribution of a dataset to a theoretical model, and for some audiences, this is a good way to visualize the comparison.
       But for audiences that are familiar with CDFs, comparing CDFs is often better.
@@ -906,6 +906,7 @@ boom = read_baby_boom()
 boom.head()
       </input>
     </program>
+    </listing>
     <pre>
    time  sex  weight_g  minutes
 0     5    1      3837        5
@@ -914,7 +915,6 @@ boom.head()
 3   155    2      3838      115
 4   257    2      3625      177
     </pre>
-    </listing>
     <p>
       The <c>minutes</c> column records "the number of minutes since midnight for each birth".
       So we can use the <c>diff</c> method to compute the interval between each successive birth.
@@ -944,10 +944,10 @@ pmf_diffs.bar(width=1)
 decorate(xlabel="Interval (minutes)", ylabel="PMF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_013.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Then we can use <c>make_cdf</c> to compute the cumulative probabilities and store them in a <c>Cdf</c> object.
     </p>
@@ -961,10 +961,10 @@ cdf_diffs.step()
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_014.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The <c>Pmf</c> and <c>Cdf</c> are equivalent in the sense that if we are given either one, we can compute the other.
       To demonstrate, we'll use the <c>make_pmf</c> method, which computes the differences between successive probabilities in a <c>Cdf</c> and returns a <c>Pmf</c>.
@@ -988,10 +988,10 @@ pmf_diffs2 = cdf_diffs.make_pmf()
 np.allclose(pmf_diffs, pmf_diffs2)
       </input>
     </program>
+    </listing>
     <pre>
 True
     </pre>
-    </listing>
     <p>
       And it is.
     </p>
@@ -1020,10 +1020,10 @@ kde_diffs.plot(ls=":", color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="Density")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_015.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       To see whether the estimated density follows an exponential model, we can make an <c>ExponentialCdf</c> with the same mean as the data.
     </p>
@@ -1052,10 +1052,10 @@ cdf_diffs.step()
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_016.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       The exponential model fits the CDF of the data well.
     </p>
@@ -1073,10 +1073,10 @@ discrete_cdf_model.step(color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_017.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Finally, to get from a discrete CDF to a continuous CDF, we can interpolate between the steps, which is what we see if we use the <c>plot</c> method instead of the <c>step</c> method.
     </p>
@@ -1089,10 +1089,10 @@ discrete_cdf_model.plot(color="gray")
 decorate(xlabel="Interval (minutes)", ylabel="CDF")
       </input>
     </program>
+    </listing>
     <figure>
       <image source="images/chap06_018.png" width="80%"/>
     </figure>
-    </listing>
     <p>
       Finally, a PDF is the derivative of a continuous CDF, and a CDF is the integral of a PDF.
     </p>
@@ -1112,10 +1112,10 @@ cdf = 1 - sp.exp(-λ * x)
 cdf
       </input>
     </program>
+    </listing>
     <pre>
 1 - exp(-x*λ)
     </pre>
-    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1124,10 +1124,10 @@ pdf = sp.diff(cdf, x)
 pdf
       </input>
     </program>
+    </listing>
     <pre>
 λ*exp(-x*λ)
     </pre>
-    </listing>
     <p>
       And if we integrate the result, we get the CDF back <mdash/> although we lose the constant of integration in the process.
     </p>
@@ -1138,10 +1138,10 @@ pdf
 sp.integrate(pdf, x)
       </input>
     </program>
+    </listing>
     <pre>
 -exp(-x*λ)
     </pre>
-    </listing>
     <p>
       This example shows how we use <c>Pmf</c>, <c>Cdf</c>, and <c>Pdf</c> objects to represent PMFs, CDFs, and PDFs, and demonstrates the process for converting from each to the others.
     </p>
@@ -1233,10 +1233,10 @@ m, s = np.mean(trimmed), np.std(trimmed)
 m, s
           </input>
         </program>
+        </listing>
     <pre>
 (np.float64(178.10278947124948), np.float64(7.017054887136004))
     </pre>
-        </listing>
         <p>
           Here's a <c>NormalCdf</c> object that represents a normal distribution with the same mean and standard deviation as the trimmed data.
         </p>
@@ -1265,10 +1265,10 @@ xlim = [140, 210]
 decorate(xlabel="Height (cm)", ylabel="CDF", xlim=xlim)
           </input>
         </program>
+        </listing>
     <figure>
       <image source="images/chap06_020.png" width="80%"/>
     </figure>
-        </listing>
         <p>
           Use <c>gaussian_kde</c> to make a <c>Pdf</c> that approximates the PDF of male height.
           (Hint: Investigate the <c>bw_method</c> argument, which can be used to control the smoothness of the estimated density.)
