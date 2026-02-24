@@ -5,9 +5,17 @@
 
   <introduction>
     <p>
-      In the previous chapter, when we compared discrete distributions, we used a bar plot to show their probability mass functions (PMFs).
-      When we compared continuous distributions, we used a line plot to show their cumulative distribution functions (CDFs).
-      In this chapter, we'll introduce probability density functions (PDFs), which are another way to represent and visualize continuous distributions.
+      In the previous chapter, we modeled data with theoretical distributions including the binomial, Poisson, exponential, and normal distributions.
+    </p>
+    <p>
+      The binomial and Poisson distributions are <term>discrete</term>, which means that the outcomes have to be distinct or separate elements, like an integer number of hits and misses, or goals scored.
+      In a discrete distribution, each outcome is associated with a probability mass.
+    </p>
+    <p>
+      The exponential and normal distribution are <term>continuous</term>, which means the outcomes can be at any point in a range of possible values.
+      In a continuous distribution, each outcome is associated with a <term>probability density</term>.
+      Probability density is an abstract idea, and many people find it difficult at first, but we'll take it one step at a time.
+      As a first step, let's think again about comparing distributions.
     </p>
 
     <listing>
@@ -59,11 +67,15 @@ from thinkstats import decorate
     <title>Comparing Distributions</title>
 
     <p>
-      For discrete distributions, we could use either PMFs or CDFs to compare distributions.
+      In the previous chapter, when we compared discrete distributions, we used a bar plot to show their probability mass functions (PMFs).
+      When we compared continuous distributions, we used a line plot to show their cumulative distribution functions (CDFs).
+    </p>
+    <p>
+      For the discrete distributions, we could also have used CDFs.
       For example, here's the PMF of a Poisson distribution with <c>lam=2.2</c>, which is a good model for the distribution of household size in the NSFG data.
     </p>
     <p>
-      We can use <c>read_fem_resp</c> to read the respondent data file, then select household sizes for people 25 and older.
+      The following cells download the data files and install <c>statadict</c>, which we need to read the data.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -86,6 +98,9 @@ except ImportError:
       </input>
     </program>
     </listing>
+    <p>
+      We can use <c>read_fem_resp</c> to read the respondent data file.
+    </p>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -96,6 +111,9 @@ resp = read_fem_resp()
       </input>
     </program>
     </listing>
+    <p>
+      Next we'll select household sizes for people 25 and older.
+    </p>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -274,7 +292,7 @@ m, s = np.mean(trimmed), np.std(trimmed)
     </program>
     </listing>
     <p>
-      Now we'll evaluate <c>normal_pdf</c> for a range of weights and plot it.
+      Now we'll evaluate <c>normal_pdf</c> for a range of weights.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -287,6 +305,9 @@ ps = normal_pdf(qs, m, s)
       </input>
     </program>
     </listing>
+    <p>
+      And plot it.
+    </p>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -707,6 +728,15 @@ len(pmf_model), len(pmf_birth_weight)
       <caption>Python Code</caption>
     <program language="python">
       <input>
+# Set the random seed so we get the same results every time
+np.random.seed(3)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 n = 10
 sample = birth_weights.sample(n)
       </input>
@@ -864,12 +894,19 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     <title>The Distribution Framework</title>
 
     <p>
-      At this point we have a complete set of ways to represent distributions: PMFs, CDFs, and PDFs.
-      There are transitions available from each representation to the others.
+      At this point we have a complete set of ways to represent distributions: PMFs, CDFs, and PDFs
+      The following figure shows these representations and the transitions from one to another.
       For example, if we have a <c>Pmf</c>, we can use the <c>cumsum</c> function to compute the cumulative sum of the probabilities and get a <c>Cdf</c> that represents the same distribution.
     </p>
+    <figure>
+      <image source="images/distribution_framework.png" width="80%"/>
+    </figure>
     <p>
-      To demonstrate these transitions, we'll use a dataset that "contains the time of birth, sex, and birth weight for each of 44 babies born in one 24-hour period at a Brisbane, Australia, hospital."
+      To demonstrate these transitions, we'll use a new dataset that "contains the time of birth, sex, and birth weight for each of 44 babies born in one 24-hour period at a Brisbane, Australia, hospital," according to the description.
+      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      According to the information in the file
     </p>
     <blockquote>
       <p>
@@ -896,6 +933,14 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     <p>
       We can read the data like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/babyboom.dat")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <console>
