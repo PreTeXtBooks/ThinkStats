@@ -185,16 +185,63 @@ def _truncate(text, max_length=MAX_TEXT_LENGTH):
     return text
 
 
+def migrate_ptx_file(ptx_path):
+    """
+    Migrate an existing PTX file so that output blocks are inside their
+    corresponding <listing> element rather than after it.
+
+    Handles two cases:
+    1. A separate <listing><caption>Output</caption>...</listing> that follows
+       a code listing — the output content is merged into the code listing.
+    2. A <figure> or <pre> block placed directly after </listing> (inserted by
+       an older version of this script) — the block is moved inside the listing.
+
+    Returns True if any changes were made.
+    """
+    with open(ptx_path) as f:
+        content = f.read()
+
+    original = content
+
+    # Case 1: merge a separate output listing into the preceding code listing.
+    # Before: </program>\n    </listing>\n    <listing>\n      <caption>Output</caption>(content)</listing>
+    # After:  </program>(content)</listing>
+    case1_pattern = re.compile(
+        r"(</program>)"
+        r"[ \t]*\n[ \t]*</listing>"
+        r"[ \t]*\n[ \t]*<listing>[ \t]*\n[ \t]*<caption>Output</caption>"
+        r"(.*?)"
+        r"([ \t]*\n[ \t]*</listing>)",
+        re.DOTALL,
+    )
+    content = case1_pattern.sub(r"\1\2\3", content)
+
+    # Case 2: move a figure/pre block that sits directly after </listing> inside it.
+    # Before: </program>\n    </listing>\n    <figure|pre>...</figure|pre>
+    # After:  </program>\n    <figure|pre>...</figure|pre>\n    </listing>
+    case2_pattern = re.compile(
+        r"(</program>)"
+        r"([ \t]*\n[ \t]*)</listing>"
+        r"((?:[ \t]*\n[ \t]*<(?:figure|pre)\b.*?</(?:figure|pre)>)+)",
+        re.DOTALL,
+    )
+    content = case2_pattern.sub(r"\1\3\2</listing>", content)
+
+    if content != original:
+        with open(ptx_path, "w") as f:
+            f.write(content)
+        print(f"  Migrated {ptx_path.name}: outputs moved inside listings")
+        return True
+    return False
+
+
 def update_ptx_file(ptx_path, code_to_outputs):
     """
-    Update a PTX source file by inserting output blocks after program blocks
-    whose code matches a cell in the notebook.
+    Update a PTX source file by inserting output blocks inside program
+    listing blocks whose code matches a cell in the notebook.
 
     This function is idempotent: it will not add outputs if they are
-    already present after a program block.
-
-    When a <program> is wrapped in a <listing>, outputs are inserted after
-    </listing> rather than inside it.
+    already present inside the listing.
 
     Returns True if any changes were made.
     """
@@ -218,6 +265,7 @@ def update_ptx_file(ptx_path, code_to_outputs):
     )
 
     # Pattern to detect a closing </listing> tag immediately after </program>
+    # (with only whitespace between) — means the listing has no output yet.
     listing_close_pattern = re.compile(r'\s*</listing>', re.DOTALL)
 
     changes_made = 0
@@ -227,14 +275,17 @@ def update_ptx_file(ptx_path, code_to_outputs):
     for match in program_pattern.finditer(content):
         code_raw = match.group(2)
 
-        # Check if this program is wrapped in a <listing> block.
-        # If so, output should go after </listing>, not inside it.
+        # Check if this program is wrapped in a <listing> block with no output
+        # inside yet.  If listing_close_pattern matches, only whitespace sits
+        # between </program> and </listing>, so we insert there (inside the
+        # listing).  Otherwise the listing already has output (or the program
+        # is not in a listing) and we check right after </program>.
         after_program = content[match.end():]
         listing_close_match = listing_close_pattern.match(after_program)
         if listing_close_match:
-            insertion_end = match.end() + listing_close_match.end()
-            after_insertion = content[insertion_end:]
-            already_has_output = bool(existing_output_pattern.match(after_insertion))
+            # Insert output inside the listing, right after </program>
+            insertion_end = match.end()
+            already_has_output = False
         else:
             insertion_end = match.end()
             already_has_output = bool(existing_output_pattern.match(after_program))
@@ -277,6 +328,10 @@ def process_all_chapters():
             continue
 
         print(f"\nProcessing {ptx_filename}...")
+
+        # Migrate any existing outputs that are outside their listing
+        migrate_ptx_file(ptx_path)
+
         code_to_outputs = extract_outputs_from_notebook(notebook_path)
 
         if not code_to_outputs:

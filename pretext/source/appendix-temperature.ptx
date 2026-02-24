@@ -53,9 +53,6 @@ metadata = response.json()
 metadata.keys()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 dict_keys(['chart', 'columns', 'dateDownloaded'])
     </pre>
@@ -72,9 +69,6 @@ from pprint import pprint
 pprint(metadata["chart"])
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 {'citation': 'Contains modified Copernicus Climate Change Service information '
              '(2019)',
@@ -96,9 +90,6 @@ pprint(metadata["chart"])
 pprint(metadata["columns"]["temperature_2m"])
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 {'citationLong': 'Contains modified Copernicus Climate Change Service '
                  'information (2019) – with major processing by Our World in '
@@ -202,10 +193,10 @@ temp_series.plot(label=country_code)
 plt.ylabel("Surface temperature (℃)");
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/temperature_001.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       Not surprisingly, there is a strong seasonal pattern.
       We can use <c>seasonal_decompose</c> from StatsModels to identify a long-term trend,
@@ -258,10 +249,10 @@ def plot_decomposition(original, decomposition):
 plot_decomposition(temp_series, decomposition)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/temperature_002.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       As always, I'm grateful to Our World in Data for making datasets like this available,
       and now easier to use programmatically.

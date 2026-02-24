@@ -316,9 +316,6 @@ preg = read_stata(dct_file, dat_file)
 preg.shape
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (13593, 243)
     </pre>
@@ -334,9 +331,6 @@ preg.shape
 preg.head()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
    caseid  pregordr  howpreg_n  howpreg_p  moscurrp  nowprgdk  pregend1  \
 0       1         1        NaN        NaN       NaN       NaN       6.0   
@@ -376,9 +370,6 @@ preg.head()
 preg.columns
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 Index(['caseid', 'pregordr', 'howpreg_n', 'howpreg_p', 'moscurrp', 'nowprgdk',
        'pregend1', 'pregend2', 'nbrnaliv', 'multbrth',
@@ -400,9 +391,6 @@ pregordr = preg["pregordr"]
 type(pregordr)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 pandas.core.series.Series
     </pre>
@@ -418,9 +406,6 @@ pandas.core.series.Series
 pregordr.head()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 0    1
 1    2
@@ -545,9 +530,6 @@ Name: pregordr, dtype: int64
 preg["outcome"].value_counts().sort_index()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 outcome
 1    9148
@@ -639,9 +621,6 @@ counts = preg["birthwgt_lb"].value_counts(dropna=False).sort_index()
 counts
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 birthwgt_lb
 0.0        8
@@ -683,9 +662,6 @@ Name: count, dtype: int64
 counts.loc[0:5]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 birthwgt_lb
 0.0      8
@@ -707,9 +683,6 @@ Name: count, dtype: int64
 counts.loc[0:5].sum()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(1125)
     </pre>
@@ -761,9 +734,6 @@ preg["birthwgt_lb"] = preg["birthwgt_lb"].replace([51, 97, 98, 99], np.nan)
 preg["agepreg"].mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(2468.8151197039497)
     </pre>
@@ -779,9 +749,6 @@ preg["agepreg"] /= 100.0
 preg["agepreg"].mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(24.6881511970395)
     </pre>
@@ -803,9 +770,6 @@ np.float64(24.6881511970395)
 preg["birthwgt_oz"].value_counts(dropna=False).sort_index()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 birthwgt_oz
 0.0     1037
@@ -850,9 +814,6 @@ preg["totalwgt_lb"] = preg["birthwgt_lb"] + preg["birthwgt_oz"] / 16.0
 preg["totalwgt_lb"].mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(7.265628457623368)
     </pre>
@@ -881,9 +842,6 @@ n = weights.count()
 n
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(9038)
     </pre>
@@ -899,9 +857,6 @@ mean = weights.sum() / n
 mean
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(7.265628457623368)
     </pre>
@@ -916,9 +871,6 @@ np.float64(7.265628457623368)
 weights.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(7.265628457623368)
     </pre>
@@ -949,9 +901,6 @@ var = squared_deviations.sum() / n
 var
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.983070989750022)
     </pre>
@@ -966,9 +915,6 @@ np.float64(1.983070989750022)
 weights.var()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.9832904288326545)
     </pre>
@@ -986,9 +932,6 @@ np.float64(1.9832904288326545)
 weights.var(ddof=0)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.983070989750022)
     </pre>
@@ -1007,9 +950,6 @@ std = np.sqrt(var)
 std
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.40821553384062)
     </pre>
@@ -1024,9 +964,6 @@ np.float64(1.40821553384062)
 weights.std(ddof=0)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.40821553384062)
     </pre>
@@ -1053,9 +990,6 @@ subset = preg.query("caseid == 10229")
 subset.shape
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (7, 244)
     </pre>
@@ -1071,9 +1005,6 @@ subset.shape
 subset["outcome"].values
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 array([4, 4, 4, 4, 4, 4, 1])
     </pre>

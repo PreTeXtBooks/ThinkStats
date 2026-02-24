@@ -50,9 +50,6 @@ djia = pd.read_csv(filename, skiprows=4, parse_dates=[0], index_col=0)
 djia.head()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
                DJIA
 Date               
@@ -75,9 +72,6 @@ annual = djia.groupby(djia.index.year).last().drop(2024)
 annual
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
             DJIA
 Date            
@@ -108,9 +102,6 @@ annual['Ratio'] = annual['DJIA'] / annual['DJIA'].shift(1)
 annual
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
             DJIA     Ratio
 Date                      
@@ -151,9 +142,6 @@ annual['Return'] = (annual['Ratio'] - 1) * 100
 annual.dropna().sort_values(by='Return')
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
            DJIA     Ratio     Return
 Date                                
@@ -199,9 +187,6 @@ decorate(xlabel='Annual return (percent)', ylabel='CDF')
 1 - cdf_return(10)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 0.4492753623188406
     </pre>
@@ -255,9 +240,6 @@ def compute_ratios(start=1993, duration=30):
 compute_ratios(1980, 43)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (1980, 2023, 44.93751117788029, 15.356490985533199)
     </pre>
@@ -279,9 +261,6 @@ compute_ratios(1980, 43)
 compute_ratios(1900, 43)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (1900, 1943, 2.8071864303140583, 7.225624631784611)
     </pre>
@@ -303,9 +282,6 @@ ratios.index = ratios['Start']
 ratios.tail()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
        Start   End  Index Fund  Buffer ETF
 Start                                     

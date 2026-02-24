@@ -97,9 +97,6 @@ df = pd.read_csv("lamps.csv", index_col=0)
 df.tail()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
        h  f  K
 i             
@@ -126,9 +123,6 @@ pmf_bulblife = Pmf(df["f"].values, index=df["h"])
 pmf_bulblife.normalize()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(50)
     </pre>
@@ -146,9 +140,6 @@ cdf_bulblife = pmf_bulblife.make_cdf()
 cdf_bulblife[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.7800000000000002)
     </pre>
@@ -166,9 +157,6 @@ complementary_cdf = 1 - cdf_bulblife
 complementary_cdf[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.21999999999999975)
     </pre>
@@ -188,9 +176,6 @@ surv_bulblife = cdf_bulblife.make_surv()
 surv_bulblife[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.21999999999999997)
     </pre>
@@ -209,10 +194,10 @@ surv_bulblife.plot(label="Survival")
 decorate(xlabel="Light bulb duration (hours)", ylabel="Probability")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_001.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       In that sense, the CDF and survival function are equivalent<mdash/>if we are given
       either one, we can compute the other<mdash/>but in the context of survival analysis it
@@ -245,9 +230,6 @@ at_risk = pmf_bulblife + surv_bulblife
 at_risk[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.25999999999999995)
     </pre>
@@ -262,9 +244,6 @@ np.float64(0.25999999999999995)
 pmf_bulblife[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.04)
     </pre>
@@ -280,9 +259,6 @@ hazard = pmf_bulblife / at_risk
 hazard[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.15384615384615388)
     </pre>
@@ -303,9 +279,6 @@ hazard_bulblife = surv_bulblife.make_hazard()
 hazard_bulblife[1656]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.15384615384615397)
     </pre>
@@ -321,10 +294,10 @@ hazard_bulblife.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Hazard")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_002.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       We can see that the hazard is higher in some places than others, but this way of
       visualizing the hazard function can be misleading, especially in parts of the range
@@ -342,10 +315,10 @@ cumulative_hazard.plot()
 decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_003.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       Where the probability of expiring is high, the cumulative hazard function is steep.
       Where the probability of expiring is low, the cumulative hazard function is flat.
@@ -390,9 +363,6 @@ resp = pd.read_csv("marriage_nsfg_female.csv.gz")
 resp.shape
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (70183, 34)
     </pre>
@@ -468,9 +438,6 @@ resp["cohort"] = resp["cmbirth"].apply(decade_of_birth)
 value_counts(resp["cohort"])
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 cohort
 1930      325
@@ -555,10 +522,10 @@ ylim = [-0.05, 1.05]
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_004.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       If we take these results at face value, they show that people in earlier generations got
       married younger, and more of them got married eventually.
@@ -670,10 +637,10 @@ for label, surv in survs_resampled.items():
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_005.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The difference, with and without resampling, is substantial, which shows that we need to
       correct for stratified sampling to get accurate results.
@@ -736,9 +703,6 @@ complete = resp60.query("evrmarry == 1")["agemarr"]
 complete.count()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(9921)
     </pre>
@@ -755,9 +719,6 @@ ongoing = resp60.query("evrmarry == 0")["age"]
 ongoing.count()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(5468)
     </pre>
@@ -790,9 +751,6 @@ ft_ongoing = FreqTab.from_seq(ongoing)
 ft_complete[25]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(58)
     </pre>
@@ -808,9 +766,6 @@ np.int64(58)
 ft_ongoing[25]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(5)
     </pre>
@@ -838,9 +793,6 @@ surv_ongoing = ft_ongoing.make_surv()
 surv_complete[25]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(2848)
     </pre>
@@ -855,9 +807,6 @@ np.int64(2848)
 surv_ongoing[25]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(2273)
     </pre>
@@ -879,9 +828,6 @@ at_risk = ft_complete[25] + ft_ongoing[25] + surv_complete[25] + surv_ongoing[25
 at_risk
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(5184)
     </pre>
@@ -898,9 +844,6 @@ hazard = ft_complete[25] / at_risk
 hazard
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.011188271604938271)
     </pre>
@@ -959,10 +902,10 @@ hazard.cumsum().plot()
 decorate(xlabel="Age", ylabel="Cumulative hazard")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_006.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       It is steepest between ages 20 and 30, which means that an unmarried person is at the
       greatest <q>risk</q> of getting married at these ages.
@@ -1024,10 +967,10 @@ surv.plot(label="Kaplan-Meier")
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_007.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       We can see how important it is to handle censored data correctly.
     </p>
@@ -1147,9 +1090,6 @@ kmf = KaplanMeierFitter()
 kmf.fit(durations=durations, event_observed=event_observed)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 &lt;lifelines.KaplanMeierFitter:"KM_estimate", fitted with 15389 total observations, 5468 right-censored observations&gt;
     </pre>
@@ -1169,10 +1109,10 @@ kmf.plot()
 decorate(xlabel="Age", ylabel="Prob never married", ylim=ylim)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_008.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       Unlike the survival function we computed, the one from <c>lifelines</c> starts from 0.
       But the rest of the function is the same, within floating-point error.
@@ -1185,9 +1125,6 @@ ps = kmf.survival_function_["KM_estimate"].drop(0)
 np.allclose(ps, surv)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 True
     </pre>
@@ -1285,10 +1222,10 @@ xlim = [8, 55]
 decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_009.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       This visualization is good enough for exploration, but the lines look blurry and some
       of the labels overlap.
@@ -1347,9 +1284,6 @@ from nsfg import get_nsfg_groups
 live, firsts, others = get_nsfg_groups()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 /home/runner/work/ThinkStats/ThinkStats/soln/nsfg.py:190: PerformanceWarning: DataFrame is highly fragmented.  This is usually the result of calling `frame.insert` many times, which has poor performance.  Consider joining all columns at once using pd.concat(axis=1) instead. To get a de-fragmented frame, use `newframe = frame.copy()`
   df["totalwgt_lb"] = df.birthwgt_lb + df.birthwgt_oz / 16.0
@@ -1420,9 +1354,6 @@ pmf_remaining = Pmf(ps, qs)
 pmf_remaining.normalize()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.9155006558810669)
     </pre>
@@ -1439,10 +1370,10 @@ pmf_remaining.bar(label="Week 36")
 decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_010.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The mean of this distribution is the expected remaining time.
     </p>
@@ -1453,9 +1384,6 @@ decorate(xlabel="Remaining duration (weeks)", ylabel="PMF")
 pmf_remaining.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(3.2145671641791043)
     </pre>
@@ -1510,9 +1438,6 @@ expected = expected_remaining(pmf_durations)
 expected
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 36    3.214567
 37    2.337714
@@ -1544,10 +1469,10 @@ decorate(
 )
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap13_011.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       Between weeks 36 and 39, the expected remaining time decreases until, at the beginning
       of the 39th week, it is about 0.6 weeks.
@@ -1749,10 +1674,10 @@ hazard.plot()
 decorate(xlabel="Age (years)", ylabel="Hazard")
           </input>
         </program>
-        </listing>
     <figure>
       <image source="images/chap13_015.png" width="80%"/>
     </figure>
+        </listing>
         <p>
           Use <c>make_surv</c> to make a survival function based on these rates, and
           <c>make_cdf</c> to compute the corresponding CDF.
