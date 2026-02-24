@@ -101,9 +101,6 @@ np.random.seed(1)
 flip(25, 0.9)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 array([1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 0,
        1, 1, 1])
@@ -123,9 +120,6 @@ pmf = Pmf.from_seq(seq)
 pmf
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 0    0.101
 1    0.899
@@ -169,9 +163,6 @@ results_sim = [simulate_round(n, p) for i in range(1000)]
 np.mean(results_sim), n * p
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(22.522), 22.5)
     </pre>
@@ -191,6 +182,9 @@ pmf_sim.bar()
 decorate(xlabel="Hits", ylabel="PMF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_001.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The peak is near the mean, and the distribution is skewed to the left.
@@ -241,10 +235,10 @@ two_bar_plots(pmf_sim, pmf_binom)
 decorate(xlabel="Hits", ylabel="PMF")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap05_002.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       They are similar, with small differences because of random variation in the simulation results.
       This agreement should not be surprising, because the simulation and the model are based on the same assumptions <mdash/> particularly the assumption that every attempt has the same probability of success.
@@ -276,9 +270,6 @@ total_hits = results.sum()
 n, total_shots, total_hits
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (25, 3750, np.int64(3575))
     </pre>
@@ -294,9 +285,6 @@ p = total_hits / total_shots
 p
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.9533333333333334)
     </pre>
@@ -323,6 +311,9 @@ two_bar_plots(pmf_results, pmf_binom)
 decorate(xlabel="Hits", ylabel="PMF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_003.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The binomial model is a good fit for the distribution of the data <mdash/> even though it makes the unrealistic assumption that all competitors have the same, unchanging capability.
@@ -348,9 +339,6 @@ p = m / 3600
 p
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 0.0016666666666666668
     </pre>
@@ -378,9 +366,6 @@ goals = [simulate_goals(n, p) for i in range(1001)]
 np.mean(goals)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(6.021978021978022)
     </pre>
@@ -436,9 +421,6 @@ pmf_poisson.normalize()
 pmf_poisson.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(5.999925498375129)
     </pre>
@@ -456,10 +438,10 @@ two_bar_plots(pmf_sim, pmf_poisson)
 decorate(xlabel="Goals", ylabel="PMF")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap05_004.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The distributions are similar except for small differences due to random variation.
       That should not be surprising, because the simulation and the Poisson model are based on the same assumption that the probability of scoring a goal is the same during any second of the game.
@@ -495,9 +477,6 @@ lam = np.mean(goals)
 lam
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(6.0182926829268295)
     </pre>
@@ -524,6 +503,9 @@ two_bar_plots(pmf_goals, pmf_poisson)
 decorate(xlabel="Goals", ylabel="PMF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_005.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The Poisson distribution fits the data well, which suggests that it is a good model of the goal-scoring process in hockey.
@@ -550,9 +532,6 @@ p = m / 3600
 p
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 0.0016666666666666668
     </pre>
@@ -586,9 +565,6 @@ mean = np.mean(first_goal_times)
 mean
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(597.7902097902098)
     </pre>
@@ -625,9 +601,6 @@ lam = 1 / mean
 lam
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.0016728276636563566)
     </pre>
@@ -663,10 +636,10 @@ cdf_sim.plot()
 decorate(xlabel="Time of first goal (seconds)", ylabel="CDF")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap05_006.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The exponential model fits the results from the simulation very well <mdash/> but a stronger test is to see how it does with real data.
     </p>
@@ -700,9 +673,6 @@ lam = 1 / np.nanmean(firsts)
 lam
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.0015121567467720825)
     </pre>
@@ -728,6 +698,12 @@ cdf_firsts = Cdf.from_seq(firsts, name="data", dropna=False)
 cdf_firsts.tail()
       </input>
     </program>
+    <pre>
+3286.0    0.996951
+3581.0    0.997713
+NaN       1.000000
+Name: data, dtype: float64
+    </pre>
     </listing>
     <listing>
       <caption>Python Code</caption>
@@ -739,6 +715,9 @@ cdf_firsts.plot()
 decorate(xlabel="Time of first goal (seconds)", ylabel="CDF")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_007.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The data deviate from the model in some places <mdash/> it looks like there are fewer goals in the first 1000 seconds than the model predicts.
@@ -789,9 +768,6 @@ m, s = np.mean(sim_weights), np.std(sim_weights)
 m, s
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(199.37062937062936), np.float64(8.388630840376777))
     </pre>
@@ -857,6 +833,9 @@ cdf_sim_weights = Cdf.from_seq(sim_weights, name="simulation")
 two_cdf_plots(cdf_model, cdf_sim_weights, xlabel="Weight (pounds)")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_008.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The normal model fits the distribution of the weights very well.
@@ -889,9 +868,6 @@ m, s = np.mean(birth_weights), np.std(birth_weights)
 m, s
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(7.265628457623368), np.float64(1.40821553384062))
     </pre>
@@ -912,9 +888,6 @@ m, s = np.mean(trimmed), np.std(trimmed)
 m, s
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(7.280883100022579), np.float64(1.2430657948614345))
     </pre>
@@ -936,6 +909,9 @@ cdf_birth_weight = Cdf.from_seq(birth_weights, name='data')
 two_cdf_plots(cdf_model, cdf_birth_weight, xlabel="Birth weight (pounds)")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_009.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The normal model fits the data well except below 5 pounds, where the distribution of the data is to the left of the model <mdash/> that is, the lightest babies are lighter than we'd expect in a normal distribution.
@@ -979,9 +955,6 @@ sim_weights = [simulate_proportionate_growth(100) for i in range(1001)]
 np.mean(sim_weights), np.std(sim_weights)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(130.80183363824722), np.float64(20.956047434921466))
     </pre>
@@ -1000,9 +973,6 @@ m, s = np.mean(log_sim_weights), np.std(log_sim_weights)
 m, s
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(2.1111299372609933), np.float64(0.06898607064749827))
     </pre>
@@ -1022,10 +992,10 @@ two_cdf_plots(
 )
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap05_010.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The model fits the simulation result very well, which is what we expected.
     </p>
@@ -1062,9 +1032,6 @@ m, s = np.mean(adult_weights), np.std(adult_weights)
 m, s
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (np.float64(78.9924529968581), np.float64(19.546132387397257))
     </pre>
@@ -1082,10 +1049,10 @@ cdf_adult_weights = Cdf.from_seq(adult_weights, name="adult weight")
 two_cdf_plots(cdf_model, cdf_adult_weights, xlabel="Adult weight (kilograms)")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap05_011.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       The normal distribution might be a good enough model for this data, for some purposes <mdash/> but let's see if we can do better.
       Here's the distribution of the log-transformed weights and a normal model with the same mean and standard deviation.
@@ -1108,6 +1075,9 @@ cdf_log_adult_weights = Cdf.from_seq(log_adult_weights, name="log adult weight")
 two_cdf_plots(cdf_model, cdf_log_adult_weights, xlabel="Adult weight (log10 kg)")
       </input>
     </program>
+    <figure>
+      <image source="images/chap05_012.png" width="80%"/>
+    </figure>
     </listing>
     <p>
       The normal model fits the logarithms better than it fits the weights themselves, which suggests that proportional growth is a better model of weight gain than additive growth.
@@ -1261,9 +1231,6 @@ m, s = np.mean(adult_heights), np.std(adult_heights)
 m, s
           </input>
         </program>
-        </listing>
-        <listing>
-          <caption>Output</caption>
     <pre>
 (np.float64(168.82518961012298), np.float64(10.35264015645592))
     </pre>

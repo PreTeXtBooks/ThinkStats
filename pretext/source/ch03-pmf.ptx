@@ -77,9 +77,6 @@ ftab = FreqTab.from_seq([1, 2, 2, 3, 5])
 ftab
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 1    1
 2    2
@@ -99,9 +96,6 @@ n = ftab.sum()
 n
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(5)
     </pre>
@@ -117,9 +111,6 @@ pmf = ftab / n
 pmf
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 1    0.2
 2    0.4
@@ -144,9 +135,6 @@ Name: , dtype: float64
 pmf.sum()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
@@ -167,9 +155,6 @@ pmf = Pmf.from_seq([1, 2, 2, 3, 5])
 pmf
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 1    0.2
 2    0.4
@@ -188,9 +173,6 @@ Name: , dtype: float64
 pmf.sum()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
@@ -206,9 +188,6 @@ np.float64(0.8500000000000001)
 pmf[2]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.4)
     </pre>
@@ -223,9 +202,6 @@ np.float64(0.4)
 pmf(2)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.4)
     </pre>
@@ -241,9 +217,6 @@ pmf[2] = 0.2
 pmf(2)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.2)
     </pre>
@@ -259,9 +232,6 @@ pmf[2] += 0.3
 pmf[2]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.5)
     </pre>
@@ -277,9 +247,6 @@ pmf[2] *= 0.5
 pmf[2]
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.25)
     </pre>
@@ -294,9 +261,6 @@ np.float64(0.25)
 pmf.sum()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
@@ -311,9 +275,6 @@ np.float64(0.8500000000000001)
 pmf.normalize()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
@@ -328,9 +289,6 @@ np.float64(0.8500000000000001)
 pmf.copy()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 1    0.235294
 2    0.294118
@@ -363,9 +321,6 @@ mean = np.sum(seq) / n
 mean
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
@@ -392,9 +347,6 @@ mean = np.sum(pmf.ps * pmf.qs)
 mean
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
@@ -410,9 +362,6 @@ np.float64(2.6)
 pmf.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
@@ -439,9 +388,6 @@ var = np.sum(pmf.ps * deviations**2)
 var
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.84)
     </pre>
@@ -456,9 +402,6 @@ np.float64(1.84)
 pmf.var()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.84)
     </pre>
@@ -473,9 +416,6 @@ np.float64(1.84)
 np.sqrt(var)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.3564659966250536)
     </pre>
@@ -490,9 +430,6 @@ np.float64(1.3564659966250536)
 pmf.std()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(1.3564659966250536)
     </pre>
@@ -507,9 +444,6 @@ np.float64(1.3564659966250536)
 pmf.mode()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(2)
     </pre>
@@ -555,9 +489,6 @@ data["count"] = [8, 8, 14, 4, 6, 12, 8, 3, 2]
 data
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
             count
 class size       
@@ -585,9 +516,6 @@ sizes = ranges.left + 2
 sizes
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 Index([7, 12, 17, 22, 27, 32, 37, 42, 47], dtype='int64')
     </pre>
@@ -606,9 +534,6 @@ actual_pmf = Pmf(counts, sizes, name="actual")
 actual_pmf.normalize()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.int64(65)
     </pre>
@@ -623,9 +548,6 @@ np.int64(65)
 actual_pmf.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(23.692307692307693)
     </pre>
@@ -678,10 +600,10 @@ two_bar_plots(actual_pmf, observed_pmf, width=2)
 decorate(xlabel="Class size", ylabel="PMF")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap03_001.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       In the observed distribution there are fewer small classes and more large ones.
       And the biased mean is 29.1, almost 25% higher than the actual mean.
@@ -693,9 +615,6 @@ decorate(xlabel="Class size", ylabel="PMF")
 observed_pmf.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(29.123376623376622)
     </pre>
@@ -734,9 +653,6 @@ debiased_pmf = unbias(observed_pmf, "debiased")
 debiased_pmf.mean()
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 np.float64(23.692307692307693)
     </pre>
@@ -816,10 +732,10 @@ two_bar_plots(first_pmf, other_pmf)
 decorate(xlabel="Weeks", ylabel="Probability", xlim=[20, 50])
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap03_002.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       By plotting the PMF instead of the frequency table, we can compare the two distributions without being misled by the difference in sizes of the samples.
       Based on this figure, first babies seem to be less likely than others to arrive on time (week 39) and more likely to be late (weeks 41 and 42).
@@ -848,9 +764,6 @@ weeks = range(35, 46)
 first_pmf(weeks)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 array([0.03602991, 0.03897575, 0.04713347, 0.06163608, 0.4790392 ,
        0.12145932, 0.08157716, 0.04645366, 0.01971448, 0.00521187,
@@ -864,9 +777,6 @@ array([0.03602991, 0.03897575, 0.04713347, 0.06163608, 0.4790392 ,
 other_pmf(weeks)
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 array([0.03210137, 0.03146779, 0.05216473, 0.07074974, 0.54466737,
        0.12249208, 0.04794087, 0.02597677, 0.01288279, 0.00485744,
@@ -884,9 +794,6 @@ diffs = first_pmf(weeks) - other_pmf(weeks)
 diffs
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 array([ 0.00392854,  0.00750796, -0.00503126, -0.00911366, -0.06562817,
        -0.00103276,  0.03363629,  0.02047689,  0.00683169,  0.00035443,
@@ -904,10 +811,10 @@ plt.bar(weeks, diffs * 100)
 decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
       </input>
     </program>
-    </listing>
     <figure>
       <image source="images/chap03_003.png" width="80%"/>
     </figure>
+    </listing>
     <p>
       This figure makes the pattern clearer: first babies are less likely to be born in week 39, and somewhat more likely to be born in weeks 41 and 42.
     </p>
@@ -964,9 +871,6 @@ resp = read_fem_resp()
 resp.shape
       </input>
     </program>
-    </listing>
-    <listing>
-      <caption>Output</caption>
     <pre>
 (7643, 3092)
     </pre>
@@ -1018,6 +922,9 @@ skewness = np.mean(deviations**3) / numbabes.std(ddof=0) ** 3
 skewness
           </input>
         </program>
+    <pre>
+np.float64(1.7018914266755958)
+    </pre>
         </listing>
         <p>
           A positive value indicates that a distribution is skewed to the right, and a negative value indicates that it is skewed to the left.
