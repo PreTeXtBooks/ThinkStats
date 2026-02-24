@@ -892,6 +892,15 @@ resp.shape
           Then make a <c>Pmf</c> object and plot it as a bar graph.
           Is the distribution symmetric, skewed to the left, or skewed to the right?
         </p>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
+pmf.bar()
+decorate(xlabel="Number of babies", ylabel="PMF")
+          </input>
+        </program>
+        </listing>
       </statement>
     </exercise>
 

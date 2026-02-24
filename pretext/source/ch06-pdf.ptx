@@ -1259,6 +1259,14 @@ sp.integrate(pdf, x)
           <caption>Python Code</caption>
         <program language="python">
           <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
+          </input>
+        </program>
+        </listing>
+        <listing>
+          <caption>Python Code</caption>
+        <program language="python">
+          <input>
 from thinkstats import read_brfss
 
 brfss = read_brfss()
