@@ -517,6 +517,19 @@ array(6.70391061)
       As an example, let's compare the distribution of birth weights for first babies and others.
       We'll load the NSFG dataset again, and divide it into three <c>DataFrames</c>: all live births, first babies, and others.
     </p>
+    <p>
+      The following cells download the data files we need to read the data.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">

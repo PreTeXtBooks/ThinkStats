@@ -707,6 +707,15 @@ len(pmf_model), len(pmf_birth_weight)
       <caption>Python Code</caption>
     <program language="python">
       <input>
+# Set the random seed so we get the same results every time
+np.random.seed(3)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
 n = 10
 sample = birth_weights.sample(n)
       </input>
@@ -896,6 +905,14 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     <p>
       We can read the data like this.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/babyboom.dat")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <console>

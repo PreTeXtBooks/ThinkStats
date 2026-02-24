@@ -673,6 +673,14 @@ def simulate_first_goal(n, p):
     </p>
     <listing>
       <caption>Python Code</caption>
+    <program language="python">
+      <input>
+np.random.seed(3)
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
     <console>
       <input>
 first_goal_times = [simulate_first_goal(n, p) for i in range(1001)]
@@ -961,6 +969,19 @@ two_cdf_plots(cdf_model, cdf_sim_weights, xlabel="Weight (pounds)")
       But first let's see how well the normal distribution fits real data.
       As an example, we'll look at the distribution of birth weights in the National Survey of Family Growth (NSFG).
     </p>
+    <p>
+      The following cells download the data files we need to read the data.
+    </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -1128,6 +1149,14 @@ two_cdf_plots(
       Adult weights in kilograms are recorded in the <c>wtkg2</c> column.
       The mean is about 79 kg.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
