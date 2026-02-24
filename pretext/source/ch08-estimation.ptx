@@ -17,6 +17,50 @@
     <p>
       Statistical inference includes estimation, which is the topic of this chapter, and hypothesis testing, which is the topic of the next chapter.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-estimation-weighing-penguins">
@@ -70,10 +114,13 @@ sample
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([4.44719887, 3.41859205, 3.45704099, 3.20643443, 4.09808751,
        2.6412922 , 4.50261341, 3.34984483, 3.84675798, 3.58528963])
     </pre>
+    </listing>
 
     <p>
       And here are the mean and median of the sample.
@@ -87,9 +134,12 @@ np.mean(sample), np.median(sample)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(3.6553151902291945), np.float64(3.521165310619601))
     </pre>
+    </listing>
 
     <p>
       The mean and median are different enough that we should wonder which is a better estimate.
@@ -192,9 +242,12 @@ np.mean(means)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(3.7003450849286907)
     </pre>
+    </listing>
 
     <p>
       The average of the means is close to the actual mean we used to generate the samples: 3.7 kg.
@@ -212,9 +265,12 @@ np.mean(medians)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(3.701214089907223)
     </pre>
+    </listing>
 
     <p>
       The average of these hypothetical medians is also very close to the actual population mean.
@@ -257,9 +313,12 @@ mse(means, mu)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.020871984891289382)
     </pre>
+    </listing>
 
     <p>
       If we have samples with size 10 and we use the sample mean to estimate the population mean, the average squared error is about 0.021 kilograms squared.
@@ -274,9 +333,12 @@ mse(medians, mu)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.029022273128644173)
     </pre>
+    </listing>
 
     <p>
       If we use the sample medians to estimate the population mean, the average squared error is about 0.029 kilograms squared.
@@ -317,9 +379,12 @@ mae(means, mu)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.1154043374950527)
     </pre>
+    </listing>
 
     <p>
       And the sample medians.
@@ -333,9 +398,12 @@ mae(medians, mu)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.13654429774596036)
     </pre>
+    </listing>
 
     <p>
       On average, we expect the sample mean to be off by about 0.115 kg, and the sample median to be off by 0.137 kg.
@@ -421,9 +489,12 @@ np.mean(means)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(3.786352945690677)
     </pre>
+    </listing>
 
     <p>
       The measurement errors cause the sample mean to be higher, on average, than 3.7 kg.
@@ -441,9 +512,12 @@ np.mean(medians)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(3.7121869836715353)
     </pre>
+    </listing>
 
     <p>
       The average of the sample medians is also higher than 3.7 kg, but it is not off by nearly as much.
@@ -458,9 +532,12 @@ mse(means, mu), mse(medians, mu)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(0.06853430354724438), np.float64(0.031164467796883765))
     </pre>
+    </listing>
 
     <p>
       If measurements actually come from a normal distribution, the sample mean minimizes MSE, but this scenario violates that assumption, so the sample mean doesn't minimize MSE.
@@ -509,9 +586,12 @@ np.mean(biased_vars)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.19049277659404473)
     </pre>
+    </listing>
 
     <p>
       The result is about 0.19, but in this case, we know that the actual population variance is about 0.21, so this version of the sample variance is too low on average -- which confirms that it is biased.
@@ -526,9 +606,12 @@ actual_var
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 0.2116
     </pre>
+    </listing>
 
     <p>
       The following function computes the unbiased estimator, which is the sum of the squared deviations divided by <c>n-1</c>.
@@ -560,9 +643,12 @@ np.mean(unbiased_vars)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.21159109492300626)
     </pre>
+    </listing>
 
     <p>
       The average of the unbiased sample variances is very close to the actual value -- which is what we expect if it is unbiased.
@@ -581,9 +667,12 @@ n = 10
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 0.09999999999999998
     </pre>
+    </listing>
 
     <listing>
       <caption>Python Code</caption>
@@ -594,9 +683,12 @@ n = 100
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 0.010000000000000009
     </pre>
+    </listing>
 
   </section>
 
@@ -646,9 +738,12 @@ penguins.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (342, 17)
     </pre>
+    </listing>
 
     <p>
       The dataset includes three penguin species.
@@ -662,6 +757,8 @@ penguins["Species"].value_counts()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 Species
 Adelie Penguin (Pygoscelis adeliae)          151
@@ -669,6 +766,7 @@ Gentoo penguin (Pygoscelis papua)            123
 Chinstrap penguin (Pygoscelis antarctica)     68
 Name: count, dtype: int64
     </pre>
+    </listing>
 
     <p>
       For the first example we'll select just the Chinstrap penguins.
@@ -735,9 +833,12 @@ sample_mean
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(3.733088235294118)
     </pre>
+    </listing>
 
     <p>
       If you are asked to estimate the population mean, 3.7 kg is a reasonable choice -- but how precise is that estimate?
@@ -827,9 +928,12 @@ standard_error
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.04626531069684985)
     </pre>
+    </listing>
 
     <p>
       In this case, the standard error is about 0.045 kg -- so if we collect many samples, we expect the sample means to vary by about 0.045 kg, on average.
@@ -855,9 +959,12 @@ np.std(weights)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.3814986213564681)
     </pre>
+    </listing>
 
     <p>
       The standard error of the average weight is about 0.046 kg.
@@ -871,9 +978,12 @@ np.std(sample_means)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.04626531069684985)
     </pre>
+    </listing>
 
     <p>
       Standard deviation tells you how much penguins differ in weight.
@@ -904,9 +1014,12 @@ approximate_standard_error(weights)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.046263503290595163)
     </pre>
+    </listing>
 
     <p>
       This result is close to what we got by resampling.
@@ -932,9 +1045,12 @@ ci90
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([3.6576334 , 3.80737506])
     </pre>
+    </listing>
 
     <p>
       To interpret a confidence interval, it is tempting to say that there is a 90% chance that the true value of the population parameter falls in the 90% confidence interval.
@@ -1096,10 +1212,13 @@ download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/CDBRFS08.ASC.gz"
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 Downloaded CDBRFS08.ASC.gz
 
     </pre>
+        </listing>
         <listing>
           <caption>Python Code</caption>
         <program language="python">
@@ -1120,6 +1239,8 @@ heights.describe()
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 count    154407.000000
 mean        178.066221
@@ -1131,6 +1252,7 @@ min          61.000000
 max         236.000000
 Name: htm3, dtype: float64
     </pre>
+        </listing>
       </statement>
     </exercise>
 
@@ -1184,9 +1306,12 @@ actual_median
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 np.float64(6.931471805599453)
     </pre>
+        </listing>
         <p>
           Next, generate many samples with size 10 and check whether the sample mean is an unbiased estimator of the population mean.
         </p>
@@ -1244,10 +1369,13 @@ make_sample(n=10)
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 array([4.5279695 , 3.75698359, 4.09347143, 3.56308034, 3.17123233,
        4.40734952, 3.70858308, 4.15706704, 4.06716703, 3.7203591 ])
     </pre>
+        </listing>
       </statement>
     </exercise>
 
@@ -1319,9 +1447,12 @@ sample
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 array([74, 71, 95, 10, 17])
     </pre>
+        </listing>
         <p>
           And here is the estimate based on this sample.
         </p>
@@ -1333,9 +1464,12 @@ estimate_tanks(sample)
           </input>
         </program>
         </listing>
+        <listing>
+          <caption>Output</caption>
     <pre>
 np.float64(113.0)
     </pre>
+        </listing>
         <p>
           Check whether this estimator is biased.
         </p>

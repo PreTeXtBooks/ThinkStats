@@ -13,6 +13,50 @@
       We'll use <c>Pmf</c> objects to compute the mean and variance of a distribution, and the skewness, which indicates whether it is skewed to the left or right.
       Finally, we will explore how a phenomenon called the "inspection paradox" can cause a sample to give a biased view of a distribution.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import pandas as pd
+import matplotlib.pyplot as plt
+
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-pmfs">
@@ -34,6 +78,8 @@ ftab
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1    1
 2    2
@@ -41,6 +87,7 @@ ftab
 5    1
 Name: , dtype: int64
     </pre>
+    </listing>
     <p>
       The sum of the frequencies is the size of the original sequence.
     </p>
@@ -53,9 +100,12 @@ n
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(5)
     </pre>
+    </listing>
     <p>
       If we divide the frequencies by <c>n</c>, they represent proportions, rather than counts.
     </p>
@@ -68,6 +118,8 @@ pmf
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1    0.2
 2    0.4
@@ -75,6 +127,7 @@ pmf
 5    0.2
 Name: , dtype: float64
     </pre>
+    </listing>
     <p>
       This result indicates that 20% of the values in the sequence are 1, 40% are 2, and so on.
     </p>
@@ -92,9 +145,12 @@ pmf.sum()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
+    </listing>
     <p>
       A normalized <c>FreqTab</c> object represents a <term>probability mass function</term> (PMF), so-called because probabilities associated with discrete values are also called "probability masses".
     </p>
@@ -112,6 +168,8 @@ pmf
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1    0.2
 2    0.4
@@ -119,6 +177,7 @@ pmf
 5    0.2
 Name: , dtype: float64
     </pre>
+    </listing>
     <p>
       The <c>Pmf</c> is normalized so the total probability is 1.
     </p>
@@ -130,9 +189,12 @@ pmf.sum()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
+    </listing>
     <p>
       <c>Pmf</c> and <c>FreqTab</c> objects are similar in many ways.
       To look up the probability associated with a value, we can use the bracket operator.
@@ -145,9 +207,12 @@ pmf[2]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.4)
     </pre>
+    </listing>
     <p>
       Or use parentheses to call the <c>Pmf</c> like a function.
     </p>
@@ -159,9 +224,12 @@ pmf(2)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.4)
     </pre>
+    </listing>
     <p>
       To assign a probability to a value, you have to use the bracket operator.
     </p>
@@ -174,9 +242,12 @@ pmf(2)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.2)
     </pre>
+    </listing>
     <p>
       You can modify an existing <c>Pmf</c> by incrementing the probability associated with a value:
     </p>
@@ -189,9 +260,12 @@ pmf[2]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.5)
     </pre>
+    </listing>
     <p>
       Or you can multiply a probability by a factor:
     </p>
@@ -204,9 +278,12 @@ pmf[2]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.25)
     </pre>
+    </listing>
     <p>
       If you modify a <c>Pmf</c>, the result may not be normalized <mdash/> that is, the probabilities may no longer add up to 1.
     </p>
@@ -218,9 +295,12 @@ pmf.sum()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
+    </listing>
     <p>
       The <c>normalize</c> method renormalizes the <c>Pmf</c> by dividing through by the sum <mdash/> and returning the sum.
     </p>
@@ -232,9 +312,12 @@ pmf.normalize()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.8500000000000001)
     </pre>
+    </listing>
     <p>
       <c>Pmf</c> objects provide a <c>copy</c> method so you can make and modify a copy without affecting the original.
     </p>
@@ -246,6 +329,8 @@ pmf.copy()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1    0.235294
 2    0.294118
@@ -253,6 +338,7 @@ pmf.copy()
 5    0.235294
 Name: , dtype: float64
     </pre>
+    </listing>
     <p>
       Like a <c>FreqTab</c> object, a <c>Pmf</c> object has a <c>qs</c> attribute that accesses the quantities and a <c>ps</c> attribute that accesses the probabilities.
       It also has a <c>bar</c> method that plots the <c>Pmf</c> as a bar graph and a <c>plot</c> method that plots it as a line graph.
@@ -278,9 +364,12 @@ mean
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
+    </listing>
     <p>
       Now suppose we compute the PMF of the values in the sequence.
     </p>
@@ -304,9 +393,12 @@ mean
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
+    </listing>
     <p>
       Notice that we <em>don't</em> have to divide by <c>n</c>, because we already did that when we normalized the <c>Pmf</c>.
       <c>Pmf</c> objects have a <c>mean</c> method that does the same thing.
@@ -319,9 +411,12 @@ pmf.mean()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(2.6)
     </pre>
+    </listing>
     <p>
       Given a <c>Pmf</c>, we can compute the variance by computing the deviation of each quantity from the mean.
     </p>
@@ -345,9 +440,12 @@ var
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(1.84)
     </pre>
+    </listing>
     <p>
       The <c>var</c> method does the same thing.
     </p>
@@ -359,9 +457,12 @@ pmf.var()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(1.84)
     </pre>
+    </listing>
     <p>
       From the variance, we can compute the standard deviation in the usual way.
     </p>
@@ -373,9 +474,12 @@ np.sqrt(var)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(1.3564659966250536)
     </pre>
+    </listing>
     <p>
       Or the <c>std</c> method does the same thing.
     </p>
@@ -387,9 +491,12 @@ pmf.std()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(1.3564659966250536)
     </pre>
+    </listing>
     <p>
       <c>Pmf</c> also provides a <c>mode</c> method that finds the value with the highest probability.
     </p>
@@ -401,9 +508,12 @@ pmf.mode()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(2)
     </pre>
+    </listing>
     <p>
       We'll see more methods as we go along, but that's enough to get started.
     </p>
@@ -446,6 +556,8 @@ data
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
             count
 class size       
@@ -459,6 +571,7 @@ class size
 [40, 45)        3
 [45, 50)        2
     </pre>
+    </listing>
     <p>
       The Pandas function <c>interval_range</c> makes an <c>Index</c> where each label represents a range of values.
       The notation <c>[5, 10)</c> means that <c>5</c> is included in the interval and <c>10</c> is not.
@@ -473,9 +586,12 @@ sizes
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 Index([7, 12, 17, 22, 27, 32, 37, 42, 47], dtype='int64')
     </pre>
+    </listing>
     <p>
       Now let's make a <c>Pmf</c> that represents the distribution of class sizes.
       Because we know the sizes and their frequencies, we can create a <c>Pmf</c> directly, passing as arguments the counts, sizes, and a name.
@@ -491,9 +607,12 @@ actual_pmf.normalize()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(65)
     </pre>
+    </listing>
     <p>
       If you ask the college for the average class size, they report the mean of this distribution, which is 23.7.
     </p>
@@ -505,9 +624,12 @@ actual_pmf.mean()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(23.692307692307693)
     </pre>
+    </listing>
     <p>
       But if you survey a group of students, ask them how many students are in their classes, and compute the mean, the average is bigger.
       Let's see how much bigger.
@@ -572,9 +694,12 @@ observed_pmf.mean()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(29.123376623376622)
     </pre>
+    </listing>
     <p>
       It is also possible to invert this operation.
       Suppose you want to find the distribution of class sizes at a college, but you can't get reliable data.
@@ -610,9 +735,12 @@ debiased_pmf.mean()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(23.692307692307693)
     </pre>
+    </listing>
     <p>
       The mean of the debiased <c>Pmf</c> is the same as the mean of the actual distribution we started with.
     </p>
@@ -634,6 +762,27 @@ np.float64(23.692307692307693)
       The <c>nsfg</c> module provides a <c>get_nsfg_groups</c> function that reads the data, selects rows that represent live births, and partitions live births into first babies and others.
       It returns three <c>DataFrame</c> objects.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -700,11 +849,14 @@ first_pmf(weeks)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([0.03602991, 0.03897575, 0.04713347, 0.06163608, 0.4790392 ,
        0.12145932, 0.08157716, 0.04645366, 0.01971448, 0.00521187,
        0.00135962])
     </pre>
+    </listing>
     <listing>
       <caption>Python Code</caption>
     <program language="python">
@@ -713,11 +865,14 @@ other_pmf(weeks)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([0.03210137, 0.03146779, 0.05216473, 0.07074974, 0.54466737,
        0.12249208, 0.04794087, 0.02597677, 0.01288279, 0.00485744,
        0.00084477])
     </pre>
+    </listing>
     <p>
       So we can compute the differences in the probabilities like this.
     </p>
@@ -730,11 +885,14 @@ diffs
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([ 0.00392854,  0.00750796, -0.00503126, -0.00911366, -0.06562817,
        -0.00103276,  0.03363629,  0.02047689,  0.00683169,  0.00035443,
         0.00051485])
     </pre>
+    </listing>
     <p>
       Here's what they look like, multiplied by 100 to express the differences in percentage points.
     </p>
@@ -784,6 +942,15 @@ decorate(xlabel="Weeks", ylabel="Difference (percentage points)")
     <p>
       The codebook for this dataset is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       The <c>nsfg.py</c> module provides a function that reads the respondent file and returns a <c>DataFrame</c>.
     </p>
@@ -798,9 +965,12 @@ resp.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (7643, 3092)
     </pre>
+    </listing>
     <p>
       This <c>DataFrame</c> contains 7643 rows and 3092 columns.
     </p>

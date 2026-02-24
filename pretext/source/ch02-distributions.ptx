@@ -9,6 +9,48 @@
       We'll start with frequency tables <mdash/> which represent the values in a dataset and the number of times each of them appears <mdash/> and use them to explore data from the National Survey of Family Growth (NSFG).
       We'll also look for extreme or erroneous values, called outliers, and consider ways to handle them.
     </p>
+
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+from os.path import basename, exists
+
+
+def download(url):
+    filename = basename(url)
+    if not exists(filename):
+        from urllib.request import urlretrieve
+
+        local, _ = urlretrieve(url, filename)
+        print("Downloaded " + local)
+
+
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/thinkstats.py")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import empiricaldist
+except ImportError:
+    %pip install empiricaldist
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+import numpy as np
+import matplotlib.pyplot as plt
+from thinkstats import decorate
+      </input>
+    </program>
+    </listing>
   </introduction>
 
   <section xml:id="sec-frequency-tables">
@@ -55,6 +97,8 @@ ftab
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1.0    1
 2.0    2
@@ -62,6 +106,7 @@ ftab
 5.0    1
 Name: , dtype: int64
     </pre>
+    </listing>
     <p>
       A <c>FreqTab</c> object is a kind of Pandas <c>Series</c> that contains values and their frequencies.
       In this example, the value <c>1.0</c> has frequency 1, the value <c>2.0</c> has frequency 2, etc.
@@ -92,9 +137,12 @@ ftab[2.0]
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(2)
     </pre>
+    </listing>
     <p>
       But unlike a Pandas <c>Series</c>, we can also call a <c>FreqTab</c> object like a function to look up a value.
     </p>
@@ -106,9 +154,12 @@ ftab(2.0)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.int64(2)
     </pre>
+    </listing>
     <p>
       If we look up a value that does not appear in the <c>FreqTab</c>, the function syntax returns <c>0</c>.
     </p>
@@ -120,9 +171,12 @@ ftab(4.0)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 0
     </pre>
+    </listing>
     <p>
       A <c>FreqTab</c> object has an attribute called <c>qs</c> that returns an array of values <mdash/> <c>qs</c> stands for quantities, although technically not all values are quantities.
     </p>
@@ -134,9 +188,12 @@ ftab.qs
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([1., 2., 3., 5.])
     </pre>
+    </listing>
     <p>
       <c>FreqTab</c> also has an attribute called <c>fs</c> that returns an array of frequencies.
     </p>
@@ -148,9 +205,12 @@ ftab.fs
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 array([1, 2, 1, 1])
     </pre>
+    </listing>
     <p>
       <c>FreqTab</c> provides an <c>items</c> method we can use to loop through quantity-frequency pairs:
     </p>
@@ -163,6 +223,8 @@ for x, freq in ftab.items():
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 1.0 1
 2.0 2
@@ -170,6 +232,7 @@ for x, freq in ftab.items():
 5.0 1
 
     </pre>
+    </listing>
     <p>
       We'll see more <c>FreqTab</c> methods as we go along.
     </p>
@@ -186,6 +249,27 @@ for x, freq in ftab.items():
       In the previous chapter, we downloaded this dataset, read it into a Pandas <c>DataFrame</c>, and cleaned a few of the variables.
       The code we used to load and clean the data is in a module called <c>nsfg.py</c> <mdash/> instructions for installing this module are in the notebook for this chapter.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       We can import it and read the pregnancy file like this.
     </p>
@@ -255,9 +339,12 @@ ftab_lb.idxmax()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(7.0)
     </pre>
+    </listing>
     <p>
       <c>FreqTab</c> provides a method called <c>mode</c> that does the same thing.
     </p>
@@ -269,9 +356,12 @@ ftab_lb.mode()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(7.0)
     </pre>
+    </listing>
     <p>
       In this distribution, the mode is at 7 pounds.
     </p>
@@ -378,6 +468,8 @@ smallest(ftab_length)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 prglngth
 0     1
@@ -392,6 +484,7 @@ prglngth
 22    7
 Name: prglngth, dtype: int64
     </pre>
+    </listing>
     <p>
       Since we selected the rows for live births, pregnancy lengths less than 10 weeks are certainly errors.
       The most likely explanation is that the outcome was not coded correctly.
@@ -421,6 +514,8 @@ largest(ftab_length)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 prglngth
 40    1116
@@ -435,6 +530,7 @@ prglngth
 50       2
 Name: prglngth, dtype: int64
     </pre>
+    </listing>
     <p>
       Again, some of these values are probably errors.
       Most doctors recommend induced labor if a pregnancy exceeds 41 weeks, so 50 weeks seems unlikely to be correct.
@@ -518,9 +614,12 @@ firsts["prglngth"].count(), others["prglngth"].count()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.int64(4413), np.int64(4735))
     </pre>
+    </listing>
     <p>
       Comparing the means of the distributions, it looks like first babies are a little bit later on average.
     </p>
@@ -534,9 +633,12 @@ first_mean, other_mean
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(38.60095173351461), np.float64(38.52291446673706))
     </pre>
+    </listing>
     <p>
       But the difference is only 0.078 weeks, which is about 13 hours.
     </p>
@@ -549,9 +651,12 @@ diff, diff * 7 * 24
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(0.07803726677754952), np.float64(13.11026081862832))
     </pre>
+    </listing>
     <p>
       There are several possible causes of this apparent difference:
     </p>
@@ -594,9 +699,12 @@ diff / live["prglngth"].mean() * 100
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.20237586646738304)
     </pre>
+    </listing>
     <p>
       Another option is to report a <term>standardized</term> effect size, which is a statistic intended to quantify the size of an effect in a way that is comparable between different quantities and different groups.
     </p>
@@ -612,9 +720,12 @@ diff / live["prglngth"].std()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.028877623375210403)
     </pre>
+    </listing>
     <p>
       But notice that we used both groups to compute the standard deviation.
       If the groups are substantially different, the standard deviation when we put them together is larger than in either group, which might make the effect size seem small.
@@ -666,9 +777,12 @@ np.sqrt(pooled_var)
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(2.7022108144953862)
     </pre>
+    </listing>
     <p>
       The pooled standard deviation is between the standard deviations of the groups.
     </p>
@@ -680,9 +794,12 @@ firsts["prglngth"].std(), others["prglngth"].std()
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (np.float64(2.7919014146687204), np.float64(2.6158523504392375))
     </pre>
+    </listing>
     <p>
       A standardized effect size that uses pooled standard deviation is called <term>Cohen's effect size</term>.
       Here's a function that computes it.
@@ -713,9 +830,12 @@ cohen_effect_size(firsts["prglngth"], others["prglngth"])
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 np.float64(0.028879044654449834)
     </pre>
+    </listing>
     <p>
       In this example, the difference is 0.029 standard deviations, which is small.
       To put that in perspective, the difference in height between men and women is about 1.7 standard deviations.
@@ -817,6 +937,15 @@ np.float64(0.028879044654449834)
     <p>
       The codebook for the female respondent file is at <url href="https://ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf" visual="ftp.cdc.gov/pub/Health_Statistics/NCHS/Dataset_Documentation/NSFG/Cycle6Codebook-Female.pdf"/>.
     </p>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dct")
+download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemResp.dat.gz")
+      </input>
+    </program>
+    </listing>
     <p>
       The <c>nsfg.py</c> module provides a function that reads the female respondent file, cleans some of the variables, and returns a <c>DataFrame</c>.
     </p>
@@ -831,9 +960,12 @@ resp.shape
       </input>
     </program>
     </listing>
+    <listing>
+      <caption>Output</caption>
     <pre>
 (7643, 3092)
     </pre>
+    </listing>
     <p>
       This <c>DataFrame</c> contains 3092 columns, but we'll use just a few of them.
     </p>
