@@ -72,7 +72,15 @@ from thinkstats import decorate
       To demonstrate the first point, we'll look at some of the measurements in the penguin
       dataset.
       Then we'll explore the mathematical properties of the normal distribution.
-      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      The following cell downloads the data from a repository created by Allison Horst.
+    </p>
+    <p>
+      Horst AM, Hill AP, Gorman KB (2020). palmerpenguins: Palmer Archipelago (Antarctica) penguin data. R package version 0.1.0. https://allisonhorst.github.io/palmerpenguins/. doi: 10.5281/zenodo.3960218.
+    </p>
+    <p>
+      The data was collected as part of the research that led to this paper: Gorman KB, Williams TD, Fraser WR (2014). Ecological sexual dimorphism and environmental variability within a community of Antarctic penguins (genus Pygoscelis). PLoS ONE 9(3):e90081. https://doi.org/10.1371/journal.pone.0090081
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -1209,8 +1217,7 @@ normal_plot_samples(df_sample, ylabel="Sum of correlated values")
       To see why the Central Limit Theorem is useful, let's get back to the example in
       <xref ref="ch-hypothesis-testing"/>: testing the apparent difference in mean pregnancy
       length for first babies and others.
-      We'll use the NSFG data again<mdash/>instructions for downloading it are in the notebook
-      for this chapter.
+      We'll use the NSFG data again<mdash/>instructions for downloading it are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap14.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap14.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The following cell downloads the data.

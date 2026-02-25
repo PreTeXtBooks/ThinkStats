@@ -78,7 +78,7 @@ from thinkstats import decorate
     <p>
       I used the NLS Investigator to create an excerpt that contains the variables I'll use for this analysis.
       With their permission, I can redistribute this excerpt.
-      Instructions for downloading the data are in the notebook for this chapter.
+      Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap07.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap07.ipynb">notebook for this chapter</url>.
     </p>
 
     <listing>
@@ -1420,7 +1420,7 @@ decorate(ylabel="PMF")
       <statement>
         <p>
           The Behavioral Risk Factor Surveillance System (BRFSS) dataset includes self-reported heights and weights for about 400,000 respondents.
-          Instructions for downloading the data are in the notebook for this chapter.
+          Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap07.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap07.ipynb">notebook for this chapter</url>.
         </p>
         <p>
           Make a scatter plot that shows the relationship between height and weight.

@@ -74,7 +74,15 @@ from thinkstats import decorate
       Researchers installed 50 new light bulbs and left them on continuously.
       They checked on the bulbs every 12 hours and recorded the lifespan of any that
       expired<mdash/>and ran the experiment until all 50 bulbs expired.
-      Instructions for downloading the data are in the notebook for this chapter.
+    </p>
+    <p>
+      The following cell downloads the data, which is documented
+      <url href="https://gist.github.com/epogrebnyak/7933e16c0ad215742c4c104be4fbdeb1" visual="gist.github.com/epogrebnyak/7933e16c0ad215742c4c104be4fbdeb1">here</url>.
+    </p>
+    <p>
+      Dataset from: V.J. Menon and D.C. Agrawal, Renewal Rate of Filament Lamps: Theory and Experiment.
+      <em>Journal of Failure Analysis and Prevention</em>. December 2007, p. 421, Table 2.
+      DOI: 10.1007/s11668-007-9074-9
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -350,11 +358,12 @@ decorate(xlabel="Light bulb duration (hours)", ylabel="Cumulative hazard")
     <p>
       I have compiled responses from nine iterations of the survey, conducted between 1982 and
       2019, and selected data related to marriage.
-      Instructions for downloading this excerpt are in the notebook for this chapter.
     </p>
     <p>
       The following cell downloads the data, which is a CSV file I created that combines data
       from several iterations of the NSFG survey, from 1982 to 2019.
+      Details of the data preparation are in
+      <url href="https://github.com/AllenDowney/MarriageNSFG/blob/master/clean_nsfg.ipynb" visual="github.com/AllenDowney/MarriageNSFG/blob/master/clean_nsfg.ipynb">this notebook</url>.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -1335,7 +1344,7 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
       To demonstrate, we'll use pregnancy data from the NSFG.
     </p>
     <p>
-      The following cells download the data files we need to read the data.
+      The following cells download the data files and install <c>statadict</c>, which we need to read the data.
     </p>
     <listing>
       <caption>Python Code</caption>
@@ -1344,6 +1353,17 @@ decorate(xlabel="Age", ylabel="Prob never married", xlim=xlim, ylim=ylim)
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/nb/nsfg.py")
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dct")
 download("https://github.com/AllenDowney/ThinkStats/raw/v3/data/2002FemPreg.dat.gz")
+      </input>
+    </program>
+    </listing>
+    <listing>
+      <caption>Python Code</caption>
+    <program language="python">
+      <input>
+try:
+    import statadict
+except ImportError:
+    %pip install statadict
       </input>
     </program>
     </listing>
@@ -1689,7 +1709,7 @@ sample = resample_cycles(resp)
         <p>
           I used an online graph digitizer to get the data from the figure in their paper and
           store it in a CSV file.
-          Instructions for downloading the data are in the notebook for this chapter.
+          Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap13.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap13.ipynb">notebook for this chapter</url>.
         </p>
         <p>
           Data source: Beltrán-Sánchez, H., Crimmins, E. M., <amp/> Finch, C. E. (2012).

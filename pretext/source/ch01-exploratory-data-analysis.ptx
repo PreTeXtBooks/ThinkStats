@@ -226,7 +226,7 @@ from thinkstats import decorate
       </ul>
     </blockquote>
     <p>
-      If you agree to comply with these terms, instructions for downloading the data are in the notebook for this chapter.
+      If you agree to comply with these terms, instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap01.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap01.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       The data files are available directly from the NSFG web site at <url href="https://www.cdc.gov/nchs/data_access/ftp_dua.htm?url_redirect=ftp://ftp.cdc.gov/pub/Health_Statistics/NCHS/Datasets/NSFG" visual="cdc.gov/nchs/data_access"/>, but we will download them from the repository for this book, which provides a compressed version of the data file.

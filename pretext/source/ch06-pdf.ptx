@@ -912,7 +912,7 @@ decorate(xlabel="Birth weight (pounds)", ylabel="Density")
     </figure>
     <p>
       To demonstrate these transitions, we'll use a new dataset that "contains the time of birth, sex, and birth weight for each of 44 babies born in one 24-hour period at a Brisbane, Australia, hospital," according to the description.
-      Instructions for downloading the data are in the notebook for this chapter.
+      Instructions for downloading the data are in the <url href="https://github.com/AllenDowney/ThinkStats/blob/v3/nb/chap06.ipynb" visual="github.com/AllenDowney/ThinkStats/blob/v3/nb/chap06.ipynb">notebook for this chapter</url>.
     </p>
     <p>
       According to the information in the file
