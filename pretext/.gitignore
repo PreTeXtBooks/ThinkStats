@@ -5,22 +5,26 @@
 # don't track unpublished builds
 output
 
-# don't track HTML files generated directly in this directory
-*.html
-*.js
-
-# don't track log files
-logs
-
 # don't track assets generated from source
 generated-assets
 
 # don't track node packages
 node_modules
 
+# don't track local Python environments/caches
+.venv/
+__pycache__/
+*.py[cod]
+.cache/
+
 # don't track error logs
 .error_schema.log
 cli.log
+logs/
+
+assets/generated/
+logs/
+
 
 # don't track OS related files (windows/macos/linux)
 .DS_Store
@@ -57,7 +61,7 @@ ehthumbs_vista.db
 .vscode
 *.code-workspace
 
-# Don't include SublimeText files
+# Don't inlucde SublimeText files
 # Cache files for Sublime Text
 *.tmlanguage.cache
 *.tmPreferences.cache
