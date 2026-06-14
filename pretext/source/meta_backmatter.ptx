@@ -12,11 +12,12 @@
     <title>Selected Solutions</title>
   </solutions>
 
-  <xi:include href="./appendix-variability.ptx" />
-  <xi:include href="./appendix-fourier.ptx" />
-  <xi:include href="./appendix-moneyline.ptx" />
   <xi:include href="./appendix-ripoff-etf.ptx" />
+  <xi:include href="./appendix-fourier.ptx" />
   <xi:include href="./appendix-temperature.ptx" />
+  <xi:include href="./appendix-variability.ptx" />
+  <xi:include href="./appendix-moneyline.ptx" />
+
 
   <appendix>
     <title>List of Symbols</title>
